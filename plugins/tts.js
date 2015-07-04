@@ -3,10 +3,10 @@
 google voice will read the message you specified in <what>.
 
 optional "- <accent>"
-specify the accent the voice will use, default is "it" for italian, you can edit the source and set it to "en"
+specify the accent the voice will use, default is "en" for english, you can edit the source and set it to whatever you want
 
 !tts bonjour - fr //will post an audio of bonjour read in french
-!tts ciao //will post an audio of "ciao" read in italian (default accent, will fix later)*/
+!tts hello //will post an audio of "hello" read in the default accent*/
 
 var fs = require('fs');
 var http = require('http');
@@ -15,6 +15,8 @@ var request = require('request');
 var crypto = require('crypto');
 
 var tts = function(){
+
+    defaultAccent = "en";
 
     this.init = function(){
 
@@ -34,7 +36,7 @@ var tts = function(){
             match = match[1].split("-");
 
             text = match[0].trim();
-            language = match[1] ? match[1].trim() : "it";
+            language = match[1] ? match[1].trim() : defaultAccent;
 
             console.log("\tTTS: '" + text + "' from " + msg.from.username);
 
@@ -42,7 +44,7 @@ var tts = function(){
                 return;
 
             if(encodeURIComponent(text.length) > 150){
-                reply({type: 'text', text: "!tts: Testo troppo lungo."});
+                reply({type: 'text', text: "!tts: Text is too long!."});
                 return;
             }
 
