@@ -2,7 +2,7 @@
 Roll it! 
 Get a random number between 0 and max (default 100)
 
-!roll (<max>)
+!roll [max]
 
 Example:
 You: !roll
@@ -28,6 +28,8 @@ var roll = function(){
         
         if(match)
         {
+            console.log("\tROLL: " + msg.text)
+
             if(match[1]){ //roll with max specified
                 max = parseInt(match[1]); 
             }else{
