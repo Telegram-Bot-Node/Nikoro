@@ -1,4 +1,10 @@
-/*say ping get pong*/
+/*
+Ping - Pong
+
+Example:
+You: ping
+Bot: pong
+*/
 
 var ping = function(){
 

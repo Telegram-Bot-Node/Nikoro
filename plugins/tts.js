@@ -1,12 +1,18 @@
 /*usage: 
-!tts <what> (- <accent>)
-google voice will read the message you specified in <what>.
+Get an audio reading aloud whatever you want
+You can also specify the language for the reader voice.
+!tts <what> (- <Language>)
 
-optional "- <accent>"
-specify the accent the voice will use, default is "en" for english, you can edit the source and set it to whatever you want
+Example
+You: !tts Hello
+Bot: <audio> saying "Hello" in the default language
 
-!tts bonjour - fr //will post an audio of bonjour read in french
-!tts hello //will post an audio of "hello" read in the default accent*/
+You: !tts Hola - es
+Bot <audio> saying "Hola" in spanish language/accent
+
+Example of Languages:
+it, es, fr, de, ru, en
+*/
 
 var fs = require('fs');
 var http = require('http');
@@ -16,7 +22,7 @@ var crypto = require('crypto');
 
 var tts = function(){
 
-    defaultAccent = "en";
+    defaultLanguage = "en";   //<---------- change the default language here
 
     this.init = function(){
 
@@ -36,7 +42,7 @@ var tts = function(){
             match = match[1].split("-");
 
             text = match[0].trim();
-            language = match[1] ? match[1].trim() : defaultAccent;
+            language = match[1] ? match[1].trim() : defaultLanguage;
 
             console.log("\tTTS: '" + text + "' from " + msg.from.username);
 

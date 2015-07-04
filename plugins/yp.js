@@ -1,5 +1,11 @@
-/*Search youporn
+/*
+Search YouPorn
 !yp <query>
+
+Example:
+
+You: !yp test
+Bot: title - youporn_link
 */
 
 var cheerio = require('cheerio'), request = require('request');

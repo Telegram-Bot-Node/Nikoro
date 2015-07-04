@@ -1,5 +1,18 @@
-/*usage: !set <trigger> - <result>
-whenever someone say the trigger word the result will be produced as a reply*/
+/*
+Trigger bot responses whenever someone says a specific sentence. The triggers will be saved to file on shutdown.
+
+!set <trigger> - <response>
+!unset <trigger>
+
+Example:
+You: !set hello - f*** you!
+You: hello
+Bot: f*** you!
+
+You: !unset hello
+You: hello
+Bot: ... <- Nothing, you removed the trigger
+*/
 
 var set = function(){
 
