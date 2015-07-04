@@ -1,3 +1,13 @@
+/*usage: 
+!tts <what> (- <accent>)
+google voice will read the message you specified in <what>.
+
+optional "- <accent>"
+specify the accent the voice will use, default is "it" for italian, you can edit the source and set it to "en"
+
+!tts bonjour - fr //will post an audio of bonjour read in french
+!tts ciao //will post an audio of "ciao" read in italian (default accent, will fix later)*/
+
 var fs = require('fs');
 var http = require('http');
 var request = require('request');

@@ -1,3 +1,7 @@
+/*Search youporn
+!yp <query>
+*/
+
 var cheerio = require('cheerio'), request = require('request');
 
 var yp = function(){

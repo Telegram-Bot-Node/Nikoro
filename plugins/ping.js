@@ -1,3 +1,5 @@
+/*say ping get pong*/
+
 var ping = function(){
 
     this.init = function(){

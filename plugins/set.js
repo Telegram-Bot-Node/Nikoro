@@ -1,3 +1,6 @@
+/*usage: !set <trigger> - <result>
+whenever someone say the trigger word the result will be produced as a reply*/
+
 var set = function(){
 
     dict = {};
