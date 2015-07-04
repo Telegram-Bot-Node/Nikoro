@@ -1,6 +1,6 @@
 {
   "name": "telegram-bot",
-  "version": "0.2",
+  "version": "0.0.0",
   "description": "Simple Telegram Bot developed with node-telegram-bot-api",
   "main": "bot.js",
   "dependencies": {
