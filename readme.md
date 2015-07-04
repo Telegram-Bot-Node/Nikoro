@@ -1,11 +1,14 @@
-#Node-Telegram-Bot
+# Node-Telegram-Bot
 
 A Telegram Bot which supports user-made plugins. 
 
 Platform: Node.js 
 
+## Plugins
 
-## Will fix readme and more stuff later
+Plugins can be easly written with a basic understanding of Javascript.
+
+Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation.
 
 ## How to use the bot
 
@@ -15,7 +18,7 @@ Platform: Node.js
     * Get the associated token (https://core.telegram.org/bots/#botfather)
 * Edit config.js
     * Set ```telegramToken``` with the auth token of your bot
-    * Edit ```activePlugins``` if you want to edit the active plugins 
+    * Edit ```activePlugins``` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
 * Run the bot
     * ```node bot.js``` 
     * Stop it at any time with CTRL+C
@@ -57,7 +60,20 @@ var pluginName = function(){
 
 module.exports = pluginName;
 ```
+## TODO
+* Better way to handle plugins (?), I need suggestion on this
+* Common utilities module (downloading file, downloading web page, ...)
+* Improve the code
+* More plugins
+* TTS
+    * Fix random exceptions that sometimes happens
+* SET
+    * Check if the database file exists before saving/loading
 
 ## Contributing
 
-Did you made a plugin you want to share with the world? Submit a pull request! 
+Did you made a plugin you want to share with everyone? 
+
+Submit a pull request! 
+
+This project will only grow if *YOU* help!
