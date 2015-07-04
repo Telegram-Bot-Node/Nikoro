@@ -4,6 +4,8 @@ A Telegram Bot which supports user-made plugins.
 
 Platform: Node.js 
 
+Thanks to: [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
+
 ## How to use the bot
 
 * Clone/Download/Fork the repository
