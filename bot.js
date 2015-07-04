@@ -9,28 +9,28 @@ var bot = new TelegramBot(token, {polling: true});
 console.log("The bot is starting...");
 console.log(pluginsL.length + " plugins enabled");
 
+/*loading the plugins*/
 var pluginsM = [];
 for(i=0;i<pluginsL.length;i++){
     var plugin = require("./plugins/" + pluginsL[i])
     pluginsM.push(new plugin());
 }
-
 console.log("Plugins loaded");
 
+/*init method*/
 for(i=0;i<pluginsM.length;i++){
-        pluginsM[i].init();
-    }
-
+    pluginsM[i].init();
+}
 console.log("Plugins initialized");
 
 
 bot.on('message', function (msg) {
 
-    if(msg.text){
-        
+    if(msg.text){ //right now we handle only commands coming as text messages
         var chatId = msg.chat.id;
+
         for(i=0;i<pluginsM.length;i++){
-            pluginsM[i].doMessage(msg, function(reply){
+            pluginsM[i].doMessage(msg, function(reply){ //this does the job, I don't know if it is the best way, but is good for async functions done by plugins 
                 if(reply.type == "text")
                 {
                     bot.sendMessage(chatId, reply.text);
@@ -46,16 +46,20 @@ bot.on('message', function (msg) {
 
 });
 
+process.on('SIGINT', shutDown);
+process.on('uncaughtException', shutDown);
 
 function shutDown(){
     console.log("The bot is shutting down...");
     for(i=0;i<pluginsM.length;i++){
         pluginsM[i].doStop();
     }
+    /*need a better way to implement this: 
+        wait until all plugins have stopped before exiting, something with callbacks (which I don't know much about)
+    waiting 1,5 sec is NOT good, but works*/
+
     setTimeout(function() {
         process.exit();  
     }, 1500);
 }
 
-process.on('SIGINT', shutDown);
-process.on('uncaughtException', shutDown);
