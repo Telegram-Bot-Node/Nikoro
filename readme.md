@@ -4,12 +4,6 @@ A Telegram Bot which supports user-made plugins.
 
 Platform: Node.js 
 
-## Plugins
-
-Plugins can be easly written with a basic understanding of Javascript.
-
-Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation.
-
 ## How to use the bot
 
 * Clone/Download/Fork the repository
@@ -23,7 +17,13 @@ Check the ```plugins``` folder to see the available plugins and check each file 
     * ```node bot.js``` 
     * Stop it at any time with CTRL+C
 
-## Writing custom plugins
+## Plugins
+
+Plugins can be easly written with a basic understanding of Javascript.
+
+Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation.
+
+### Writing custom plugins
 
 * Take a look at the provided plugins in the ```plugins``` folder
 * Create a ```.js``` file in the ```plugins``` folder
