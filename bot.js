@@ -47,7 +47,7 @@ bot.on('message', function (msg) {
 });
 
 process.on('SIGINT', shutDown);
-process.on('uncaughtException', shutDown);
+process.on('uncaughtException', shutDown);  //remove this is you are developing plugins
 
 function shutDown(){
     console.log("The bot is shutting down...");
