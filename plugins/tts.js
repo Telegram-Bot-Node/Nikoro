@@ -1,7 +1,7 @@
 /*usage: 
 Get an audio reading aloud whatever you want
 You can also specify the language for the reader voice.
-!tts <what> (- <Language>)
+!tts <what> [- <Language>]
 
 Example
 You: !tts Hello
@@ -22,7 +22,7 @@ var crypto = require('crypto');
 
 var tts = function(){
 
-    defaultLanguage = "en";   //<---------- change the default language here
+    defaultLanguage = "it";   //<---------- change the default language here
 
     this.init = function(){
 
@@ -39,6 +39,8 @@ var tts = function(){
         var match = re.exec(msg.text);  
         
         if(match){
+
+            reply({type:"status", status: "upload_audio"});
             match = match[1].split("-");
 
             text = match[0].trim();

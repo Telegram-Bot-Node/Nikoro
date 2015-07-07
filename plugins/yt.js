@@ -36,6 +36,9 @@ var yt = function(){
         var match = re.exec(msg.text);  
         
         if(match){ 
+
+            reply({type:"status", status: "typing"});
+
             query = match[1].trim();
 
             if(query.length > 0){
@@ -46,7 +49,7 @@ var yt = function(){
                     if (!error && response.statusCode == 200) {
                         
                         data = JSON.parse(data);
-
+                        
                         if(data["items"])
                         {
                             var videos = data["items"];

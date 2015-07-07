@@ -26,6 +26,8 @@ var yp = function(){
         var match = re.exec(msg.text);  
         
         if(match){ 
+            reply({type:"status", status: "typing"});
+            
             query = match[1].trim();
 
             if(query.length > 0){
