@@ -55,7 +55,7 @@ var set = function(){
 
             dict[key] = value;
 
-            reply({type: 'text', text: "Set " + key + " = " + value})
+            reply({type: 'text', text: key + " = " + value})
 
             console.log("\tSET: " + key + " = " + value);
 
