@@ -40,6 +40,11 @@ bot.on('message', function (msg) {
                 {
                     bot.sendAudio(chatId, reply.audio)
                 }
+
+                if(reply.type == "status")
+                {
+                    bot.sendChatAction(chatId, reply.status);
+                }
             });
         }
     }
