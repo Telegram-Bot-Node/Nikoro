@@ -48,7 +48,12 @@ var imgur = function(){
                         console.log("\tIMGUR: Wrong id " + s);
                         return findValidPic(++s, reply);
                     }
-                    if((dimensions.width==198 && dimensions.height==160) || (dimensions.width==161 && dimensions.height==81)) 
+                    else if(dimensions.width<25 || dimensions.height<25)
+                    {
+                        console.log("\tIMGUR: Wrong id " + s);
+                        return findValidPic(++s, reply);
+                    }
+                    else if((dimensions.width==198 && dimensions.height==160) || (dimensions.width==161 && dimensions.height==81)) 
                     {
                         console.log("\tIMGUR: Wrong id " + s);
                         return findValidPic(++s, reply);
