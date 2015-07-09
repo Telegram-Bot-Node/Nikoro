@@ -29,8 +29,9 @@ bot.on('message', function (msg) {
     if(msg.text){ //right now we handle only commands coming as text messages
         var chatId = msg.chat.id;
 
-        for(i=0;i<pluginsM.length;i++){
-            pluginsM[i].doMessage(msg, function(reply){ //this does the job, I don't know if it is the best way, but is good for async functions done by plugins 
+        for(pl=0;pl<pluginsM.length;pl++)
+        {
+            pluginsM[pl].doMessage(msg, function(reply){ //this does the job, I don't know if it is the best way, but is good for async functions done by plugins 
                 if(reply.type == "text")
                 {
                     bot.sendMessage(chatId, reply.text);
@@ -38,13 +39,19 @@ bot.on('message', function (msg) {
 
                 if(reply.type == "audio")
                 {
-                    bot.sendAudio(chatId, reply.audio)
+                    bot.sendAudio(chatId, reply.audio);
+                }
+
+                if(reply.type == "photo")
+                {
+                    bot.sendPhoto(chatId, reply.photo);
                 }
 
                 if(reply.type == "status")
                 {
                     bot.sendChatAction(chatId, reply.status);
                 }
+                return;
             });
         }
     }
