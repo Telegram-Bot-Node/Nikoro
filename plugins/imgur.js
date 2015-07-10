@@ -3,11 +3,7 @@ Get a random image from imgur
 
 !imgur  
 */
-var sizeOf = require('image-size');
-var fs = require('fs');
 var http = require('http');
-var request = require('request');
-var crypto = require('crypto');
 
 var imgur = function(){
 
@@ -36,35 +32,23 @@ var imgur = function(){
 
         reply({type:"status", status: "upload_photo"});
 
-        var current_date = (new Date()).valueOf().toString();
-        var random = Math.random().toString();
-        var fn = __dirname + "/../tmp/" + crypto.createHash('sha1').update(current_date + random).digest('hex') + ".png";
-
         generateUrl(5, function(url){
-            request.get(url).pipe(fs.createWriteStream(fn)).on('close', function(){
-                sizeOf(fn, function (err, dimensions){
-                    if(!dimensions)
-                    {
-                        console.log("\tIMGUR: Wrong id " + s);
-                        return findValidPic(++s, reply);
-                    }
-                    else if(dimensions.width<25 || dimensions.height<25)
-                    {
-                        console.log("\tIMGUR: Wrong id " + s);
-                        return findValidPic(++s, reply);
-                    }
-                    else if((dimensions.width==198 && dimensions.height==160) || (dimensions.width==161 && dimensions.height==81)) 
-                    {
-                        console.log("\tIMGUR: Wrong id " + s);
-                        return findValidPic(++s, reply);
-                    }
-                    else
-                    {
-                        console.log("\tIMGUR: Valid id " + url);
-                        reply({type: 'photo', photo: fn});
-                    }
-                });
+            var options = {method: 'HEAD', host: 'i.imgur.com', port: 80, path: '/' + url + ".png"};
+            var req = http.request(options, function(res){
+                headers = res.headers;
+                
+                if(headers["location"])
+                {
+                    console.log("\tIMGUR: Wrong id " + s);
+                    return findValidPic(++s, reply);
+                }
+                else
+                {
+                    console.log("\tIMGUR: Valid id " + url);
+                    reply({type: 'text', text: "http://i.imgur.com/" + url + ".png"});
+                }
             });
+            req.end();
         });
 
         return null;
@@ -78,7 +62,7 @@ var imgur = function(){
         {
             url+=letters[Math.floor(Math.random()*letters.length)];
         }
-        callback("http://i.imgur.com/"+url+"m.gif");
+        callback(url);
     }
 
 };
