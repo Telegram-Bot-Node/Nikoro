@@ -9,7 +9,9 @@
     "cheerio": "~0.19.0",
     "twitter": "~1.2.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "~2.2.5"
+    },
   "scripts": {
     "start": "node bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"

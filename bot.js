@@ -1,43 +1,16 @@
 var config = require('./config');
-
-var pluginsL = config.activePlugins;
 var token = config.telegramToken;
+
+var PluginManager = require('./plugins');
+var plugins = new PluginManager();
 
 var TelegramBot = require('node-telegram-bot-api');
 var bot = new TelegramBot(token, {polling: true});
 
 console.log("The bot is starting...");
-console.log(pluginsL.length + " plugins enabled.");
-
-/*loading the plugins*/
-var runningPlugins = [];
-for(i=0;i<pluginsL.length;i++){
-    var pluginModule = require("./plugins/" + pluginsL[i])
-    plugin = new pluginModule();
-
-    if (typeof plugin.check == 'function') { //optional function to check if required stuff is set
-        if(plugin.check()){ //if everything is set
-            runningPlugins.push(plugin);
-        }
-        else{
-            console.log(pluginsL[i] + ".check() fails. Plugin not activated.");
-        }
-    }
-    else {
-        runningPlugins.push(plugin);
-    }
-}
-console.log(runningPlugins.length + " plugins running.");
-
-/*init method*/
-for(i=0;i<runningPlugins.length;i++){
-    runningPlugins[i].init();
-}
-console.log(runningPlugins.length + " Plugins initialized.");
-
+plugins.setupActivePlugins(config.activePlugins);
 
 bot.on('message', function (msg) {
-
     if(msg.text){ //right now we handle only commands coming as text messages
         var chatId = msg.chat.id;
 
