@@ -3,7 +3,7 @@
         Get an audio reading aloud whatever you want
         You can also specify the language for the reader voice.
 
-        Available languages - it, es, fr, de, ru, en
+        Example of available languages - it, es, fr, de, ru, en
 
     AUTHOR: 
         Cristian Baldi
@@ -27,7 +27,7 @@ var crypto = require('crypto');
 
 var tts = function(){
 
-    defaultLanguage = "it";   //<---------- change the default language here
+    defaultLanguage = "en";
 
     this.init = function(){
 

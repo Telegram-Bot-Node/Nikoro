@@ -15,7 +15,6 @@
 
 var ball = function(){
 
-    //choices = ["Ni.","Sì.","No.","Forse.","Non saprei.","Chiedi più tardi.","Certamente.","Senza dubbio.","Molto probabilmente.","Meglio non dirlo adesso.","Secondo me, sì.","Non posso saperlo.","Io penso di no.","Assolutamente no.","Molto probabilmente no.", "Per me è la C."];
     choices = ["Yes.","No.","Maybe.","I don't know yet."];
     
     this.init = function(){
