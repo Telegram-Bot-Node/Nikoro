@@ -6,6 +6,7 @@
         Cristian Baldi
 
     CONFIGURATION:
+        Enable YouTube Data API v3
         GOOGLE_API_KEY - https://code.google.com/apis/console/
 
     COMMANDS:

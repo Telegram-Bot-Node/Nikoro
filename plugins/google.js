@@ -6,8 +6,9 @@
         Cristian Baldi
 
     CONFIGURATION:
-        GOOGLE_API_KEY - https://code.google.com/apis/console/
-
+        Enable Custom Search API
+        GOOGLE_API_KEY - https://code.google.com/apis/console/   
+            
     COMMANDS:
         !g <query>
 
