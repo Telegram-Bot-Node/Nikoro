@@ -2,10 +2,12 @@
 # https://core.telegram.org/bots#botfather
 export TELEGRAM_TOKEN=""
 
-# Youtube & Google Search
+# yt.js and google.js
+# Read more in 'plugins/yt.js' and 'plugins/google.js'
 export GOOGLE_API_KEY=""
 
-# Twitter
+# twitter.js
+# Read more in 'plugins/twitter.js'
 export TWITTER_CONSUMER_KEY=""
 export TWITTER_CONSUMER_SECRET=""
 export TWITTER_ACCESS_TOKEN_KEY=""

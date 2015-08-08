@@ -11,9 +11,6 @@
     EXAMPLES:
         You: !8ball am i ugly?
         Bot: Yes.
-
-    TODO:
-        Add more responses
 */
 
 var ball = function(){

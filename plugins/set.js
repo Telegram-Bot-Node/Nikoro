@@ -18,10 +18,6 @@
         You: !unset hello
         You: hello
         Bot: ... <- Nothing, you removed the trigger
-
-    TODO:
-        Make triggers local to a chat (they are now shared between all chats)
-        
 */
 
 var set = function(){

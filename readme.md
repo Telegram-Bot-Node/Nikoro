@@ -1,6 +1,6 @@
 # Node-Telegram-Bot
 
-A Telegram Bot which supports user-made plugins. 
+A Telegram Bot which supports user-made plugins. Supports Heroku.
 
 Platform: Node.js 
 
@@ -12,9 +12,17 @@ Thanks to: [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-ap
 * ```npm install```
 * Create a Bot Account 
     * Get the associated token (https://core.telegram.org/bots/#botfather)
+* Set the required Environment Variables (two methods)
+    1. Via ```setup.sh```
+        * Edit ```setup.sh```
+            * Set ```TELEGRAM_TOKEN``` with the auth token of your bot
+            * Set the other API Keys if you want to enable the relative plugins.
+        * Run ```./setup.sh```
+    2. Set them manually
+        * Check setup.sh to see the required Environment Variables.
 * Edit config.js
-    * Set ```telegramToken``` with the auth token of your bot
     * Edit ```activePlugins``` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
+        * You can find the plugins in the ```plugins``` folder.
 * Run the bot
     * ```node bot.js``` 
     * Stop it at any time with CTRL+C
@@ -52,6 +60,8 @@ var pluginName = function(){
             3. Produce reply 
                 replyText = {type:"text", text:"Message you want to post"}
                 replyAudio = {type:"audio", audio:"path/to/audio.mp3"}
+                replyPhoto = {type:"photo", photo:"path/to/photo.png"}
+                replyStatus = {type:"status", status:"typing"}
             4. Post the reply
                 reply(replyText); //for example
 
@@ -67,15 +77,23 @@ module.exports = pluginName;
 * Common utilities module (downloading file, downloading web page, ...)
 * Improve the code
 * More plugins
-* TTS
-    * Fix random exceptions that sometimes happens
-* SET
-    * Check if the database file exists before saving/loading
+* Plugins fixes
+    * TTS
+        * Fix random exceptions that sometimes happens
+    * SET
+        * Check if the database file exists before saving/loading
+        * Make triggers local to a chat (they are now shared between all chats)
+    * 8BALL
+        * Add more responses
 
 ## Contributing
 
-Did you made a plugin you want to share with everyone? 
+Did you made a plugin you want to share with everyone? Did you improve the code in any way?
 
 Submit a pull request! 
 
 This project will only grow if *YOU* help!
+
+## Need help?
+
+Send me a mail or create an issue, I will answer ASAP. :+1:
