@@ -1,14 +1,19 @@
 /*
-Search Google
-!g <query>
+    DESCRIPTION: 
+        Perform Google searches using Google's Custom Search API
 
-Set the Google API Key with with variable GOOGLE_API_KEY.
-See https://code.google.com/apis/console/
+    AUTHOR: 
+        Cristian Baldi
 
-Example:
+    CONFIGURATION:
+        GOOGLE_API_KEY - https://code.google.com/apis/console/
 
-You: !g test
-Bot: title - link
+    COMMANDS:
+        !g <query>
+
+    EXAMPLE:
+        You: !g <query>
+        Bot: title - link
 */
 
 var request = require('request');

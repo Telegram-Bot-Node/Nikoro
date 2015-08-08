@@ -1,12 +1,16 @@
 /*
-Roll it! 
-Get a random number between 0 and max (default 100)
+    DESCRIPTION: 
+        Get a random number between 0 and max (default 100)
 
-!roll [max]
+    AUTHOR: 
+        Cristian Baldi
 
-Example:
-You: !roll
-Bot: 4
+    COMMANDS:
+        !roll [max]
+
+    EXAMPLE:
+        You: !roll
+        Bot: 4
 */
 
 var roll = function(){

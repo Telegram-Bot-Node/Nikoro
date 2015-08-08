@@ -1,19 +1,25 @@
 /*
-Search YouTube
-!yt <query>
+    DESCRIPTION: 
+        Perform YouTube searches using Youtube's Data API
 
-Set the Google API Key with with variable GOOGLE_API_KEY.
-See https://code.google.com/apis/console/
-Example:
+    AUTHOR: 
+        Cristian Baldi
 
-You: !yt test
-Bot: title - youtube_link
+    CONFIGURATION:
+        GOOGLE_API_KEY - https://code.google.com/apis/console/
+
+    COMMANDS:
+        !yt <query>
+
+    EXAMPLE:
+        You: !yt test
+        Bot: title - link
 */
 
 var request = require('request');
 
 var yt = function(){
-    
+
 
     this.init = function(){
 

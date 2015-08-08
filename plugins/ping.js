@@ -1,9 +1,16 @@
 /*
-Ping - Pong
+    DESCRIPTION: 
+        Ping - pong
 
-Example:
-You: ping
-Bot: pong
+    AUTHOR: 
+        Cristian Baldi
+
+    COMMANDS:
+        ping
+
+    EXAMPLE:
+        You: ping
+        Bot: pong
 */
 
 var ping = function(){
