@@ -49,7 +49,7 @@ var yt = function(){
 
             if(query.length > 0){
                 console.log("\tYT: " + query);
-                link = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + encodeURIComponent(query) + "&key=" + process.env.GOOGLE_API_KEY;
+                link = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + encodeURIComponent(query) + "&key=" + GOOGLE_API_KEY;
                 
                 request(link, function (error, response, data) {
                     if (!error && response.statusCode == 200) {

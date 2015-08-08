@@ -49,7 +49,7 @@ var google = function(){
 
             if(query.length > 0){
                 console.log("\tGoogle: " + query);
-                link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + process.env.GOOGLE_API_KEY;
+                link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + GOOGLE_API_KEY;
                 
                 request(link, function (error, response, data) {
                     if (!error && response.statusCode == 200) {
