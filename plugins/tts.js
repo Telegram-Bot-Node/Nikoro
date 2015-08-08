@@ -1,17 +1,22 @@
-/*usage: 
-Get an audio reading aloud whatever you want
-You can also specify the language for the reader voice.
-!tts <what> [- <Language>]
+/*
+    DESCRIPTION: 
+        Get an audio reading aloud whatever you want
+        You can also specify the language for the reader voice.
 
-Example
-You: !tts Hello
-Bot: <audio> saying "Hello" in the default language
+        Available languages - it, es, fr, de, ru, en
 
-You: !tts Hola - es
-Bot <audio> saying "Hola" in spanish language/accent
+    AUTHOR: 
+        Cristian Baldi
 
-Example of Languages:
-it, es, fr, de, ru, en
+    COMMANDS:
+        !tts <query> [- <language>]
+
+    EXAMPLE:
+        You: !tts Hello
+        Bot: <audio> saying "Hello" in the default language
+
+        You: !tts Hola - es
+        Bot <audio> saying "Hola" in spanish language/accent
 */
 
 var fs = require('fs');

@@ -1,11 +1,16 @@
 /*
-Search YouPorn
-!yp <query>
+    DESCRIPTION: 
+        Search YouPorn
 
-Example:
+    AUTHOR: 
+        Cristian Baldi
 
-You: !yp test
-Bot: title - youporn_link
+    COMMANDS:
+        !yp <query>
+
+    EXAMPLE:
+        You: !yp test
+        You: title - link
 */
 
 var cheerio = require('cheerio'), request = require('request');

@@ -1,8 +1,18 @@
 /*
-Get a random image from imgur
+    DESCRIPTION: 
+        Get a random image from imgur
 
-!imgur  
+    AUTHOR: 
+        Cristian Baldi
+
+    COMMANDS:
+        !imgur
+
+    EXAMPLE:
+        You: !imgur
+        Bot: https://i.imgur.com/ExIhYmu.png
 */
+
 var http = require('http');
 
 var imgur = function(){

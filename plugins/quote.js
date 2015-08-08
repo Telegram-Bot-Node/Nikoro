@@ -1,8 +1,16 @@
 /*
-Random line from the quote file
+    DESCRIPTION: 
+        Get a random line from the quotes file
 
-!q
+    AUTHOR: 
+        Cristian Baldi
 
+    COMMANDS:
+        !q
+
+    EXAMPLE:
+        You: !q
+        Bot: This is Sparta!
 */
 
 var quote = function(){

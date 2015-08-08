@@ -1,12 +1,19 @@
 /*
-Search Google
-!g <query>
+    DESCRIPTION: 
+        Perform Google searches using Google's Custom Search API
 
+    AUTHOR: 
+        Cristian Baldi
 
-Example:
+    CONFIGURATION:
+        GOOGLE_API_KEY - https://code.google.com/apis/console/
 
-You: !g test
-Bot: title - link
+    COMMANDS:
+        !g <query>
+
+    EXAMPLE:
+        You: !g <query>
+        Bot: title - link
 */
 
 var request = require('request');
@@ -36,7 +43,7 @@ var google = function(){
 
             if(query.length > 0){
                 console.log("\tGoogle: " + query);
-                link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + apiKey;
+                link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + process.env.GOOGLE_API_KEY;
                 
                 request(link, function (error, response, data) {
                     if (!error && response.statusCode == 200) {

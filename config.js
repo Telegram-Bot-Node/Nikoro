@@ -1,6 +1,6 @@
 var config = {};
 
-config.telegramToken = "<your_bot_token_here>";
+config.telegramToken = process.env.TELEGRAM_TOKEN;
 
 config.activePlugins = ["ping", "tts", "set", "yp"];
 

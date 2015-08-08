@@ -1,11 +1,16 @@
 /*
-The classic 8Ball! 
+    DESCRIPTION: 
+        The classic 8Ball!
 
-!8ball [message]
+    AUTHOR: 
+        Cristian Baldi
 
-Example:
-You: !8ball am i ugly?
-Bot: Yes.
+    COMMANDS:
+        !8ball <question>
+
+    EXAMPLES:
+        You: !8ball am i ugly?
+        Bot: Yes.
 */
 
 var ball = function(){
