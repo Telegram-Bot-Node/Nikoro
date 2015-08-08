@@ -17,7 +17,7 @@ Thanks to: [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-ap
         * Edit ```setup.sh```
             * Set ```TELEGRAM_TOKEN``` with the auth token of your bot
             * Set the other API Keys if you want to enable the relative plugins.
-        * Run ```./setup.sh```
+        * Run ```source setup.sh```
     2. Set them manually
         * Check setup.sh to see the required Environment Variables.
 * Edit config.js
