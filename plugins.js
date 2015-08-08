@@ -3,38 +3,71 @@
 */
 
 function PluginManager() {
-	var runningPlugins;
 
-	PluginManager.prototype.setupActivePlugins = function(activePlugins) {
-		var runningPlugins = [];
-		
-		for (var idx in activePlugins) {
-			var activePlugin = activePlugins[idx];
-			var module = require('./plugins/' + activePlugin);
-			var plugin = new module();
+	PluginManager.prototype.runPlugins = function(plugins) {
+		var loadedPlugins = PluginManager.prototype.loadPlugins(plugins);
+		console.log(loadedPlugins.length + " Plugins loaded");
 
-			if (typeof plugin.check == 'function') {
+		var runningPlugins = PluginManager.prototype.initializePlugins(loadedPlugins);
+		console.log(runningPlugins.length + " Plugins initialized");
 
-				if (plugin.check()) {
-					runningPlugins.push(plugin);
-				}
-				else {
-					console.log(activePlugin + "configuration failed. Plugin not acivated");
-				}
+		return runningPlugins;
+	}
+
+	PluginManager.prototype.loadPlugins = function(plugins) {
+		var loadedPlugins = [];
+		var loadedPluginNames = [];
+
+		for (var idx in plugins) {
+			var plugin = plugins[idx];
+			var module = PluginManager.prototype.loadPlugin(plugin);
+
+			if (module != null && PluginManager.prototype.validatePlugin(module)) {
+				loadedPlugins.push(module);
+				loadedPluginNames.push(plugin);
 			}
 			else {
-				runningPlugins.push(plugin);
+				console.log(plugin + " configuration failed. Plugin not activated");
 			}
 		}
-		console.log(runningPlugins.length + " Plugins loaded");
 
-		/* Initialize Plugins */
-		for (var idx in runningPlugins) {
-			var runningPlugin = runningPlugins[idx];
-			runningPlugin.init();
+		this.loadedPluginNames = loadedPluginNames;
+		return loadedPlugins;
+	}
+
+	PluginManager.prototype.initializePlugins = function(plugins) {
+		var intializedPlugins = [];
+
+		for (var idx in plugins) {
+			var plugin = plugins[idx];
+			plugin.init();
+			intializedPlugins.push(plugin);
 		}
-		console.log(runningPlugins.length + " Plugins initialized");
-		this.runningPlugins = runningPlugins;
+
+		return intializedPlugins;
+	}
+
+	PluginManager.prototype.loadPlugin = function(plugin) {
+		try {
+			var module = require('./plugins/' + plugin);
+			return new module();
+		}
+		catch(err) {
+			console.log("Error: Module path not found");
+			return null;
+		}
+	}
+
+	PluginManager.prototype.validatePlugin = function(plugin) {
+		if (typeof plugin.check == 'function') {
+			if (plugin.check()) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
 	}
 }
 

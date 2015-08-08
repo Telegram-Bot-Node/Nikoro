@@ -10,7 +10,8 @@
     "twitter": "~1.2.5"
   },
   "devDependencies": {
-    "mocha": "~2.2.5"
+    "mocha": "~2.2.5",
+    "chai": "~2.1.2"
     },
   "scripts": {
     "start": "node bot.js",

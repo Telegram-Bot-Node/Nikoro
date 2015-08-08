@@ -8,7 +8,7 @@ var TelegramBot = require('node-telegram-bot-api');
 var bot = new TelegramBot(token, {polling: true});
 
 console.log("The bot is starting...");
-plugins.setupActivePlugins(config.activePlugins);
+plugins.runPlugins(config.plugins);
 
 bot.on('message', function (msg) {
     if(msg.text){ //right now we handle only commands coming as text messages
