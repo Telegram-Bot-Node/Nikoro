@@ -2,6 +2,8 @@
 Search Google
 !g <query>
 
+Set the Google API Key with with variable GOOGLE_API_KEY.
+See https://code.google.com/apis/console/
 
 Example:
 
@@ -36,7 +38,7 @@ var google = function(){
 
             if(query.length > 0){
                 console.log("\tGoogle: " + query);
-                link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + apiKey;
+                link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + process.env.GOOGLE_API_KEY;
                 
                 request(link, function (error, response, data) {
                     if (!error && response.statusCode == 200) {

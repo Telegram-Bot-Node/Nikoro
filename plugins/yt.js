@@ -2,9 +2,8 @@
 Search YouTube
 !yt <query>
 
-You must obtain an api key for YoutubeData: https://developers.google.com/youtube/v3/getting-started
-And then set apiKey.
-
+Set the Google API Key with with variable GOOGLE_API_KEY.
+See https://code.google.com/apis/console/
 Example:
 
 You: !yt test
@@ -14,12 +13,10 @@ Bot: title - youtube_link
 var request = require('request');
 
 var yt = function(){
-
-    apiKey = "";
+    
 
     this.init = function(){
-        if(apiKey.length == 0)
-            console.log("YT: Error, apiKey not set.");
+
     };
 
     this.doStop = function(){
@@ -28,9 +25,6 @@ var yt = function(){
 
 
     this.doMessage = function (msg, reply) {
-
-        if(apiKey.length == 0)
-            return;
 
         var re = /!yt\s+(.*)/i; 
         var match = re.exec(msg.text);  
@@ -43,7 +37,7 @@ var yt = function(){
 
             if(query.length > 0){
                 console.log("\tYT: " + query);
-                link = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + encodeURIComponent(query) + "&key=" + apiKey;
+                link = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=" + encodeURIComponent(query) + "&key=" + process.env.GOOGLE_API_KEY;
                 
                 request(link, function (error, response, data) {
                     if (!error && response.statusCode == 200) {
