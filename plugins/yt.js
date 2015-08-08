@@ -21,6 +21,11 @@ var request = require('request');
 
 var yt = function(){
 
+    var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
+
+    this.check = function(){
+        return GOOGLE_API_KEY == "" ? false : true;
+    };
 
     this.init = function(){
 
