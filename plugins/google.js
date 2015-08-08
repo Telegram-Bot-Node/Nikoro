@@ -1,6 +1,6 @@
 /*
     DESCRIPTION: 
-        Perform Google searches using Google's Custom Search API
+        Perform Google searches using Google's Search API
 
     AUTHOR: 
         Cristian Baldi
