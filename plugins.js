@@ -32,6 +32,7 @@ function PluginManager() {
 		var runningPlugins = PluginManager.prototype.initializePlugins(loadedPlugins);
 		console.log(runningPlugins.length + " Plugins initialized");
 
+		this.runningPlugins = runningPlugins;
 		return runningPlugins;
 	}
 
@@ -126,6 +127,21 @@ function PluginManager() {
 			}
 		}
 		return true;
+	}
+
+	/*
+		Forwards a given `Message` object to each internal running plugin's
+		`doMessage` method.
+
+		@param - message - A message object from the Telegram API.
+		@param - callback - A function which handles a response from a plugin.
+	*/
+	PluginManager.prototype.doMessage = function(message, callback) {
+		var runningPlugins = this.runningPlugins;
+		for (var idx in runningPlugins) {
+			var runningPlugin = runningPlugins[idx];
+			runningPlugin.doMessage(message, callback);
+		}
 	}
 }
 

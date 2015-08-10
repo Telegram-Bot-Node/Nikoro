@@ -10,37 +10,30 @@ var bot = new TelegramBot(token, {polling: true});
 console.log("The bot is starting...");
 plugins.runPlugins(config.plugins);
 
-bot.on('message', function (msg) {
-    if(msg.text){ //right now we handle only commands coming as text messages
+bot.on('message', function(msg) {
+    if (msg.text) {
         var chatId = msg.chat.id;
+        console.log(msg);
 
-        for(pl=0;pl<runningPlugins.length;pl++)
-        {
-            runningPlugins[pl].doMessage(msg, function(reply){ //this does the job, I don't know if it is the best way, but is good for async functions done by plugins 
-                if(reply.type == "text")
-                {
+        plugins.doMessage(msg, function(reply) {
+            switch(reply.type) {
+                case "text":
                     bot.sendMessage(chatId, reply.text);
-                }
-
-                if(reply.type == "audio")
-                {
+                    break;
+                case "audio":
                     bot.sendAudio(chatId, reply.audio);
-                }
-
-                if(reply.type == "photo")
-                {
+                    break;
+                case "photo":
                     bot.sendPhoto(chatId, reply.photo);
-                }
-
-                if(reply.type == "status")
-                {
+                    break;
+                case "status":
                     bot.sendChatAction(chatId, reply.status);
-                }
-                return;
-            });
-        }
+                    break;
+                default:
+                    console.log("Error: Unrecognized response");
+            }
+        });
     }
-
 });
 
 //if CTRL+C is pressed we stop the bot safely.
