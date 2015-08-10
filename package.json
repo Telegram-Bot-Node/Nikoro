@@ -11,7 +11,9 @@
   },
   "devDependencies": {
     "mocha": "~2.2.5",
-    "chai": "~2.1.2"
+    "chai": "~2.1.2",
+    "sinon": "~1.15.4",
+    "sinon-chai": "~2.8.0"
     },
   "scripts": {
     "start": "node bot.js",

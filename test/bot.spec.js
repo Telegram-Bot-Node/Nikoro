@@ -1,45 +1,75 @@
-var should = require('chai').should();
 var PluginManager = require('../plugins');
+var chai = require('chai');
+var sinon = require('sinon');
+var sinonChai = require('sinon-chai');
+chai.use(sinonChai);
+var should = chai.should();
 
 describe('bot', function() {
 
 	describe('PluginManager', function() {
 		var plugins = new PluginManager();
-		var runningPlugins;
-		var loadedPlugins;
+		var runningPlugins, runningPlugins;
+		var ping, google, set, yt;
+		var pingSpy, googleSpy, setSpy, ytSpy;
 
-		beforeEach(function() {
-			loadedPlugins = plugins.loadPlugins(["ping", "google", "set", "yt"]);
-			runningPlugins = plugins.runPlugins(["ping", "google", "set", "yt"]);
+		before(function() {
+			ping = plugins.loadPlugin("ping");
+			google = plugins.loadPlugin("google");
+			set = plugins.loadPlugin("set");
+			yt = plugins.loadPlugin("yt");
+		})
+
+		describe('loading plugins', function() {
+			before(function() {
+				loadedPlugins = plugins.loadPlugins(["ping", "google", "set", "yt"]);
+				runningPlugins = plugins.initializePlugins(loadedPlugins);
+			});
+
+			it('should validate plugin configuration if required', function() {
+				plugins.validatePlugin(ping).should.equal(true);
+				plugins.validatePlugin(google).should.equal(false); // requires an api key
+				plugins.validatePlugin(set).should.equal(true);
+				plugins.validatePlugin(yt).should.equal(false); // requires an api key
+			});
+
+			it('should ignore unconfigured plugins', function() {
+				loadedPlugins.should.have.length(2); // ping, set
+			});
+
+			it('should load all configured plugins', function() {
+				plugins.loadedPluginNames[0].should.equal('ping');
+				plugins.loadedPluginNames[1].should.equal('set');
+			});
+
+			it('should ignore missing or invalid plugin names', function() {
+				var invalidPlugin = plugins.loadPlugin("this doesn't exist");
+				should.equal(invalidPlugin, null);
+
+				var randomPlugins = plugins.loadPlugins(["ping", "nonexistent", "set", "fake"]);
+				randomPlugins.should.have.length(2);
+			});
 		});
 
-		it('should validate plugin configuration if required', function() {
-			plugins.validatePlugin("ping").should.equal(true);
-			plugins.validatePlugin("google").should.equal(true);
-			plugins.validatePlugin("set").should.equal(true);
-			plugins.validatePlugin("yt").should.equal(true);
-		});
+		describe('initializing plugins', function() {
+			before(function() {
+				pingSpy = sinon.spy(ping, "init");
+				googleSpy = sinon.spy(google, "init");
+				setSpy = sinon.spy(set, "init");
+				ytSpy = sinon.spy(yt, "init");
 
-		it('should ignore unconfigured plugins', function() {
-			loadedPlugins.should.have.length(2);
-		});
+				plugins.initializePlugins([ping, google, set, yt]);
+			});
 
-		it('should not load missing or invalid plugin names', function() {
-			var invalidPlugin = plugins.loadPlugin("this doesn't exist");
-			should.equal(invalidPlugin, null);
-			var randomPlugins = plugins.loadPlugins(["ping", "nonexistent", "set", "fake"]);
-			randomPlugins.should.have.length(2);
-		});
+			it('should initialize all loaded plugins', function() {
+				runningPlugins.should.have.length(2);
 
-		it('should load all configured plugins', function() {
-			plugins.loadedPluginNames[0].should.equal('ping');
-			plugins.loadedPluginNames[1].should.equal('set');
+				pingSpy.should.have.been.called;
+				googleSpy.should.have.been.called;
+				setSpy.should.have.been.called;
+				ytSpy.should.have.been.called;
+			});
 		});
-
-		it('should initialize all specified plugins', function() {
-			runningPlugins.should.have.length(2);
-		});
-
 	});
 
 	describe('message forwarding', function() {
@@ -72,7 +102,7 @@ describe('bot', function() {
 
 	});
 
-	describe('lifecycle', function() {
+	describe('shutdown', function() {
 
 		it('should wait to safely stop all plugins before shutdown');
 
