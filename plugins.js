@@ -152,14 +152,17 @@ function PluginManager() {
 		all plugins have safely prepared to terminate. 
 	*/
 	PluginManager.prototype.shutDown = function(done) {
+		var existingPlugins = this.runningPlugins.slice(); // copy array
 		var runningPlugins = this.runningPlugins;
-
-		for (var idx in runningPlugins) {
-			var runningPlugin = runningPlugins[idx];
-			runningPlugin.doStop(function(callback) {
-				this.runningPlugins.pop(runningPlugin);
-
-				if (this.runningPlugins.length == 0) {
+		for (var idx in existingPlugins) {
+			var runningPlugin = existingPlugins[idx];
+			runningPlugin.doStop(function(err) {
+				if (err) {
+					console.log(err);
+				};
+				
+				runningPlugins.splice(0, 1); // remove plugin
+				if (runningPlugins.length == 0) {
 					done();
 				}
 			});
