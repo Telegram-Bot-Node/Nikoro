@@ -13,7 +13,6 @@ plugins.runPlugins(config.plugins);
 bot.on('message', function(msg) {
     if (msg.text) {
         var chatId = msg.chat.id;
-        console.log(msg);
 
         plugins.doMessage(msg, function(reply) {
             switch(reply.type) {

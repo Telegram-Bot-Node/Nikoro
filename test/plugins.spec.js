@@ -7,16 +7,15 @@ var should = chai.should();
 
 describe('PluginManager', function() {
 		var plugins = new PluginManager();
-		var runningPlugins, runningPlugins;
+		var loadedPlugins, runningPlugins;
 		var ping, google, set, yt;
-		var pingSpy, googleSpy, setSpy, ytSpy;
 
-		before(function() {
+		beforeEach(function() {
 			ping = plugins.loadPlugin("ping");
 			google = plugins.loadPlugin("google");
 			set = plugins.loadPlugin("set");
 			yt = plugins.loadPlugin("yt");
-		})
+		});
 
 		describe('loading plugins', function() {
 			before(function() {
@@ -50,6 +49,8 @@ describe('PluginManager', function() {
 		});
 
 		describe('initializing plugins', function() {
+			var pingSpy, googleSpy, setSpy, ytSpy;
+
 			before(function() {
 				pingSpy = sinon.spy(ping, "init");
 				googleSpy = sinon.spy(google, "init");
@@ -57,6 +58,13 @@ describe('PluginManager', function() {
 				ytSpy = sinon.spy(yt, "init");
 
 				plugins.initializePlugins([ping, google, set, yt]);
+			});
+
+			after(function() {
+				pingSpy.restore();
+				googleSpy.restore();
+				setSpy.restore();
+				ytSpy.restore();
 			});
 
 			it('should initialize all loaded plugins', function() {
@@ -70,20 +78,41 @@ describe('PluginManager', function() {
 		});
 
 		describe('message forwarding', function() {
+			var pingSpy, googleSpy, callbackSpy;
+			var message = { "text": "ping" };
+			var callback = sinon.spy();
 
-			it('should forward messages to each plugin');
+			beforeEach(function() {
+				plugins.runPlugins(["ping", "google", "set", "yt"]);
+				ping = plugins.runningPlugins[0];
+				set = plugins.runningPlugins[1];
 
-			it('should forward all messages to enabled plugins');
+				pingSpy = sinon.spy(ping, "doMessage");
+				setSpy = sinon.spy(set, "doMessage");
 
-			it('should handle reply callbacks from plugins');
+				plugins.doMessage(message, callback);
+			});
 
-			it('should handle text reply types');
+			afterEach(function() {
+				pingSpy.restore();
+			});
 
-			it('should handle audio reply types');
+			it('should forward messages to each plugin', function() {
+				pingSpy.should.have.been.calledWith(message, callback);
+				setSpy.should.have.been.calledWith(message, callback);
+			});
 
-			it('should handle photo reply types');
+			it('should handle reply callbacks from plugins', function() {
+				callback.should.have.been.calledTwice;
+			});
 
-			it('should handle status reply types');
+			it('should handle text reply types'); //pending
+
+			it('should handle audio reply types'); //pending
+
+			it('should handle photo reply types'); //pending
+
+			it('should handle status reply types'); //pending
 
 		});
 
