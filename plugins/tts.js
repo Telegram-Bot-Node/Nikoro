@@ -63,7 +63,7 @@ var tts = function(){
 
             var current_date = (new Date()).valueOf().toString();
             var random = Math.random().toString();
-            var fn = __dirname + "/../tmp/" + crypto.createHash('sha1').update(current_date + random).digest('hex') + ".mp3";
+            var fn = __dirname + "/../files/tmp/" + crypto.createHash('sha1').update(current_date + random).digest('hex') + ".mp3";
         
 
             var url = "http://translate.google.com/translate_tts?tl=" + language + "&q=" + encodeURIComponent(text);
