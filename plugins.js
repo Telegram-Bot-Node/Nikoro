@@ -143,6 +143,28 @@ function PluginManager() {
 			runningPlugin.doMessage(message, callback);
 		}
 	}
+
+	/*
+		Shuts down each running plugin module by calling plugin's
+		internal `doStop` method.
+
+		@param - done - A callback function to be performed when shutDown
+		all plugins have safely prepared to terminate. 
+	*/
+	PluginManager.prototype.shutDown = function(done) {
+		var runningPlugins = this.runningPlugins;
+
+		for (var idx in runningPlugins) {
+			var runningPlugin = runningPlugins[idx];
+			runningPlugin.doStop(function(callback) {
+				this.runningPlugins.pop(runningPlugin);
+
+				if (this.runningPlugins.length == 0) {
+					done();
+				}
+			});
+		}
+	}
 }
 
 module.exports = PluginManager;

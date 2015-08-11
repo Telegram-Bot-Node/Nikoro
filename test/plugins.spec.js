@@ -78,7 +78,7 @@ describe('PluginManager', function() {
 		});
 
 		describe('message forwarding', function() {
-			var pingSpy, googleSpy, callbackSpy;
+			var pingSpy, setSpy;
 			var message = { "text": "ping" };
 			var callback = sinon.spy();
 
@@ -95,6 +95,7 @@ describe('PluginManager', function() {
 
 			afterEach(function() {
 				pingSpy.restore();
+				setSpy.restore();
 			});
 
 			it('should forward messages to each plugin', function() {

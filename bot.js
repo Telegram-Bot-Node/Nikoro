@@ -35,22 +35,16 @@ bot.on('message', function(msg) {
     }
 });
 
-//if CTRL+C is pressed we stop the bot safely.
+// If `CTRL+C` is pressed we stop the bot safely.
 process.on('SIGINT', shutDown);
-//stop safely in case of uncaughtException
-process.on('uncaughtException', shutDown);  
 
-function shutDown(){
+// Stop safely in case of `uncaughtException`.
+process.on('uncaughtException', shutDown);
+
+function shutDown() {
     console.log("The bot is shutting down...");
-    for(i=0;i<runningPlugins.length;i++){
-        runningPlugins[i].doStop();
-    }
-    /*need a better way to implement this: 
-        wait until all plugins have stopped before exiting, something with callbacks (which I don't know much about)
-    waiting 1,5 sec is NOT good, but works*/
-
-    setTimeout(function() {
-        process.exit();  
-    }, 1500);
+    plugins.shutDown(function() {
+        process.exit();
+    });
 }
 
