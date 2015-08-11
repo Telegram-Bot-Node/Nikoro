@@ -35,18 +35,19 @@ var set = function(){
         }); 
     };
 
-    this.doStop = function(){
+    this.doStop = function(done){
         var fs = require('fs');
         fs.writeFile("./files/set", JSON.stringify(dict), function(err) {
             if(err) {
-                return console.log(err);
+                return done(err);
             }
             console.log("\tSET: file saved");
+            return done();
         }); 
     };
 
 
-    this.doMessage = function (msg, reply) {
+    this.doMessage = function (msg, reply){
         var reSet = /!set\s+(.*?)\s*-\s*(.*)/im;
 
         var reUnset = /!unset\s+(.*)/im; 
