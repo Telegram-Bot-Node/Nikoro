@@ -1,3 +1,4 @@
-tmp/*.mp3
 node_modules/
-files/
+!files/tmp/.gitkeep
+files/tmp/*
+files/*
