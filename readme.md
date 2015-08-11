@@ -95,11 +95,11 @@ This project will only grow if *YOU* help!
 ## Constributors
 In Alphabetical Order
 
-* Cristian Baldi
+* [Cristian Baldi](https://github.com/crisbal/)
     * Crated the project
     * Developed a bunch plugins
     
-* Phill Farrugia
+* [Phill Farrugia](https://github.com/phillfarrugia/)
     * Improved & documented the code
     * Added Heroku Integration
     * Created Unit Tests
