@@ -1,10 +1,10 @@
 # Node-Telegram-Bot
 
-A Telegram Bot which supports user-made plugins. Supports Heroku.
+A Telegram Bot which supports user-made plugins
 
-Platform: Node.js 
+Written in Node.js
 
-Thanks to: [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
+Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
 ## How to use the bot
 
@@ -29,7 +29,7 @@ Thanks to: [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-ap
 
 ## Plugins
 
-Plugins can be easly written with a basic understanding of Javascript.
+Plugins can be easly written with a basic understanding of JavaScript.
 
 Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation.
 
@@ -73,7 +73,6 @@ var pluginName = function(){
 module.exports = pluginName;
 ```
 ## TODO
-* Better way to handle plugins (?), I need suggestion on this
 * Common utilities module (downloading file, downloading web page, ...)
 * Improve the code
 * More plugins
@@ -87,13 +86,24 @@ module.exports = pluginName;
         * Add more responses
 
 ## Contributing
-
 Did you made a plugin you want to share with everyone? Did you improve the code in any way?
 
 Submit a pull request! 
 
 This project will only grow if *YOU* help!
 
-## Need help?
+## Constributors
+In Alphabetical Order
 
+* Cristian Baldi
+    * Crated the project
+    * Developed a bunch plugins
+    
+* Phill Farrugia
+    * Improved & documented the code
+    * Added Heroku Integration
+    * Created Unit Tests
+    * Added automatic testing via Travis CI 
+    
+## Need help?
 Send me a mail or create an issue, I will answer ASAP. :+1:
