@@ -1,3 +1,4 @@
 node_modules/
 !files/tmp/.gitkeep
+files/tmp/*
 files/*
