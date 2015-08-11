@@ -27,6 +27,8 @@ function PluginManager() {
     	modules or functions.
     */
     PluginManager.prototype.runPlugins = function(plugins) {
+        console.log(plugins.length + " Plugins activated");
+
         var loadedPlugins = PluginManager.prototype.loadPlugins(plugins);
         console.log(loadedPlugins.length + " Plugins loaded");
 
@@ -58,7 +60,7 @@ function PluginManager() {
                 loadedPlugins.push(module);
                 loadedPluginNames.push(plugin);
             } else {
-                console.log(plugin + " configuration failed. Plugin not activated");
+                console.log("\t"+ plugin + " configuration failed. Plugin not activated");
             }
         }
 
