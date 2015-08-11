@@ -117,4 +117,29 @@ describe('PluginManager', function() {
 
 		});
 
+		describe('shutdown', function() {
+			var pingSpy, setSpy;
+			var callback = sinon.spy();
+
+			before(function() {
+				plugins.runPlugins(["ping", "google", "set", "yt"]);
+				ping = plugins.runningPlugins[0];
+				set = plugins.runningPlugins[1];
+
+				pingSpy = sinon.spy(ping, "doStop");
+				setSpy = sinon.spy(set, "doStop");
+
+				plugins.shutDown(callback);
+			});
+
+			it('should ask plugins to shutdown safely', function () {
+				pingSpy.should.have.been.called;
+				setSpy.should.have.been.called;
+			});
+
+			it('should wait to safely stop all plugins before shutdown', function() {
+				callback.should.have.been.called; // called only once, after all shutdown
+			});
+		});
+
 	});
