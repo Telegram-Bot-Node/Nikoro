@@ -5,7 +5,9 @@ var PluginManager = require('./plugins');
 var plugins = new PluginManager();
 
 var TelegramBot = require('node-telegram-bot-api');
-var bot = new TelegramBot(token, {polling: true});
+var bot = new TelegramBot(token, {
+    polling: true
+});
 
 console.log("The bot is starting...");
 plugins.runPlugins(config.plugins);
@@ -15,7 +17,7 @@ bot.on('message', function(msg) {
         var chatId = msg.chat.id;
 
         plugins.doMessage(msg, function(reply) {
-            switch(reply.type) {
+            switch (reply.type) {
                 case "text":
                     bot.sendMessage(chatId, reply.text);
                     break;
@@ -47,4 +49,3 @@ function shutDown() {
         process.exit();
     });
 }
-
