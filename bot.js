@@ -10,7 +10,7 @@ var bot = new TelegramBot(token, {
 });
 
 console.log("The bot is starting...");
-plugins.runPlugins(config.plugins);
+plugins.runPlugins(config.activePlugins);
 
 bot.on('message', function(msg) {
     if (msg.text) {
