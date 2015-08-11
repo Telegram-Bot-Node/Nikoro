@@ -91,10 +91,10 @@ function PluginManager() {
     /*
     	Loads an individual plugin by requiring the necessary module.
 
-    	@param plugins - An array of plugin names corresponding to file
-    	names in the plugins directory.
+    	@param plugin - A plugin name corresponding to a file
+    	name in the plugins directory.
 
-    	@return -  An array of loaded, configured plugin modules or functions.
+    	@return -  A new instance of the specified plugin.
     */
     PluginManager.prototype.loadPlugin = function(plugin) {
         try {
@@ -111,7 +111,7 @@ function PluginManager() {
     	requirements have been met. A plugin is considering configured correctly
     	if its internal `check` method returns true, or if no such method exists.
 
-    	@param plugins - A plugin module or function.
+    	@param plugin - A plugin module or function.
 
     	@return -  `true` if no configuration is needed, or if internal plugin 
     	configuration returns `true`. Otherwise returns `false` and is ignored.
