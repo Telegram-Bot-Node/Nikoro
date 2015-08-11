@@ -21,12 +21,12 @@ var ball = function(){
 
     };
 
-    this.doStop = function(){
-
+    this.doStop = function(done){
+        done();
     };
 
 
-    this.doMessage = function (msg, reply) {
+    this.doMessage = function (msg, reply){
         var re = /!8ball\s+?/i;
         var match = re.exec(msg.text);  
         

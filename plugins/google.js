@@ -31,12 +31,12 @@ var google = function(){
 
     };
 
-    this.doStop = function(){
-
+    this.doStop = function(done){
+        done();
     };
 
 
-    this.doMessage = function (msg, reply) {
+    this.doMessage = function (msg, reply){
 
         var re = /!g\s+(.*)/i; 
         var match = re.exec(msg.text);  
