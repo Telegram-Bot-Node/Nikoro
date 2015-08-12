@@ -12,6 +12,7 @@
         You: !roll
         Bot: 4
 */
+var util = require('./../util');
 
 var roll = function(){
 
