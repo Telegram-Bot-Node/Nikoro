@@ -19,25 +19,31 @@
         You: hello
         Bot: ... <- Nothing, you removed the trigger
 */
+var fs = require('fs');
 
 var set = function(){
 
     dict = {};
 
     this.init = function(){
-        var fs = require('fs');
         fs.readFile("./files/set",'utf8', function(err, data) {
-            if(err) {
-                return console.log(err);
+            if(err) {    
+                if(err.code == 'ENOENT') {
+                    dict = {}
+                    console.log("\tSET: file not found. Empty Set.");
+                } else {
+                    return console.log(err);
+                }
+            } else {
+                dict = JSON.parse(data);
+                console.log("\tSET: file loaded");
             }
-            dict = JSON.parse(data);
-            console.log("\tSET: file loaded");
         }); 
     };
 
     this.doStop = function(done){
         var fs = require('fs');
-        fs.writeFile("./files/set", JSON.stringify(dict), function(err) {
+        fs.writeFile("./files/set", JSON.stringify(dict), { flags: 'w' }, function(err) {
             if(err) {
                 return done(err);
             }
