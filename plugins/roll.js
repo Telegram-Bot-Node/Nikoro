@@ -27,15 +27,15 @@ var roll = function(){
 
 
     this.doMessage = function (msg, reply){
-        var re = /!roll\s*(\d+)?/;
-        var match = re.exec(msg.text);  
         
-        if(match)
+        var args = util.parseCommand(msg.text,["roll","r"]);  
+
+        if(args)
         {
             console.log("\tROLL: " + msg.text)
 
-            if(match[1]){ //roll with max specified
-                max = parseInt(match[1]); 
+            if(args[1]){ //roll with max specified
+                max = parseInt(args[1]); 
             }else{
                 max = maxDefault;
             }
