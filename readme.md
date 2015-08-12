@@ -80,10 +80,7 @@ module.exports = pluginName;
     * TTS
         * Fix random exceptions that sometimes happens
     * SET
-        * Check if the database file exists before saving/loading
         * Make triggers local to a chat (they are now shared between all chats)
-    * 8BALL
-        * Add more responses
 
 ## Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way?
