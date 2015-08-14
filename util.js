@@ -19,9 +19,9 @@ var util = {};
 
     @param message - The message which you want to extract args from
     
-    @param command - Optional. The command or commands you want to extract.
+    @param commandName - Optional. The command or commands that will trigger the match.
                         defaults to "[a-zA-Z0-9]+" (any text) if not set.
-                    Example to explain: 
+                    Example: 
                     message =  "/yahoo text"
                     parseCommand(message) ->  ["yahoo","text"]
                     parseCommand(message,"yahoo") ->  ["yahoo","text"]
@@ -35,28 +35,28 @@ var util = {};
 
     @return - An array of the args of the command, 
         the first element of the array is the command called. (C / Python style)
-        Returns null if the message is not a valid command  
+        Returns null if the message is not a valid command (does not match the regex)  
 */
 
-util.parseCommand = function(message, command, split_by){
+util.parseCommand = function(message, commandName, split_by){
     if (!split_by)
         split_by = " ";
 
     var regexParam = ""
-    if (!command) {
-        command = "[a-zA-Z0-9]+";
+    if (!commandName) {
+        commandName = "[a-zA-Z0-9]+";
     } else {
-        if (typeof command === 'string')
-            command = [command];
+        if (typeof commandName === 'string')
+            commandName = [commandName];
 
 
         //let's build a valid regex that matches any of the passed commands
         //["g","google","ggl"] -> g|google|ggl
         regexParam = ""; 
-        for (var i = 0; i < command.length; i++) {
-            regexParam += command[i];
+        for (var i = 0; i < commandName.length; i++) {
+            regexParam += commandName[i];
 
-            if (i != command.length - 1)
+            if (i != commandName.length - 1)
                 regexParam += "|";
         }
     }
