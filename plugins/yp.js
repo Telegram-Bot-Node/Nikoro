@@ -14,6 +14,7 @@
 */
 
 var cheerio = require('cheerio'), request = require('request');
+var util = require('./../util');
 
 var yp = function(){
 
@@ -29,7 +30,7 @@ var yp = function(){
     this.doMessage = function (msg, reply){
 
         var match = util.parseCommand(msg.text,["yp","youporn"], {joinParams: true});  
-          
+
         if(match){ 
             reply({type:"status", status: "typing"});
             

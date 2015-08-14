@@ -24,7 +24,7 @@
         You: !g <query>
         Bot: title - link
 */
-
+var util = require('./../util');
 
 var Twitter = require('twitter');
 

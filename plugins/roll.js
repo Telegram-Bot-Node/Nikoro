@@ -19,7 +19,7 @@ var roll = function(){
     maxDefault = 100;
 
     this.init = function(){
-
+        
     };
 
     this.doStop = function(done){
@@ -28,7 +28,6 @@ var roll = function(){
 
 
     this.doMessage = function (msg, reply){
-        
         var args = util.parseCommand(msg.text,["roll","r"]);  
 
         if(args)

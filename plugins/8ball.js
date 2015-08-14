@@ -29,7 +29,7 @@ var ball = function(){
 
     this.doMessage = function (msg, reply){
         var match = util.parseCommand(msg.text,["8ball","8b"]);  
-                
+           
         if(match)
         {
             console.log("\t8BALL: " + msg.text)
