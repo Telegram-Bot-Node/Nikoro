@@ -43,6 +43,7 @@ var util = {};
 
 util.parseCommand = function(message, commandName, options){
     
+    options = options || {};
     var splitBy = options.splitBy || " ";
     var joinParams = options.joinParams || false;
 
@@ -65,16 +66,18 @@ util.parseCommand = function(message, commandName, options){
     
     var re = new RegExp("(?:!|\\/)(" + regexParam +")\\s+(.*)"); 
     var match = re.exec(message + " "); //we have to add this space because we specified "\s+" in the regex, to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"] 
-        
+
     var args = [];
     if (match) {
+
         var command = match[1].trim();
+        args = [command];
+
         var params = match[2].split(splitBy);
-        
+
         if (joinParams)
             params = [params.join(" ")];
         
-        args = [command];
         
         for (var i=0;i<params.length;i++) {
             var param = params[i].trim();
@@ -82,7 +85,6 @@ util.parseCommand = function(message, commandName, options){
                 args.push(param);
         }
 
-       
         return args;
 
     } else {

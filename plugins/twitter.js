@@ -63,13 +63,13 @@ var twitter = function(){
 
 
     this.doMessage = function (msg, reply){
-        var re = /!tweet\s+(.*)/i; 
-        var match = re.exec(msg.text);  
         
+        var match = util.parseCommand(msg.text,["tweet","tw"], {joinParams: true});  
+          
         if(match){ 
             reply({type:"status", status: "typing"});
             
-            tweet = match[1].trim(); 
+            tweet = match[1]; 
 
 
             if(tweet.length > 140)

@@ -34,8 +34,7 @@ var quote = function(){
 
 
     this.doMessage = function (msg, reply){
-        var re = /!q/i;
-        var match = re.exec(msg.text);  
+        var match = util.parseCommand(msg.text,["quote","q"]);  
         
         if(match)
         {

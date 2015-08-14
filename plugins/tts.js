@@ -43,7 +43,7 @@ var tts = function(){
 
     this.doMessage = function (msg, reply){
     
-        var args = util.parseCommand(msg.text,"tts","-");  
+        var args = util.parseCommand(msg.text,["tts","speak"], {splitBy: "-"});  
         
         if(args){
 

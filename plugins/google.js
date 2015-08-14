@@ -39,11 +39,11 @@ var google = function(){
 
     this.doMessage = function (msg, reply){
 
-        var args = util.parseCommand(msg.text,["google","g"]);
+        var args = util.parseCommand(msg.text,["google","g"], {joinParams: true});
 
-        if(args != null){ 
+        if(args != null){
 
-            query = args[1];
+            query = args[1]
 
             if(query.length > 0){
 
