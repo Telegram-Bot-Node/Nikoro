@@ -18,6 +18,7 @@
 */
 
 var request = require('request');
+var util = require('./../util');
 
 var yt = function(){
 
@@ -38,14 +39,13 @@ var yt = function(){
 
     this.doMessage = function (msg, reply){
 
-        var re = /!yt\s+(.*)/i; 
-        var match = re.exec(msg.text);  
-        
+        var match = util.parseCommand(msg.text,["yt","youtube", "video"], {joinParams: true});  
+  
         if(match){ 
 
             reply({type:"status", status: "typing"});
 
-            query = match[1].trim();
+            query = match[1];
 
             if(query.length > 0){
                 console.log("\tYT: " + query);

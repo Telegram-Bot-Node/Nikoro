@@ -18,6 +18,7 @@
 */
 
 var request = require('request');
+var util = require('./../util');
 
 var google = function(){
 
@@ -38,16 +39,16 @@ var google = function(){
 
     this.doMessage = function (msg, reply){
 
-        var re = /!g\s+(.*)/i; 
-        var match = re.exec(msg.text);  
-        
-        if(match){ 
-            
-            reply({type:"status", status: "typing"});
+        var args = util.parseCommand(msg.text,["google","g"], {joinParams: true});
 
-            query = match[1].trim();
+        if(args != null){
+
+            query = args[1]
 
             if(query.length > 0){
+
+                reply({type:"status", status: "typing"});
+
                 console.log("\tGoogle: " + query);
                 link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + GOOGLE_API_KEY;
                 

@@ -12,13 +12,14 @@
         You: !q
         Bot: This is Sparta!
 */
+var util = require('./../util');
+var fs = require('fs');
 
 var quote = function(){
 
     quotes = [];
 
     this.init = function(){
-        var fs = require('fs');
         fs.readFile("./files/quotes",'utf8', function(err, data) {
             if(err) {
                 return console.log(err);
@@ -34,8 +35,7 @@ var quote = function(){
 
 
     this.doMessage = function (msg, reply){
-        var re = /!q/i;
-        var match = re.exec(msg.text);  
+        var match = util.parseCommand(msg.text,["quote","q"]);  
         
         if(match)
         {

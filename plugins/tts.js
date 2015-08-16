@@ -25,6 +25,9 @@ var request = require('request');
 
 var crypto = require('crypto');
 
+var util = require('./../util');
+
+
 var tts = function(){
 
     defaultLanguage = "en";
@@ -40,18 +43,17 @@ var tts = function(){
 
     this.doMessage = function (msg, reply){
     
-        var re = /!tts\s+(.*)/i; 
-        var match = re.exec(msg.text);  
+        var args = util.parseCommand(msg.text,["tts","speak"], {splitBy: "-"});  
         
-        if(match){
+        if(args){
 
             reply({type:"status", status: "upload_audio"});
-            match = match[1].split("-");
+            
+            text = args[1];
 
-            text = match[0].trim();
-            language = match[1] ? match[1].trim() : defaultLanguage;
+            language = args[2] ? args[2] : defaultLanguage;
 
-            console.log("\tTTS: '" + text + "' from " + msg.from.username);
+            console.log("\tTTS: '" + text + "'/" + language + " from " + msg.from.username);
 
             if(text.length == 0)
                 return;
