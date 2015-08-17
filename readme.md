@@ -1,4 +1,4 @@
-# Node-Telegram-Bot [![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)
+#Node-Telegram-Bot [![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)
 
 A Telegram Bot which supports user-made plugins
 
@@ -17,7 +17,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
     - [Constributors](#)
     - [Need help?](#)
 
-## Running the Bot
+##Running the Bot
 
 * Clone/Download/Fork the repository
 * ```npm install```
@@ -38,13 +38,13 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
     * ```node bot.js``` 
     * Stop it at any time with CTRL+C
 
-## Plugins
+##Plugins
 
 Plugins can be easly written with a basic understanding of JavaScript.
 
 Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation.
 
-### Writing custom plugins
+###Writing custom plugins
 
 * Take a look at the provided plugins in the ```plugins``` folder
 * Create a ```.js``` file in the ```plugins``` folder
@@ -83,7 +83,7 @@ var pluginName = function(){
 
 module.exports = pluginName;
 ```
-## TODO
+##TODO
 * Common utilities module (downloading file, downloading web page, ...)
 * Improve the code
 * More plugins
@@ -93,14 +93,14 @@ module.exports = pluginName;
     * SET
         * Make triggers local to a chat (they are now shared between all chats)
 
-## Contributing
+##Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way?
 
 Submit a pull request! 
 
 This project will only grow if *YOU* help!
 
-## Constributors
+##Constributors
 In Alphabetical Order
 
 * [Cristian Baldi](https://github.com/crisbal/)
@@ -113,5 +113,5 @@ In Alphabetical Order
     * Created Unit Tests
     * Added automatic testing via Travis CI 
     
-## Need help?
+##Need help?
 Send me a mail or create an issue, I will answer ASAP. :+1:
