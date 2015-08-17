@@ -6,7 +6,18 @@ Written in Node.js
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
-## How to use the bot
+**Table of Contents**
+
+- [Node-Telegram-Bot ](#)
+    - [Running the Bot](#)
+    - [Plugins](#)
+        - [Writing custom plugins](#)
+    - [TODO](#)
+    - [Contributing](#)
+    - [Constributors](#)
+    - [Need help?](#)
+
+## Running the Bot
 
 * Clone/Download/Fork the repository
 * ```npm install```
