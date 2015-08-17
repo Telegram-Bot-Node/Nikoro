@@ -1,4 +1,6 @@
 var PluginManager = require('../plugins');
+var util = require('../util');
+
 var chai = require('chai');
 var sinon = require('sinon');
 var sinonChai = require('sinon-chai');
@@ -143,5 +145,34 @@ describe('PluginManager', function() {
             callback.should.have.been.called; // called only once, after all shutdown
         });
     });
+
+});
+
+
+describe('Util Module', function() {
+
+     describe('ParseCommand', function() {
+        var message1 = "/command arg1 arg2 arg3"; //regular command
+        var message2 = "/command arg1 - arg2 arg2"; //command with args separated by "-" 
+        var message3 = "command arg1 arg2"; //not a command, not prefixed by / or !
+        var message4 = "/command only one arg very long"; //command with one long arg
+
+        it('should parse commands correctly', function() {
+
+            util.parseCommand(message1, ["command"]).length.should.equal(["command","arg1","arg2","arg3"].length);
+            (util.parseCommand(message1, ["anotherCommand"]) == null).should.be.true;
+
+            util.parseCommand(message2, ["command"],{splitBy: "-"}).length.should.equal(["command", "arg1", "arg2 arg2"].length);
+            
+            (util.parseCommand(message3, ["command"]) == null).should.be.true;
+
+            util.parseCommand(message4, ["command"], {joinParams: true}).length.should.equal(["command", "only one arg very long"].length);
+            
+
+        });
+
+
+     });
+
 
 });
