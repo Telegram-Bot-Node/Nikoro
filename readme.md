@@ -1,4 +1,6 @@
-#Node-Telegram-Bot [![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)
+#Node-Telegram-Bot 
+
+[![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)
 
 A Telegram Bot which supports user-made plugins
 
@@ -6,16 +8,19 @@ Written in Node.js
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
-**Table of Contents**
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+###Table of Contents
 
-- [Node-Telegram-Bot ](#)
-    - [Running the Bot](#)
-    - [Plugins](#)
-        - [Writing custom plugins](#)
-    - [TODO](#)
-    - [Contributing](#)
-    - [Constributors](#)
-    - [Need help?](#)
+- [Running the Bot](#running-the-bot)
+- [Plugins](#plugins)
+  - [Writing custom plugins](#writing-custom-plugins)
+- [TODO](#todo)
+- [Contributing](#contributing)
+- [Constributors](#constributors)
+- [Need help?](#need-help)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ##Running the Bot
 
