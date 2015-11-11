@@ -33,7 +33,6 @@ var tts = function(){
     defaultLanguage = "en";
 
     this.init = function(){
-        console.log("Here");
     };
 
     this.doStop = function(done){
@@ -44,10 +43,8 @@ var tts = function(){
     this.doMessage = function (msg, reply){
     
         var args = util.parseCommand(msg.text,["tts","speak"], {splitBy: "-"});  
-            console.log("Here");
         
         if(args){
-            console.log("Here");
             reply({type:"status", status: "upload_audio"});
             
             text = args[1];
