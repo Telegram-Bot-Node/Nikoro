@@ -33,7 +33,7 @@ var tts = function(){
     defaultLanguage = "en";
 
     this.init = function(){
-
+        console.log("Here");
     };
 
     this.doStop = function(done){
@@ -44,9 +44,10 @@ var tts = function(){
     this.doMessage = function (msg, reply){
     
         var args = util.parseCommand(msg.text,["tts","speak"], {splitBy: "-"});  
+            console.log("Here");
         
         if(args){
-
+            console.log("Here");
             reply({type:"status", status: "upload_audio"});
             
             text = args[1];
@@ -68,10 +69,25 @@ var tts = function(){
             var fn = __dirname + "/../files/tmp/" + crypto.createHash('sha1').update(current_date + random).digest('hex') + ".mp3";
         
 
-            var url = "http://translate.google.com/translate_tts?tl=" + language + "&q=" + encodeURIComponent(text);
-            request.get(url).pipe(fs.createWriteStream(fn)).on('close', function(){
+            var url = "http://translate.google.com/translate_tts?tl=" + language + "&q=" + encodeURIComponent(text) + "&client=t";
+            
+            var headers = { "Host": "translate.google.com",
+                "Referer": "http://www.gstatic.com/translate/sound_player2.swf",
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.163 Safari/535.19"
+            };
+
+            var options = {
+                url: url,
+                headers: {
+                    'Referer': 'http://translate.google.com/',
+                    'User-Agent': 'stagefright/1.2 (Linux;Android 5.0)'
+                }
+            };
+
+            request(options).pipe(fs.createWriteStream(fn)).on('close', function(){
                 reply({type: 'audio', audio: fn});
             });
+
             return;
         }
     };
