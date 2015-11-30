@@ -1,6 +1,5 @@
 var config = require('./config');
 var token = config.telegramToken;
-
 var PluginManager = require('./plugins');
 var plugins = new PluginManager();
 
@@ -29,6 +28,9 @@ bot.on('message', function(msg) {
                     break;
                 case "status":
                     bot.sendChatAction(chatId, reply.status);
+                    break;
+                case "sticker":
+                    bot.sendSticker(chatId, reply.sticker);
                     break;
                 default:
                     console.log("Error: Unrecognized response");
