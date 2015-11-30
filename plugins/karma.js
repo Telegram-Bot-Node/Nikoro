@@ -51,12 +51,11 @@ var karma = function(){
 
 
     this.doMessage = function (msg, reply){
-        var reKarma = /@([a-z0-9-_]+)(\-\-|\+\+)/i; 
+        var reKarma = /@([a-z0-9-_]+)\s*(\-\-|\+\+)/ig; 
 
         var matchKarma = reKarma.exec(msg.text);  
         
         //var matchChart = util.parseCommand(msg.text,["karmachart"]);  
-
         if(matchKarma){
             uname = matchKarma[1];
             operator = matchKarma[2];
