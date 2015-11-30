@@ -55,7 +55,7 @@ var karma = function(){
 
         var matchKarma = reKarma.exec(msg.text);  
         
-        var matchChart = util.parseCommand(msg.text,["karmachart"]);  
+        //var matchChart = util.parseCommand(msg.text,["karmachart"]);  
 
         if(matchKarma){
             uname = matchKarma[1];
@@ -64,7 +64,7 @@ var karma = function(){
 
             if(uname.toLowerCase() == msg.from.username.toLowerCase())
             {
-                reply({type: 'text', text: "Hey! You can't give yourself Karma!"});
+                reply({type: 'text', text: "Hey! You can't give Karma to yourself!"});
                 return;
             }
 
@@ -79,7 +79,7 @@ var karma = function(){
             else
                 karma[chat][uname]++;
 
-            reply({type: 'text', text: "@" + uname + " now has " + karma[chat][uname] + " Karma points"});
+            reply({type: 'text', text: "@" + uname + " now has " + karma[chat][uname] + " Karma"});
         }
     };
 
