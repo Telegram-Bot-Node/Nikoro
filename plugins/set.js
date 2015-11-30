@@ -65,27 +65,39 @@ var set = function(){
 
             key = matchSet[1];
             value = matchSet[2];
+            chat = msg.chat.id;
 
-            dict[key] = value;
+            if(!dict[chat])
+                dict[chat] = {};
+
+            dict[chat][key] = value;
 
             reply({type: 'text', text: key + " = " + value})
 
-            console.log("\tSET: " + key + " = " + value);
+            console.log("\tSET: " + key + " = " + value + " on " + chat);
 
         }
         else if(matchUnset)
         {
             key = matchUnset[1];
-            delete dict[key];
-            reply({type: 'text', text: "Unset " + key})
+            chat = msg.chat.id;
+
+            delete dict[chat][key];
+            reply({type: 'text', text: "Unset " + key + " on " + chat})
             console.log("\tSET: unset " + key);
 
         }
         else
         {
-            text = msg.text;
-            if (text in dict)
-                reply({type: 'text', text: dict[text]});
+            key = msg.text;
+            chat = msg.chat.id;
+            if(dict[chat])
+            {
+                if (key in dict[chat])
+                {
+                    reply({type: 'text', text: dict[chat][key]});
+                }
+            }
 
         }
     };
