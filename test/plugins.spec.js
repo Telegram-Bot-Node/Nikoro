@@ -82,7 +82,8 @@ describe('PluginManager', function() {
     describe('message forwarding', function() {
         var pingSpy, setSpy;
         var message = {
-            "text": "ping"
+            "text": "ping",
+            "chat": { "id": -1 }
         };
         var callback = sinon.spy();
 
