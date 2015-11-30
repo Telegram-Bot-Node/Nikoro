@@ -34,7 +34,7 @@ var roll = function(){
         {
             console.log("\tROLL: " + msg.text)
 
-            if(args[1]){ //roll with max specified
+            if(args[1] && !isNaN(args[1])){ //roll with max specified
                 max = parseInt(args[1]); 
             }else{
                 max = maxDefault;
