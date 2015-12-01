@@ -95,8 +95,7 @@ module.exports = pluginName;
 * Plugins fixes
     * TTS
         * Fix random exceptions that sometimes happens
-    * SET
-        * Make triggers local to a chat (they are now shared between all chats)
+
 
 ##Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way?
