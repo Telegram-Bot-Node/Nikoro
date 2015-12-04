@@ -18,7 +18,7 @@
 */
 
 var request = require('request');
-var util = require('./../util');
+var Util = require('./../src/Util');
 
 var youtube = function(){
 
@@ -36,7 +36,7 @@ var youtube = function(){
     
     this.on("text", function (msg, reply){
 
-        var match = util.parseCommand(msg.text,["yt","youtube", "video"], {joinParams: true});  
+        var match = Util.parseCommand(msg.text,["yt","youtube", "video"], {joinParams: true});  
   
         if(match){ 
 

@@ -12,7 +12,7 @@
         You: !imgur
         Bot: https://i.imgur.com/ExIhYmu.png
 */
-var util = require('./../util');
+var Util = require('./../src/Util');
 var http = require('http');
 
 var imgur = function(){
@@ -23,7 +23,7 @@ var imgur = function(){
     };
 
     this.on("text", function (msg, reply){
-        var match = util.parseCommand(msg.text,"imgur");  
+        var match = Util.parseCommand(msg.text,"imgur");  
         
         if(match)
         {  

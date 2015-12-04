@@ -126,7 +126,7 @@ function PluginManager() {
     */
     PluginManager.prototype.loadPlugin = function(plugin) {
         try {
-            var module = require('./plugins/' + plugin);
+            var module = require('./../plugins/' + plugin);
 
             util.inherits(module, EventEmitter); //ability to listen and emit events
 

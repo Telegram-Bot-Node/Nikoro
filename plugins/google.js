@@ -18,7 +18,7 @@
 */
 
 var request = require('request');
-var util = require('./../util');
+var Util = require('./../src/Util');
 
 var google = function(){
 
@@ -35,7 +35,7 @@ var google = function(){
 
     this.on("text", function (msg, reply){
 
-        var args = util.parseCommand(msg.text,["google","g"], {joinParams: true});
+        var args = Util.parseCommand(msg.text,["google","g"], {joinParams: true});
 
         if(args != null){
 

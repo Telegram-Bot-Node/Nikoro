@@ -4,7 +4,7 @@
     which could be used when developing plugins
 */
 
-var util = {};
+var Util = {};
 
 
 /*
@@ -41,7 +41,7 @@ var util = {};
         Returns null if the message is not a valid command (does not match the specified commands)  
 */
 
-util.parseCommand = function(message, commandName, options){
+Util.parseCommand = function(message, commandName, options){
     
     options = options || {};
     var splitBy = options.splitBy || " ";
@@ -92,4 +92,4 @@ util.parseCommand = function(message, commandName, options){
     } 
 }
 
-module.exports = util;
+module.exports = Util;

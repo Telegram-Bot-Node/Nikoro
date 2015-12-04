@@ -12,7 +12,7 @@
         You: !q
         Bot: This is Sparta!
 */
-var util = require('./../util');
+var Util = require('./../src/Util');
 var fs = require('fs');
 
 var quote = function(){
@@ -39,7 +39,7 @@ var quote = function(){
 
     
     this.on("text", function (msg, reply){
-        var match = util.parseCommand(msg.text,["quote","q"]);  
+        var match = Util.parseCommand(msg.text,["quote","q"]);  
         
         if(match)
         {

@@ -1,7 +1,7 @@
 var config = require('./Config');
 var token = config.telegramToken;
 
-var PluginManager = require('./PluginManager');
+var PluginManager = require('./src/PluginManager');
 var plugins = new PluginManager();
 
 var TelegramBot = require('node-telegram-bot-api');

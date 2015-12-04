@@ -16,7 +16,7 @@
         TODO
 */
 
-var util = require('./util');
+var Util = require('./Util');
 
 var PluginHelper = function(){
 
@@ -34,8 +34,8 @@ var PluginHelper = function(){
 
     this.on("text", function (msg, reply){
 
-        var matchHelp = util.parseCommand(msg.text,["help"]);
-        var matchList = util.parseCommand(msg.text,["list"]);
+        var matchHelp = Util.parseCommand(msg.text,["help"]);
+        var matchList = Util.parseCommand(msg.text,["list"]);
 
         if(matchHelp)
         {

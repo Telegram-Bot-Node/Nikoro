@@ -20,7 +20,7 @@
         Bot: ... <- Nothing, you removed the trigger
 */
 var fs = require('fs');
-var util = require('./../util');
+var Util = require('./../src/Util');
 var set = function(){
 
     this.help = {
@@ -61,8 +61,8 @@ var set = function(){
 
 
     this.on("text", function (msg, reply){
-        var matchSet = util.parseCommand(msg.text,["set"], {splitBy: "-"});  
-        var matchUnset = util.parseCommand(msg.text,["unset"]);  
+        var matchSet = Util.parseCommand(msg.text,["set"], {splitBy: "-"});  
+        var matchUnset = Util.parseCommand(msg.text,["unset"]);  
 
         if(matchSet){
             console.log(msg);

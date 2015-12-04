@@ -12,7 +12,7 @@
         You: !roll
         Bot: 4
 */
-var util = require('./../util');
+var Util = require('./../src/Util');
 
 var roll = function(){
 
@@ -25,7 +25,7 @@ var roll = function(){
 
 
     this.on("text", function (msg, reply){
-        var args = util.parseCommand(msg.text,["roll","r"]);  
+        var args = Util.parseCommand(msg.text,["roll","r"]);  
 
         if(args)
         {

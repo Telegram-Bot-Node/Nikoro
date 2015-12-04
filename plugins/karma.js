@@ -16,7 +16,7 @@
         
 */
 var fs = require('fs');
-var util = require('./../util');
+var Util = require('./../src/Util');
 
 var karma = function(){
 
@@ -64,7 +64,7 @@ var karma = function(){
 
         var matchKarma = reKarma.exec(msg.text);  
         
-        //var matchChart = util.parseCommand(msg.text,["karmachart"]);  
+        //var matchChart = Util.parseCommand(msg.text,["karmachart"]);  
         if(matchKarma){
             uname = matchKarma[1];
             operator = matchKarma[2];

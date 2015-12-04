@@ -15,7 +15,7 @@
 */
 
 var request = require('request');
-var util = require('./../util');
+var Util = require('./../src/Util');
 
 var reddit = function() {
     
@@ -25,7 +25,7 @@ var reddit = function() {
     };
 
     this.on("text", function (msg, reply){
-        var args = util.parseCommand(msg.text,["reddit","frontpage"]); 
+        var args = Util.parseCommand(msg.text,["reddit","frontpage"]); 
 
         if (args) {
             reply({ type: "status", status: "typing" });
