@@ -18,6 +18,8 @@
 var EventEmitter = require('events').EventEmitter; //these two are used to add event capabilities to plugins
 var util = require('util');
 
+var PluginHelper = require('./PluginHelper');
+
 function PluginManager() {
 
     /*
@@ -28,6 +30,7 @@ function PluginManager() {
     	names in the plugins directory.
 
     */
+
     PluginManager.prototype.runPlugins = function(plugins, callback) {
         console.log(plugins.length + " Plugins activated");
 
@@ -47,25 +50,36 @@ function PluginManager() {
     }
 
     PluginManager.prototype.initPlugins = function(loadedPlugins) {
+        var self = this;
+
         return new Promise( function(resolve, reject){
             
-            var toInitialize = loadedPlugins.slice(); // copy array
-            var inittedPlugins = [];
+            util.inherits(PluginHelper, EventEmitter);
+            self.PluginHelper = new PluginHelper();
 
-            for (var idx in toInitialize) {
-                var loadedPlugin = toInitialize[idx];
+            self.PluginHelper.emit("init", function(){
 
-                loadedPlugin.emit("init",function(err, plugin) {
-                    if (err) {
-                        reject(err);
-                    };
-                    inittedPlugins.push(plugin);
-                    loadedPlugins.splice(0, 1); // remove plugin because it is already loaded
-                    if (loadedPlugins.length == 0) {
-                        resolve(inittedPlugins);
-                    }
-                });
-            }
+                var toInitialize = loadedPlugins.slice(); // copy array
+                var inittedPlugins = [];
+
+                for (var idx in toInitialize) {
+                    var loadedPlugin = toInitialize[idx];
+
+                    loadedPlugin.emit("init",function(err, plugin) {
+                        if (err) {
+                            reject(err);
+                        };
+                        inittedPlugins.push(plugin);
+
+                        self.PluginHelper.addPlugin(plugin);
+
+                        loadedPlugins.splice(0, 1); // remove plugin because it is already loaded
+                        if (loadedPlugins.length == 0) {
+                            resolve(inittedPlugins);
+                        }
+                    });
+                }
+            });
 
         });
     }
@@ -83,17 +97,17 @@ function PluginManager() {
         var loadedPlugins = [];
         var loadedPluginNames = [];
 
-        //Create core
         for (var idx in plugins) {
-            var plugin = plugins[idx];
-            var module = PluginManager.prototype.loadPlugin(plugin);
+            var pluginName = plugins[idx];
+            var module = PluginManager.prototype.loadPlugin(pluginName);
 
             if (module != null && PluginManager.prototype.validatePlugin(module)) {
                 loadedPlugins.push(module);
-                //pass to core
-                loadedPluginNames.push(plugin);
+                loadedPluginNames.push(pluginName);
+                module.help.name = pluginName;
+
             } else {
-                console.log("\t"+ plugin + " configuration failed. Plugin not activated");
+                console.log("\t"+ pluginName + " configuration failed. Plugin not activated.");
             }
         }
 
@@ -117,6 +131,7 @@ function PluginManager() {
             util.inherits(module, EventEmitter); //ability to listen and emit events
 
             module = new module();
+
 
             if (module.listeners('init').length == 0) {
                 console.log("Adding INIT");
@@ -164,12 +179,17 @@ function PluginManager() {
 
     PluginManager.prototype.emit = function() {
         var runningPlugins = this.runningPlugins;
+        
+        try {
+            this.PluginHelper.emit.apply(this.PluginHelper, arguments);
 
-        for (var idx in runningPlugins) {
-            var runningPlugin = runningPlugins[idx];
-            runningPlugin.emit.apply(runningPlugin, arguments); //emit all the params passed
+            for (var idx in runningPlugins) {
+                var runningPlugin = runningPlugins[idx];
+                runningPlugin.emit.apply(runningPlugin, arguments); //emit all the params passed
+            }
+        } catch (ex) {
+            console.log(ex);
         }
-
     }
 
     /*
@@ -182,22 +202,22 @@ function PluginManager() {
     PluginManager.prototype.shutDown = function(done) {
 
         var self = this;
-        
+
         return new Promise( function(resolve, reject){
             var existingPlugins = self.runningPlugins.slice(); // copy array
             var runningPlugins = self.runningPlugins;
-
             for (var idx in existingPlugins) {
                 var runningPlugin = existingPlugins[idx];
                 runningPlugin.emit("stop", function(err) {
                     if (err) {
                         reject(err);
                     };
-
                     runningPlugins.splice(0, 1); // remove plugin
                     if (runningPlugins.length == 0) {
                     	self.runningPlugins = [];
-                        resolve();
+                        self.PluginHelper.emit("stop",function(){
+                            resolve();
+                        })
                     }
                 });
             }

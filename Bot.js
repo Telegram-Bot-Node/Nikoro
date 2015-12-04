@@ -23,27 +23,33 @@ plugins.runPlugins(config.activePlugins, function(){
 
 function emitHandleReply(eventName, message){
     var chatId = message.chat.id; 
-    plugins.emit(eventName, message, function(reply) { //have to do this to avoid problems with chatId. Not the cleanest way.
-        handleReply(chatId,reply);
-    });
+
+    try{
+        plugins.emit(eventName, message, function(reply) { //have to do this to avoid problems with chatId. Not the cleanest way.
+            handleReply(chatId,reply);
+        });
+    } catch (ex){
+        console.log(ex);
+    }
+    
 };
 
 function handleReply(chatId, reply){
     switch (reply.type) {
         case "text":
-            bot.sendMessage(chatId, reply.text);
+            bot.sendMessage(chatId, reply.text, reply.options);
             break;
         case "audio":
-            bot.sendAudio(chatId, reply.audio);
+            bot.sendAudio(chatId, reply.audio, reply.options);
             break;
         case "photo":
-            bot.sendPhoto(chatId, reply.photo);
+            bot.sendPhoto(chatId, reply.photo, reply.options);
             break;
         case "status": case "chatAction":
-            bot.sendChatAction(chatId, reply.status);
+            bot.sendChatAction(chatId, reply.status, reply.options);
             break;
         case "sticker":
-            bot.sendSticker(chatId, reply.sticker);
+            bot.sendSticker(chatId, reply.sticker, reply.options);
             break;
         default:
             console.log("Error: Unrecognized reply type");
@@ -53,7 +59,7 @@ function handleReply(chatId, reply){
 process.on('SIGINT', shutDown);
 
 // Stop safely in case of `uncaughtException`.
-process.on('uncaughtException', shutDown);
+//process.on('uncaughtException', shutDown);
 
 function shutDown() {
     console.log("The bot is shutting down, stopping plugins");
