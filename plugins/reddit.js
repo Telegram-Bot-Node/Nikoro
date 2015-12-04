@@ -15,19 +15,17 @@
 */
 
 var request = require('request');
+var util = require('./../util');
 
-var image = function() {
+var reddit = function() {
     
-    this.init = function() {
-        
+    this.help = {
+        shortDescription: "Get a specific reddit post from r/frontpage",
+        fullHelp: "`/reddit n` will get the `n`th post on the Front Page of Reddit."
     };
 
-    this.doStop = function(done) {
-        done();
-    };
-
-    this.doMessage = function(msg, reply) {
-        var args = util.parseCommand(msg.text,["reddit","/reddit","\\reddit","frontpage"]); 
+    this.on("text", function (msg, reply){
+        var args = util.parseCommand(msg.text,["reddit","frontpage"]); 
 
         if (args) {
             reply({ type: "status", status: "typing" });
@@ -45,8 +43,8 @@ var image = function() {
                             var permalink = post["permalink"];
                             var title = post["title"];
                             var subreddit = post["subreddit"];
-                            var msg = "r/" + subreddit + " - " + title + " http://reddit.com" + permalink;
-                            reply({ type: "text", text: msg });
+                            var msg = "r/" + subreddit + " - [" + title + "](http://reddit.com" + permalink + ")";
+                            reply({ type: "text", text: msg, options:{parse_mode: "Markdown"}});
                         }
                     } else {
                         reply({ type: "text", text: "Oops! Try again later" });
@@ -54,7 +52,7 @@ var image = function() {
                 })
             }
         }
-    };
+    });
 }
 
-module.exports = image;
+module.exports = reddit;

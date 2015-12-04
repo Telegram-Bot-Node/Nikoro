@@ -20,48 +20,52 @@
         Bot: ... <- Nothing, you removed the trigger
 */
 var fs = require('fs');
-
+var util = require('./../util');
 var set = function(){
+
+    this.help = {
+        shortDescription: "Trigger bot responses whenever someone says a specific sentence. ",
+        fullHelp: "`/set trigger - response` to set a trigger. Whenever a message equal to `trigger` will be sent the bot will answer with `response`.\n`/unset <trigger>` will delete the trigger."
+    };
 
     dict = {};
 
-    this.init = function(){
+    this.on("init", function (done){
+        var self = this;
         fs.readFile("./files/set",'utf8', function(err, data) {
             if(err) {    
                 if(err.code == 'ENOENT') {
                     dict = {}
                     console.log("\tSET: file not found. Empty Set.");
                 } else {
-                    return console.log(err);
+                    return done(err, null);
                 }
             } else {
                 dict = JSON.parse(data);
                 console.log("\tSET: file loaded");
             }
-        }); 
-    };
 
-    this.doStop = function(done){
-        var fs = require('fs');
+            done(null, self);
+        }); 
+    });
+
+    this.on("stop", function (done){
         fs.writeFile("./files/set", JSON.stringify(dict), { flags: 'w' }, function(err) {
             if(err) {
                 return done(err);
             }
             console.log("\tSET: file saved");
-            return done();
+            done();
         }); 
-    };
+    });
 
 
-    this.doMessage = function (msg, reply){
-        var reSet = /!set\s+(.*?)\s*-\s*(.*)/im;
+    this.on("text", function (msg, reply){
+        var matchSet = util.parseCommand(msg.text,["set"], {splitBy: "-"});  
+        var matchUnset = util.parseCommand(msg.text,["unset"]);  
 
-        var reUnset = /!unset\s+(.*)/im; 
-
-        var matchSet = reSet.exec(msg.text);  
-        var matchUnset = reUnset.exec(msg.text);  
-        
         if(matchSet){
+            console.log(msg);
 
             key = matchSet[1];
             value = matchSet[2];
@@ -72,7 +76,7 @@ var set = function(){
 
             dict[chat][key] = value;
 
-            reply({type: 'text', text: key + " = " + value})
+            reply({type: 'text', text: "`" + key + "` = `" + value + "`", options:{parse_mode: "Markdown"}})
 
             console.log("\tSET: " + key + " = " + value + " on " + chat);
 
@@ -83,8 +87,8 @@ var set = function(){
             chat = msg.chat.id;
 
             delete dict[chat][key];
-            reply({type: 'text', text: "Unset " + key + " on " + chat})
-            console.log("\tSET: unset " + key);
+            reply({type: 'text', text: "Unset `" + key + "`", options:{parse_mode: "Markdown"} });
+            console.log("\tSET: unset " + key + " on " + chat);
 
         }
         else
@@ -100,7 +104,7 @@ var set = function(){
             }
 
         }
-    };
+    });
 
 };
 

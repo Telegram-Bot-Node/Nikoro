@@ -24,20 +24,16 @@ var google = function(){
 
     var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
 
+    this.help = {
+        shortDescription: "Search anything on Google.",
+        fullHelp: "`/google query` or `/g query` and you are ready to find stuff on the Internet.\nBe careful! It is pretty big!"
+    };
+
     this.check = function(){
         return GOOGLE_API_KEY == "" ? false : true;
     };
 
-    this.init = function(){
-
-    };
-
-    this.doStop = function(done){
-        done();
-    };
-
-
-    this.doMessage = function (msg, reply){
+    this.on("text", function (msg, reply){
 
         var args = util.parseCommand(msg.text,["google","g"], {joinParams: true});
 
@@ -68,7 +64,7 @@ var google = function(){
                                
 
                                 if(title && link)
-                                    reply({type:"text", text: title + " - " + link})       
+                                    reply({type:"text", text: "[" + title + "](" + link + ")", options:{parse_mode: "Markdown"}})       
                             }
                         }
                     }
@@ -77,7 +73,7 @@ var google = function(){
                 
             }
         }
-    };
+    });
 
 };
 

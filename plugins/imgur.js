@@ -17,23 +17,19 @@ var http = require('http');
 
 var imgur = function(){
 
-    this.init = function(){
-
+    this.help = {
+        shortDescription: "Get a random image from imgur",
+        fullHelp: "`/imgur` will get you a random image from imgur, the popular image hosting website.\nBeware, you could randomly find adult content."
     };
 
-    this.doStop = function(done){
-        done();
-    };
-
-
-    this.doMessage = function (msg, reply){
+    this.on("text", function (msg, reply){
         var match = util.parseCommand(msg.text,"imgur");  
         
         if(match)
         {  
             findValidPic(0, reply);
         }
-    };
+    });
 
     findValidPic = function(s, reply){
         if(s > 50)
@@ -65,7 +61,6 @@ var imgur = function(){
 
     generateUrl = function(len, callback){
         var url="";
-        len = 5;
         var letters = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
         for(var i=0;i<len;i++)
         {

@@ -15,19 +15,15 @@
 
 var ping = function(){
 
-    this.init = function(){
-
+    this.help = {
+        shortDescription: "Ping - Pong",
+        fullHelp: "Send `ping`, get `pong`\nIf only life was _this_ easy."
     };
 
-    this.doStop = function(done){
-        done();
-    };
-
-
-    this.doMessage = function (msg, reply){
+    this.on("text", function (msg, reply){
         if (msg.text.toLowerCase() == "ping")
             reply({type: 'text', text: 'pong'}); 
-    };
+    });
 
 };
 

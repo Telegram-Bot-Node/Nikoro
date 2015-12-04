@@ -20,24 +20,21 @@
 var request = require('request');
 var util = require('./../util');
 
-var yt = function(){
+var youtube = function(){
 
     var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
+
+    this.help = {
+        shortDescription: "Search for videos on YouTube.",
+        fullHelp: "Use `/youtube query` or `/yt query` to seach for `query` on YouTube."
+    };
 
     this.check = function(){
         return GOOGLE_API_KEY == "" ? false : true;
     };
 
-    this.init = function(){
-
-    };
-
-    this.doStop = function(done){
-        done();
-    };
-
-
-    this.doMessage = function (msg, reply){
+    
+    this.on("text", function (msg, reply){
 
         var match = util.parseCommand(msg.text,["yt","youtube", "video"], {joinParams: true});  
   
@@ -70,7 +67,7 @@ var yt = function(){
                                 }
                             }
                             if(videoId && videoTitle)
-                                reply({type:"text", text: videoTitle + " - " + "http://www.youtube.com/watch?v=" + videoId})       
+                                reply({type:"text", text: "[" + videoTitle + "]" + "(" + "http://www.youtube.com/watch?v=" + videoId + ")", options:{parse_mode: "Markdown"}})       
                         }
                     }
                 });
@@ -78,8 +75,8 @@ var yt = function(){
                 
             }
         }
-    };
+    });
 
 };
 
-module.exports = yt;
+module.exports = youtube;

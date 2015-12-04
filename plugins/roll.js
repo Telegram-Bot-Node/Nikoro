@@ -16,18 +16,15 @@ var util = require('./../util');
 
 var roll = function(){
 
-    maxDefault = 100;
+    MAX_DEFAULT = 100;
 
-    this.init = function(){
-        
-    };
-
-    this.doStop = function(done){
-        done();
+    this.help = {
+        shortDescription: "Random Number Generator.",
+        fullHelp: "`/roll` to generate a number from 1 to " + MAX_DEFAULT + ".\n`/roll max` to generate a number from 1 to `max`"
     };
 
 
-    this.doMessage = function (msg, reply){
+    this.on("text", function (msg, reply){
         var args = util.parseCommand(msg.text,["roll","r"]);  
 
         if(args)
@@ -37,14 +34,14 @@ var roll = function(){
             if(args[1] && !isNaN(args[1])){ //roll with max specified
                 max = parseInt(args[1]); 
             }else{
-                max = maxDefault;
+                max = MAX_DEFAULT;
             }
 
             rr = Math.floor(Math.random() * (max+1));
 
             reply({type: 'text', text: '' + rr });
         }
-    };
+    });
 
 };
 
