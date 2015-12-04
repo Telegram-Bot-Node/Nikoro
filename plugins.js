@@ -14,6 +14,10 @@
 	5. Call `doStop()` method
 	6. Plugin now safely stopped
 */
+
+var EventEmitter = require('events').EventEmitter; //these two are used to add event capabilities to plugins
+var util = require('util');
+
 function PluginManager() {
 
     /*
@@ -31,6 +35,7 @@ function PluginManager() {
 
         var loadedPlugins = PluginManager.prototype.loadPlugins(plugins);
         console.log(loadedPlugins.length + " Plugins loaded");
+        this.loadedPlugins = loadedPlugins;
 
         var runningPlugins = PluginManager.prototype.initializePlugins(loadedPlugins);
         console.log(runningPlugins.length + " Plugins initialized");
@@ -52,12 +57,15 @@ function PluginManager() {
         var loadedPlugins = [];
         var loadedPluginNames = [];
 
+
+        //Create core
         for (var idx in plugins) {
             var plugin = plugins[idx];
             var module = PluginManager.prototype.loadPlugin(plugin);
 
             if (module != null && PluginManager.prototype.validatePlugin(module)) {
                 loadedPlugins.push(module);
+                //pass to core
                 loadedPluginNames.push(plugin);
             } else {
                 console.log("\t"+ plugin + " configuration failed. Plugin not activated");
@@ -83,7 +91,7 @@ function PluginManager() {
 
         for (var idx in plugins) {
             var plugin = plugins[idx];
-            plugin.init();
+            plugin.emit('init');
             intializedPlugins.push(plugin);
         }
 
@@ -101,6 +109,8 @@ function PluginManager() {
     PluginManager.prototype.loadPlugin = function(plugin) {
         try {
             var module = require('./plugins/' + plugin);
+            util.inherits(module, EventEmitter); //ability to listen and emit events
+            //core handles plugin
             return new module();
         } catch (err) {
             console.log("Error: Module path not found");
@@ -138,10 +148,27 @@ function PluginManager() {
     */
     PluginManager.prototype.doMessage = function(message, callback) {
         var runningPlugins = this.runningPlugins;
+        //core check if plugin is enabled in chat, yes by default, core need DB!!!!
         for (var idx in runningPlugins) {
             var runningPlugin = runningPlugins[idx];
             runningPlugin.doMessage(message, callback);
         }
+    }
+
+    /*
+        Send out events and associated data to each running plugin.
+        @param - eventName - Name of the event you want to execute.
+        @param - message - A message object from the Telegram API.
+        @param - callback - A function which handles a response from a plugin.
+    */
+    PluginManager.prototype.emit = function() {
+        var runningPlugins = this.runningPlugins;
+
+        for (var idx in runningPlugins) {
+            var runningPlugin = runningPlugins[idx];
+            runningPlugin.emit.apply(runningPlugin, arguments); //emit all the params passed
+        }
+
     }
 
     /*
@@ -164,6 +191,25 @@ function PluginManager() {
                 runningPlugins.splice(0, 1); // remove plugin
                 if (runningPlugins.length == 0) {
                 	this.runningPlugins = [];
+                    done();
+                }
+            });
+        }
+    }
+
+        PluginManager.prototype.initPlugins = function(done) {
+        var toInitialize = this.runningPlugins.slice(); // copy array
+        var runningPlugins = this.runningPlugins;
+        for (var idx in toInitialize) {
+            var runningPlugin = toInitialize[idx];
+            runningPlugin.emit(function(err) {
+                if (err) {
+                    console.log(err);
+                };
+
+                runningPlugins.splice(0, 1); // remove plugin
+                if (runningPlugins.length == 0) {
+                    this.runningPlugins = [];
                     done();
                 }
             });

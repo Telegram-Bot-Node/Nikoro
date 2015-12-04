@@ -2,6 +2,6 @@ var config = {};
 
 config.telegramToken = process.env.TELEGRAM_TOKEN;
 
-config.activePlugins = ["ping", "tts", "set", "yp", "google", "twitter"];
+config.activePlugins = ["pingN", "set", "diegoconti"];
 
 module.exports = config;
