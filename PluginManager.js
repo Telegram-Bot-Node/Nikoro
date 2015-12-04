@@ -27,21 +27,47 @@ function PluginManager() {
     	@param plugins - An array of plugin names corresponding to file
     	names in the plugins directory.
 
-    	@return -  An array of loaded, configured, initialized plugin
-    	modules or functions.
     */
-    PluginManager.prototype.runPlugins = function(plugins) {
+    PluginManager.prototype.runPlugins = function(plugins, callback) {
         console.log(plugins.length + " Plugins activated");
 
         var loadedPlugins = PluginManager.prototype.loadPlugins(plugins);
-        console.log(loadedPlugins.length + " Plugins loaded");
+        console.log(loadedPlugins.length + " Plugins loaded and checked");
         this.loadedPlugins = loadedPlugins;
 
-        var runningPlugins = PluginManager.prototype.initializePlugins(loadedPlugins);
-        console.log(runningPlugins.length + " Plugins initialized");
+        console.log("Initializing Plugins");
+        var self = this;
+        PluginManager.prototype.initPlugins(loadedPlugins).then(function(plugins){
+            self.runningPlugins = plugins;
+            callback(plugins);
 
-        this.runningPlugins = runningPlugins;
-        return runningPlugins;
+        }, function(error){
+            console.log("Error initializing plugins: " + error);
+        });
+    }
+
+    PluginManager.prototype.initPlugins = function(loadedPlugins) {
+        return new Promise( function(resolve, reject){
+            
+            var toInitialize = loadedPlugins.slice(); // copy array
+            var inittedPlugins = [];
+
+            for (var idx in toInitialize) {
+                var loadedPlugin = toInitialize[idx];
+
+                loadedPlugin.emit("init",function(err, plugin) {
+                    if (err) {
+                        reject(err);
+                    };
+                    inittedPlugins.push(plugin);
+                    loadedPlugins.splice(0, 1); // remove plugin because it is already loaded
+                    if (loadedPlugins.length == 0) {
+                        resolve(inittedPlugins);
+                    }
+                });
+            }
+
+        });
     }
 
     /*
@@ -56,7 +82,6 @@ function PluginManager() {
     PluginManager.prototype.loadPlugins = function(plugins) {
         var loadedPlugins = [];
         var loadedPluginNames = [];
-
 
         //Create core
         for (var idx in plugins) {
@@ -76,27 +101,6 @@ function PluginManager() {
         return loadedPlugins;
     }
 
-    /*
-    	Initializes plugins that have already been loaded by calling
-    	their internal `init` method.
-
-    	@param plugins - An array of plugin modules or functons that have been
-    	required and configured.
-
-    	@return -  An array of loaded, configured and initialized plugin 
-    	modules or functions.
-    */
-    PluginManager.prototype.initializePlugins = function(plugins) {
-        var intializedPlugins = [];
-
-        for (var idx in plugins) {
-            var plugin = plugins[idx];
-            plugin.emit('init');
-            intializedPlugins.push(plugin);
-        }
-
-        return intializedPlugins;
-    }
 
     /*
     	Loads an individual plugin by requiring the necessary module.
@@ -109,11 +113,28 @@ function PluginManager() {
     PluginManager.prototype.loadPlugin = function(plugin) {
         try {
             var module = require('./plugins/' + plugin);
+
             util.inherits(module, EventEmitter); //ability to listen and emit events
+
+            module = new module();
+
+            if (module.listeners('init').length == 0) {
+                console.log("Adding INIT");
+                module.addListener("init", function (done){
+                    done(null, module);
+                });
+            }
+
+            if (module.listeners('stop').length == 0){
+                console.log("Adding STOP");
+                module.addListener("stop", function (done){
+                    done();
+                });
+            }
             //core handles plugin
-            return new module();
+            return module;
         } catch (err) {
-            console.log("Error: Module path not found");
+            console.log("Error: " + err);
             return null;
         }
     }
@@ -139,28 +160,8 @@ function PluginManager() {
         return true;
     }
 
-    /*
-    	Forwards a given `Message` object to each internal running plugin's
-    	`doMessage` method.
 
-    	@param - message - A message object from the Telegram API.
-    	@param - callback - A function which handles a response from a plugin.
-    */
-    PluginManager.prototype.doMessage = function(message, callback) {
-        var runningPlugins = this.runningPlugins;
-        //core check if plugin is enabled in chat, yes by default, core need DB!!!!
-        for (var idx in runningPlugins) {
-            var runningPlugin = runningPlugins[idx];
-            runningPlugin.doMessage(message, callback);
-        }
-    }
 
-    /*
-        Send out events and associated data to each running plugin.
-        @param - eventName - Name of the event you want to execute.
-        @param - message - A message object from the Telegram API.
-        @param - callback - A function which handles a response from a plugin.
-    */
     PluginManager.prototype.emit = function() {
         var runningPlugins = this.runningPlugins;
 
@@ -179,42 +180,31 @@ function PluginManager() {
     	all plugins have safely prepared to terminate. 
     */
     PluginManager.prototype.shutDown = function(done) {
-        var existingPlugins = this.runningPlugins.slice(); // copy array
-        var runningPlugins = this.runningPlugins;
-        for (var idx in existingPlugins) {
-            var runningPlugin = existingPlugins[idx];
-            runningPlugin.doStop(function(err) {
-                if (err) {
-                    console.log(err);
-                };
 
-                runningPlugins.splice(0, 1); // remove plugin
-                if (runningPlugins.length == 0) {
-                	this.runningPlugins = [];
-                    done();
-                }
-            });
-        }
+        var self = this;
+        
+        return new Promise( function(resolve, reject){
+            var existingPlugins = self.runningPlugins.slice(); // copy array
+            var runningPlugins = self.runningPlugins;
+
+            for (var idx in existingPlugins) {
+                var runningPlugin = existingPlugins[idx];
+                runningPlugin.emit("stop", function(err) {
+                    if (err) {
+                        reject(err);
+                    };
+
+                    runningPlugins.splice(0, 1); // remove plugin
+                    if (runningPlugins.length == 0) {
+                    	self.runningPlugins = [];
+                        resolve();
+                    }
+                });
+            }
+        });
     }
 
-        PluginManager.prototype.initPlugins = function(done) {
-        var toInitialize = this.runningPlugins.slice(); // copy array
-        var runningPlugins = this.runningPlugins;
-        for (var idx in toInitialize) {
-            var runningPlugin = toInitialize[idx];
-            runningPlugin.emit(function(err) {
-                if (err) {
-                    console.log(err);
-                };
-
-                runningPlugins.splice(0, 1); // remove plugin
-                if (runningPlugins.length == 0) {
-                    this.runningPlugins = [];
-                    done();
-                }
-            });
-        }
-    }
+    
 }
 
 module.exports = PluginManager;

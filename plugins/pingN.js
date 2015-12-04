@@ -14,16 +14,12 @@
 */
 
 var pingN = function(){
-
+    
     this.on("text", function (msg, reply){
         if (msg.text.toLowerCase() == "ping")
             reply({type: 'text', text: 'pong'}); 
     });
-
-    this.on("new_chat_partecipant", function (msg, reply){
-        reply({type: 'text', text: 'Vaffanculo coglione!'}); 
-    });
-
+    
 };
 
 module.exports = pingN;
