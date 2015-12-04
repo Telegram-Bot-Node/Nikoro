@@ -35,6 +35,8 @@ var PluginHelper = function(){
     this.on("text", function (msg, reply){
 
         var matchHelp = util.parseCommand(msg.text,["help"]);
+        var matchList = util.parseCommand(msg.text,["list"]);
+
         if(matchHelp)
         {
             plugin = matchHelp[1];
@@ -44,7 +46,19 @@ var PluginHelper = function(){
                 message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp
                 reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
             }
-        }  
+        } else if (matchList){
+            var message = "*Enabled Plugins*\n\n"
+
+            var names = Object.keys(this.plugins);
+
+            for(var i in names)
+            {
+                message+="• " + names[i] + "\n";
+            }
+
+            message+="\nUse `!help commandName` to get help about a specific plugin.";
+            reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+        }
     });
 
 
