@@ -64,7 +64,7 @@ util.parseCommand = function(message, commandName, options){
             regexParam += "|";
     }
     
-    var re = new RegExp("(?:!|\\/)(" + regexParam +")\\s+(.*)"); 
+    var re = new RegExp("^(?:!|\\/)(" + regexParam +")\\s+(.*)"); 
     var match = re.exec(message + " "); //we have to add this space because we specified "\s+" in the regex, to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"] 
 
     var args = [];
