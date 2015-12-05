@@ -134,14 +134,12 @@ function PluginManager() {
 
 
             if (module.listeners('init').length == 0) {
-                console.log("Adding INIT");
                 module.addListener("init", function (done){
                     done(null, module);
                 });
             }
 
             if (module.listeners('stop').length == 0){
-                console.log("Adding STOP");
                 module.addListener("stop", function (done){
                     done();
                 });

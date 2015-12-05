@@ -65,10 +65,11 @@ var set = function(){
         var matchUnset = Util.parseCommand(msg.text,["unset"]);  
 
         if(matchSet){
-            console.log(msg);
-
             key = matchSet[1];
             value = matchSet[2];
+            if(!key || !value)
+                return;
+            
             chat = msg.chat.id;
 
             if(!dict[chat])
@@ -93,13 +94,24 @@ var set = function(){
         }
         else
         {
-            key = msg.text;
+            message = msg.text;
             chat = msg.chat.id;
             if(dict[chat])
-            {
-                if (key in dict[chat])
-                {
-                    reply({type: 'text', text: dict[chat][key]});
+            {   
+                var keys = Object.keys(dict[chat]);
+                for(var i=0;i<keys.length;i++)
+                {  
+
+                    var key = keys[i];
+
+
+                    if(message.indexOf(key) > -1) //lightweight check
+                    {
+                        var re = new RegExp("(^|\\s+)(" + key + ")(\\s+|$)","gi"); //we really check with regex for word boundaries
+                        match = re.exec(message);
+                        if(match)
+                            reply({type: 'text', text: dict[chat][key]});
+                    }
                 }
             }
 
