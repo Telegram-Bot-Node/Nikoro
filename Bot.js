@@ -65,5 +65,6 @@ function shutDown() {
     console.log("The bot is shutting down, stopping plugins");
     plugins.shutDown().then(function(){
         console.log("All plugins stopped correctly!")
+        process.exit();
     });
 }
