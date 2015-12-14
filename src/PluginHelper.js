@@ -40,23 +40,26 @@ var PluginHelper = function(){
         if(matchHelp)
         {
             plugin = matchHelp[1];
-            if(this.plugins[plugin])
+            if(this.plugins[plugin] && !this.plugins[plugin].hidden)
             {   
                 help = this.plugins[plugin];
                 message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp
                 reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
             }
+            
         } else if (matchList){
             var message = "*Enabled Plugins*\n\n"
 
-            var names = Object.keys(this.plugins);
-
-            for(var i in names)
+            pluginNames = Object.keys(this.plugins)
+            console.log(this.plugins);
+            for(var i in pluginNames)
             {
-                message+="• " + names[i] + "\n";
+                plugin = this.plugins[pluginNames[i]];
+                if(!plugin.hidden)
+                    message+="• " + plugin.name + "\n";
             }
 
-            message+="\nUse `!help commandName` to get help about a specific plugin.";
+            message+="\nUse `/help commandName` to get help about a specific plugin.";
             reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
         }
     });
