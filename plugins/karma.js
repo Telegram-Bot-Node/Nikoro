@@ -60,7 +60,7 @@ var karma = function(){
 
 
     this.on("text", function (msg, reply){
-        var reKarma = /@([a-z0-9-_]+)\s*(\-\-|\+\+)/ig; 
+        var reKarma = /@([a-z0-9-_]+)\s*(\-\-|\+\+|—)/ig; 
 
         var matchKarma = reKarma.exec(msg.text);  
         
@@ -82,7 +82,7 @@ var karma = function(){
             if(!karma[chat][uname])
                 karma[chat][uname] = 0;
 
-            if(operator == "--")
+            if(operator == "--" || operator == "—")
                 karma[chat][uname]--;
             else
                 karma[chat][uname]++;
