@@ -63,11 +63,9 @@ var youtube = function(){
                                 {
                                     videoId = videos[i]["id"]["videoId"];
                                     videoTitle = videos[i]["snippet"]["title"];
-                                    break;
+                                    reply({type:"text", text: "[" + videoTitle + "]" + "(" + "http://www.youtube.com/watch?v=" + videoId + ")", options:{parse_mode: "Markdown"}})       
                                 }
                             }
-                            if(videoId && videoTitle)
-                                reply({type:"text", text: "[" + videoTitle + "]" + "(" + "http://www.youtube.com/watch?v=" + videoId + ")", options:{parse_mode: "Markdown"}})       
                         }
                     }
                 });
