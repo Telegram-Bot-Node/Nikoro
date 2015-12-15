@@ -48,7 +48,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 
 Send a message to the bot or add it to a group chat and you are ready to use it!
 
-Use ```/list``` to see a list of the enabled plugins or ```/help \<plugin-name\>``` to get an explanation for each enabled plugin.
+Use ```/list``` to see a list of the enabled plugins or ```/help <plugin-name>``` to get an explanation for each enabled plugin.
 
 ##Plugins
 
@@ -71,8 +71,9 @@ var pluginName = function(){
         //both these fields are required
     };
 
-    this.on('message', function (msg, reply) {
-        //this will be executed whenever your bot get a message
+    this.on('text', function (msg, reply) {
+        //this will be executed whenever your bot get a text message
+        //you can listen to many events, just take a look at the example plugins.
 
         /*
             1. Check if the msg.text matches the trigger for your plugin
