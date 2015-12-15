@@ -13,6 +13,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 ###Table of Contents
 
 - [Running the Bot](#running-the-bot)
+- [Using the Bot](#using-the-bot)
 - [Plugins](#plugins)
   - [Writing custom plugins](#writing-custom-plugins)
 - [TODO](#todo)
@@ -40,34 +41,37 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
     * Edit ```activePlugins``` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
         * You can find the plugins in the ```plugins``` folder.
 * Run the bot
-    * ```node bot.js``` 
+    * ```node Bot.js``` 
     * Stop it at any time with CTRL+C
+
+##Using the Bot
+
+Send a message to the bot or add it to a group chat and you are ready to use it!
+
+Use ```/list``` to see a list of the enabled plugins or ```/help \<plugin-name\>``` to get an explanation for each enabled plugin.
 
 ##Plugins
 
 Plugins can be easly written with a basic understanding of JavaScript.
 
-Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation.
+Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation for each plugin.
 
 ###Writing custom plugins
 
 * Take a look at the provided plugins in the ```plugins``` folder
 * Create a ```.js``` file in the ```plugins``` folder
 
-Basic Skeleton
+Basic Class Skeleton
 ``` javascript
 var pluginName = function(){
-
-    this.init = function(){
-        //this will be executed when the bot starts
+    
+    this.help = {
+        shortDescription: "Set a simple and short description for your plugin here.",
+        fullHelp: "Add examples, an in-depth explanation here."
+        //both these fields are required
     };
 
-    this.doStop = function(){
-        //this will be executed when the bot shuts down
-    };  
-
-
-    this.doMessage = function (msg, reply) {
+    this.on('message', function (msg, reply) {
         //this will be executed whenever your bot get a message
 
         /*
@@ -82,19 +86,19 @@ var pluginName = function(){
                 reply(replyText); //for example
 
         */
-    };
+    });
 
 };
 
 module.exports = pluginName;
 ```
 ##TODO
-* Common utilities module (downloading file, downloading web page, ...)
-* Improve the code
-* More plugins
-* Plugins fixes
-    * TTS
-        * Fix random exceptions that sometimes happens
+* Tests!
+* Improve utilities module (downloading files , common database, generate markdown links)
+* More Plugins
+* Documentation
+* Website
+* Promotion
 
 
 ##Contributing
