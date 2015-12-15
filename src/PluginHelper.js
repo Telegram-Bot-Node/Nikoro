@@ -51,7 +51,6 @@ var PluginHelper = function(){
             var message = "*Enabled Plugins*\n\n"
 
             pluginNames = Object.keys(this.plugins)
-            console.log(this.plugins);
             for(var i in pluginNames)
             {
                 plugin = this.plugins[pluginNames[i]];
