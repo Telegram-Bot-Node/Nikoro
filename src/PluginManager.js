@@ -19,6 +19,8 @@ var EventEmitter = require('events').EventEmitter; //these two are used to add e
 var util = require('util');
 
 var PluginHelper = require('./PluginHelper');
+var DBWrapper = require('./DBWrapper');
+
 
 function PluginManager() {
 
@@ -28,7 +30,6 @@ function PluginManager() {
 
     	@param plugins - An array of plugin names corresponding to file
     	names in the plugins directory.
-
     */
 
     PluginManager.prototype.runPlugins = function(plugins, callback) {
@@ -65,10 +66,17 @@ function PluginManager() {
                 for (var idx in toInitialize) {
                     var loadedPlugin = toInitialize[idx];
 
+                    if(loadedPlugin.properties.databaseAccess)
+                    {
+                        loadedPlugin.db = new DBWrapper(loadedPlugin.properties.name);
+                    }
+
                     loadedPlugin.emit("init",function(err, plugin) {
                         if (err) {
                             reject(err);
                         };
+                        
+
                         inittedPlugins.push(plugin);
 
                         self.PluginHelper.addPlugin(plugin);
@@ -104,7 +112,6 @@ function PluginManager() {
             if (module != null && PluginManager.prototype.validatePlugin(module)) {
                 loadedPlugins.push(module);
                 loadedPluginNames.push(pluginName);
-                module.help.name = pluginName;
 
             } else {
                 console.log("\t"+ pluginName + " configuration failed. Plugin not activated.");
@@ -124,17 +131,18 @@ function PluginManager() {
 
     	@return -  A new instance of the specified plugin.
     */
-    PluginManager.prototype.loadPlugin = function(plugin) {
+    PluginManager.prototype.loadPlugin = function(pluginName) {
         try {
-            var module = require('./../plugins/' + plugin);
+            var module = require('./../plugins/' + pluginName);
 
             util.inherits(module, EventEmitter); //ability to listen and emit events
 
             module = new module();
-
+            module.properties.name = pluginName;
 
             if (module.listeners('init').length == 0) {
-                module.addListener("init", function (done){
+                module.addListener("init", function (done, db){
+                    
                     done(null, module);
                 });
             }

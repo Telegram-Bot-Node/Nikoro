@@ -27,22 +27,23 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 ##Running the Bot
 
 * Clone/Download/Fork the repository
-* ```npm install```
+* Install `redis` (and check if it is working)
+* `npm install`
 * Create a Bot Account 
     * Get the associated token (https://core.telegram.org/bots/#botfather)
 * Set the required Environment Variables (two methods)
-    1. Via ```setup.sh```
-        * Edit ```setup.sh```
-            * Set ```TELEGRAM_TOKEN``` with the auth token of your bot
+    1. Via `setup.sh`
+        * Edit `setup.sh`
+            * Set `TELEGRAM_TOKEN` with the auth token of your bot
             * Set the other API Keys if you want to enable the relative plugins.
-        * Run ```source setup.sh```
+        * Run `source setup.sh`
     2. Set them manually
         * Check setup.sh to see the required Environment Variables.
-* Edit config.js
-    * Edit ```activePlugins``` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
-        * You can find the plugins in the ```plugins``` folder.
+* Edit Config.js
+    * Edit `activePlugins` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
+        * You can find the plugins in the `plugins` folder.
 * Run the bot
-    * ```node Bot.js``` 
+    * `node Bot.js` 
     * Stop it at any time with CTRL+C
 
 ##Using the Bot

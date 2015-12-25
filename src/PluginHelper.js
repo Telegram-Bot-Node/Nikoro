@@ -36,37 +36,76 @@ var PluginHelper = function(){
 
         var matchHelp = Util.parseCommand(msg.text,["help"]);
         var matchList = Util.parseCommand(msg.text,["list"]);
+        var matchStart = Util.parseCommand(msg.text,["start"]);
+        var matchInfo = Util.parseCommand(msg.text,["info"]);
+
 
         if(matchHelp)
         {
             plugin = matchHelp[1];
-            if(this.plugins[plugin] && !this.plugins[plugin].hidden)
-            {   
-                help = this.plugins[plugin];
-                message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp
+
+            if(plugin)
+            {
+                if(this.plugins[plugin] && !this.plugins[plugin].hidden)
+                {   
+                    help = this.plugins[plugin];
+                    message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp
+                    reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+                }
+            }
+            else
+            {
+                message = generateHelp();
                 reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
             }
             
-        } else if (matchList){
-            var message = "*Enabled Plugins*\n\n"
+        } 
+        else if (matchList) 
+        {
+            message = generateHelp();
+            reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
+        } 
+        else if (matchStart) 
+        {
+            message = "Type /list or /help to see a list of available plugins. Use /info to get more info about me.";
+            reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
+        }
+        else if (matchInfo) 
+        {
+            message = "*Factotum Bot*\n\nThe only Telegram bot you will ever need.\n\n[Source Code](https://github.com/crisbal/Node-Telegram-Bot)";
+            reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
+        }
+    });
 
-            pluginNames = Object.keys(this.plugins)
-            for(var i in pluginNames)
-            {
-                plugin = this.plugins[pluginNames[i]];
-                if(!plugin.hidden)
-                    message+="• " + plugin.name + "\n";
-            }
-
-            message+="\nUse `/help commandName` to get help about a specific plugin.";
-            reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+    
+    this.on("new_chat_participant", function (msg, reply){
+        user = msg.new_chat_participant;
+        if(user.username.toLowerCase()=="factotum_bot")
+        {
+            reply({type: 'text', text: "Hello, I am Factotum Bot! Use /help or /list to see a list of available plugins. Use /info to get more info about me."});
         }
     });
 
 
     this.addPlugin = function(plugin){
-        this.plugins[plugin.help.name] = plugin.help;
+        this.plugins[plugin.properties.name] = plugin.properties;
     };
+
+    this.generateHelp = function(){
+        var message = "*Enabled Plugins*\n\n"
+
+        pluginNames = Object.keys(this.plugins)
+        for(var i in pluginNames)
+        {
+            plugin = this.plugins[pluginNames[i]];
+            if(!plugin.hidden)
+                message+="• " + plugin.name + "\n";
+        }
+
+        message+="\nUse `/help commandName` to get help about a specific plugin.";
+
+        return message;
+    }
 };
 
 module.exports = PluginHelper;
