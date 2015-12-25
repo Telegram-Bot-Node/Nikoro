@@ -19,7 +19,7 @@ var Util = require('./../src/Util');
 
 var reddit = function() {
     
-    this.help = {
+    this.properties = {
         shortDescription: "Get a specific reddit post from r/frontpage",
         fullHelp: "`/reddit n` will get the `n`th post on the Front Page of Reddit."
     };

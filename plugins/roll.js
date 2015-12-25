@@ -18,7 +18,7 @@ var roll = function(){
 
     MAX_DEFAULT = 100;
 
-    this.help = {
+    this.properties = {
         shortDescription: "Random Number Generator.",
         fullHelp: "`/roll` to generate a number from 1 to " + MAX_DEFAULT + ".\n`/roll max` to generate a number from 1 to `max`"
     };

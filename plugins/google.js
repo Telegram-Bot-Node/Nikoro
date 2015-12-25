@@ -24,7 +24,7 @@ var google = function(){
 
     var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
 
-    this.help = {
+    this.properties = {
         shortDescription: "Search anything on Google.",
         fullHelp: "`/google query` or `/g query` and you are ready to find stuff on the Internet.\nBe careful! It is pretty big!"
     };

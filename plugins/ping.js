@@ -15,7 +15,7 @@
 
 var ping = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Ping - Pong",
         fullHelp: "Send `ping`, get `pong`\nIf only life was _this_ easy."
     };

@@ -23,7 +23,7 @@ var fs = require('fs');
 var Util = require('./../src/Util');
 var set = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Trigger bot responses whenever someone says a specific sentence. ",
         fullHelp: "`/set trigger - response` to set a trigger. Whenever a message equal to `trigger` will be sent the bot will answer with `response`.\n`/unset <trigger>` will delete the trigger."
     };

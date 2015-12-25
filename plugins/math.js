@@ -18,7 +18,7 @@ var mathjs = require('mathjs');
 
 var math = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Amazing calculator based on [math.js](http://mathjs.org/)",
         fullHelp: "Use `/calc expression` or `/math expression` to get a quick answer for your math expression.\nYou can use _imagnary numbers_, fucntions such as _sin_, _cos_ and much, much more.\nCheck out math.js website for examples of supported stuff."
 

@@ -20,7 +20,7 @@ var Util = require('./../src/Util');
 
 var karma = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Give Karma Points to your friends!",
         fullHelp: "`@username++` will give to `@username` a Karma Point\n`@username--` will remove from `@username` a Karma Point"
     };

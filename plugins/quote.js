@@ -17,7 +17,7 @@ var fs = require('fs');
 
 var quote = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Get a random quote from the `quotes` file.",
         fullHelp: "`/quote` is all you need to have fun."
     };

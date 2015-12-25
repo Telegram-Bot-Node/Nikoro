@@ -24,7 +24,7 @@ var youtube = function(){
 
     var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
 
-    this.help = {
+    this.properties = {
         shortDescription: "Search for videos on YouTube.",
         fullHelp: "Use `/youtube query` or `/yt query` to seach for `query` on YouTube."
     };

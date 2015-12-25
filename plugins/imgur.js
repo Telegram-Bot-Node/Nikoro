@@ -17,7 +17,7 @@ var http = require('http');
 
 var imgur = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Get a random image from imgur",
         fullHelp: "`/imgur` will get you a random image from imgur, the popular image hosting website.\nBeware, you could randomly find adult content."
     };

@@ -16,7 +16,7 @@ var Util = require('./../src/Util');
 
 var ball = function(){
 
-    this.help = {
+    this.properties = {
         shortDescription: "Magic 8-Ball!",
         fullHelp: "The Magic 8-Ball will give an answer to all your yes-no questions.\n`/8ball question\n/8b question`"
     };

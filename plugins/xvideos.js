@@ -19,7 +19,7 @@ var Util = require('./../src/Util');
 var xvideos = function(){
 
 
-    this.help = {
+    this.properties = {
         shortDescription: "Search xvideos",
         fullHelp: "`/xxx <query>` or`/xvideos <query>`\n\n( ͡° ͜ʖ ͡°)"
     };
