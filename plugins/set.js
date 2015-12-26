@@ -25,40 +25,9 @@ var set = function(){
 
     this.properties = {
         shortDescription: "Trigger bot responses whenever someone says a specific sentence. ",
-        fullHelp: "`/set trigger - response` to set a trigger. Whenever a message equal to `trigger` will be sent the bot will answer with `response`.\n`/unset <trigger>` will delete the trigger."
+        fullHelp: "`/set trigger - response` to set a trigger. Whenever a message equal to `trigger` will be sent the bot will answer with `response`.\n`/unset <trigger>` will delete the trigger.",
+        databaseAccess: true
     };
-
-    dict = {};
-
-    this.on("init", function (done){
-        var self = this;
-        fs.readFile("./files/set",'utf8', function(err, data) {
-            if(err) {    
-                if(err.code == 'ENOENT') {
-                    dict = {}
-                    console.log("\tSET: file not found. Empty Set.");
-                } else {
-                    return done(err, null);
-                }
-            } else {
-                dict = JSON.parse(data);
-                console.log("\tSET: file loaded");
-            }
-
-            done(null, self);
-        }); 
-    });
-
-    this.on("stop", function (done){
-        fs.writeFile("./files/set", JSON.stringify(dict), { flags: 'w' }, function(err) {
-            if(err) {
-                return done(err);
-            }
-            console.log("\tSET: file saved");
-            done();
-        }); 
-    });
-
 
     this.on("text", function (msg, reply){
         var matchSet = Util.parseCommand(msg.text,["set"], {splitBy: "-"});  
@@ -69,13 +38,8 @@ var set = function(){
             value = matchSet[2];
             if(!key || !value)
                 return;
-            
             chat = msg.chat.id;
-
-            if(!dict[chat])
-                dict[chat] = {};
-
-            dict[chat][key] = value;
+            this.db.set(chat+":"+key, value);
 
             reply({type: 'text', text: "`" + key + "` = `" + value + "`", options:{parse_mode: "Markdown"}})
 
@@ -87,7 +51,7 @@ var set = function(){
             key = matchUnset[1];
             chat = msg.chat.id;
 
-            delete dict[chat][key];
+            this.db.del(chat+":"+key);
             reply({type: 'text', text: "Unset `" + key + "`", options:{parse_mode: "Markdown"} });
             console.log("\tSET: unset " + key + " on " + chat);
 
@@ -96,25 +60,26 @@ var set = function(){
         {
             message = msg.text;
             chat = msg.chat.id;
-            if(dict[chat])
-            {   
-                var keys = Object.keys(dict[chat]);
+            var self = this;
+            self.db.keys(chat+":*", function(err, keys){
                 for(var i=0;i<keys.length;i++)
                 {  
-
-                    var key = keys[i];
-
+                    var key = keys[i].replace(chat + ":","");
 
                     if(message.indexOf(key) > -1) //lightweight check
                     {
                         var re = new RegExp("(^|\\s+)(" + key + ")(\\s+|$)","gi"); //we really check with regex for word boundaries
                         match = re.exec(message);
                         if(match)
-                            reply({type: 'text', text: dict[chat][key]});
+                        {    
+                            self.db.get(keys[i], function(err, value){
+                                reply({type: 'text', text: value});
+                            });
+                        }
                     }
                 }
-            }
-
+            });
+            
         }
     });
 
