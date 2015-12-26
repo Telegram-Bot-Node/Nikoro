@@ -116,7 +116,10 @@ In Alphabetical Order
 
 * [Cristian Baldi](https://github.com/crisbal/)
     * Crated the project
-    * Developed a bunch plugins
+    * Developed a bunch of plugins
+    * Added redis support
+    * Improved the plugin system
+    * Messed up the code
     
 * [Phill Farrugia](https://github.com/phillfarrugia/)
     * Improved & documented the code
