@@ -56,6 +56,7 @@ stdin.addListener("data", function(d) {
     // with toString() and then substring() 
     var text = d.toString().trim()
     message = { text:text, 
-            chat:{ id:-1 }};
+            chat:{ id:-1 },
+            from: { username: 'tester'}};
     process.emit("text", message);
 });
