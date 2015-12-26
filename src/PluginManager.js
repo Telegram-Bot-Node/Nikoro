@@ -1,18 +1,18 @@
 /*
-	PluginManager
+    PluginManager
 
-	An abstract class used to require an array of external modules
-	or `plugins` specified by an array of module names. Each plugin
-	is safely loaded, configured, initialized and shutdown by this class 
-	before being used externally.
+    An abstract class used to require an array of external modules
+    or `plugins` specified by an array of module names. Each plugin
+    is safely loaded, configured, initialized and shutdown by this class 
+    before being used externally.
 
-	Plugin Lifecycle
-	1. Require plugin module
-	2. Call `check()` method
-	3. Call `init()` method
-	4. Plugin now safely running
-	5. Call `doStop()` method
-	6. Plugin now safely stopped
+    Plugin Lifecycle
+    1. Require plugin module
+    2. Call `check()` method
+    3. Call `init()` method
+    4. Plugin now safely running
+    5. Call `doStop()` method
+    6. Plugin now safely stopped
 */
 
 var EventEmitter = require('events').EventEmitter; //these two are used to add event capabilities to plugins
@@ -25,11 +25,11 @@ var DBWrapper = require('./DBWrapper');
 function PluginManager() {
 
     /*
-    	Performs all setup necessary to begin running a list of plugins.
-    	Includes loading, configuring and initialization.
+        Performs all setup necessary to begin running a list of plugins.
+        Includes loading, configuring and initialization.
 
-    	@param plugins - An array of plugin names corresponding to file
-    	names in the plugins directory.
+        @param plugins - An array of plugin names corresponding to file
+        names in the plugins directory.
     */
 
     PluginManager.prototype.runPlugins = function(plugins, callback) {
@@ -93,13 +93,13 @@ function PluginManager() {
     }
 
     /*
-    	Loads a list of plugins by requiring the necessary module
-    	and checking that it is configured correctly.
+        Loads a list of plugins by requiring the necessary module
+        and checking that it is configured correctly.
 
-    	@param plugins - An array of plugin names corresponding to file
-    	names in the plugins directory.
+        @param plugins - An array of plugin names corresponding to file
+        names in the plugins directory.
 
-    	@return -  An array of loaded, configured plugin modules or functions.
+        @return -  An array of loaded, configured plugin modules or functions.
     */
     PluginManager.prototype.loadPlugins = function(plugins) {
         var loadedPlugins = [];
@@ -124,12 +124,12 @@ function PluginManager() {
 
 
     /*
-    	Loads an individual plugin by requiring the necessary module.
+        Loads an individual plugin by requiring the necessary module.
 
-    	@param plugin - A plugin name corresponding to a file
-    	name in the plugins directory.
+        @param plugin - A plugin name corresponding to a file
+        name in the plugins directory.
 
-    	@return -  A new instance of the specified plugin.
+        @return -  A new instance of the specified plugin.
     */
     PluginManager.prototype.loadPlugin = function(pluginName) {
         try {
@@ -161,14 +161,14 @@ function PluginManager() {
     }
 
     /*
-    	Validates an individual plugin by checking that all configuration
-    	requirements have been met. A plugin is considering configured correctly
-    	if its internal `check` method returns true, or if no such method exists.
+        Validates an individual plugin by checking that all configuration
+        requirements have been met. A plugin is considering configured correctly
+        if its internal `check` method returns true, or if no such method exists.
 
-    	@param plugin - A plugin module or function.
+        @param plugin - A plugin module or function.
 
-    	@return -  `true` if no configuration is needed, or if internal plugin 
-    	configuration returns `true`. Otherwise returns `false` and is ignored.
+        @return -  `true` if no configuration is needed, or if internal plugin 
+        configuration returns `true`. Otherwise returns `false` and is ignored.
     */
     PluginManager.prototype.validatePlugin = function(plugin) {
         if (typeof plugin.check == 'function') {
@@ -199,11 +199,11 @@ function PluginManager() {
     }
 
     /*
-    	Shuts down each running plugin module by calling plugin's
-    	internal `doStop` method.
+        Shuts down each running plugin module by calling plugin's
+        internal `doStop` method.
 
-    	@param - done - A callback function to be performed when shutDown
-    	all plugins have safely prepared to terminate. 
+        @param - done - A callback function to be performed when shutDown
+        all plugins have safely prepared to terminate. 
     */
     PluginManager.prototype.shutDown = function(done) {
 
@@ -220,7 +220,7 @@ function PluginManager() {
                     };
                     runningPlugins.splice(0, 1); // remove plugin
                     if (runningPlugins.length == 0) {
-                    	self.runningPlugins = [];
+                        self.runningPlugins = [];
                         self.PluginHelper.emit("stop",function(){
                             resolve();
                         })
