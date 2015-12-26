@@ -22,72 +22,76 @@ var karma = function(){
 
     this.properties = {
         shortDescription: "Give Karma Points to your friends!",
-        fullHelp: "`@username++` will give to `@username` a Karma Point\n`@username--` will remove from `@username` a Karma Point"
+        fullHelp: "`@username++` will give to `@username` a Karma Point\n`@username--` will remove from `@username` a Karma Point",
+        databaseAccess: true
     };
-
-    karma = {};
-
-    this.on("init", function (done){
-        var self = this;
-
-        fs.readFile("./files/karma",'utf8', function(err, data) {
-            if(err) {    
-                if(err.code == 'ENOENT') {
-                    karma = {}
-                    console.log("\tKarma: file not found. Empty Karma.");
-                } else {
-                    return done(err, null);
-                }
-            } else {
-                karma = JSON.parse(data);
-                console.log("\tKarma: file loaded");
-                
-            }
-            return done(null, self);
-        }); 
-    });
-
-    this.on("stop", function (done){
-        var fs = require('fs');
-        fs.writeFile("./files/karma", JSON.stringify(karma), { flags: 'w' }, function(err) {
-            if(err) {
-                return done(err);
-            }
-            console.log("\tKarma: file saved");
-            return done();
-        }); 
-    });
-
 
     this.on("text", function (msg, reply){
         var reKarma = /@([a-z0-9-_]+)\s*(\-\-|\+\+|—)/ig; 
 
         var matchKarma = reKarma.exec(msg.text);  
         
-        //var matchChart = Util.parseCommand(msg.text,["karmachart"]);  
+        var matchChart = Util.parseCommand(msg.text,["karmachart"]);  
         if(matchKarma){
             uname = matchKarma[1];
             operator = matchKarma[2];
             chat = msg.chat.id;
 
-            if(uname.toLowerCase() == msg.from.username.toLowerCase())
+            /*if(uname.toLowerCase() == msg.from.username.toLowerCase())
             {
-                reply({type: 'text', text: "Hey! You can't give Karma to yourself!"});
+                reply({type: 'text', text: "Hey! You can't karma yourself!"});
                 return;
+            }*/
+            
+            if(operator == "--" || operator == "—")
+            {
+                this.db.decr(chat + ":" + uname, function(err, now){
+                    reply({type: 'text', text: "@" + uname + " now has " + now + " Karma"});
+                });
+            }
+            else
+            {
+                this.db.incr(chat + ":" + uname, function(err, now){
+                    reply({type: 'text', text: "@" + uname + " now has " + now + " Karma"});
+                })
             }
 
-            if(!karma[chat])
-                karma[chat] = {};
+        }
+        else if(matchChart){
+            var self = this;
+            chat = msg.chat.id;
 
-            if(!karma[chat][uname])
-                karma[chat][uname] = 0;
+            self.db.keys(chat + ":*", function(err, keys){
+                var originalKeys = keys.slice();
+                var ranking=[];
 
-            if(operator == "--" || operator == "—")
-                karma[chat][uname]--;
-            else
-                karma[chat][uname]++;
+                if(originalKeys.length == 0)
+                {
+                    reply({type: 'text', text: "No Karma was given in this chat."});
+                    return;
+                }
+                for (var i = 0; i < originalKeys.length; i++) {
+                    (function(k) {
+                        self.db.get(k, function(err, v){
+                            ranking.push({key: k.replace(chat + ":",""), value: v});
 
-            reply({type: 'text', text: "@" + uname + " now has " + karma[chat][uname] + " Karma"});
+                            keys.splice(0, 1); // classic hack for async for
+                            if (keys.length == 0) {
+                                ranking.sort(function(a,b) {
+                                    return b.value - a.value;
+                                });
+                                
+                                message = "👑 *Karma Ranking* 👑\n";
+                                for (var j = 0; j < ranking.length; j++) {
+                                    message+= "\n" + (j+1) +") " + ranking[j].key + " (" + ranking[j].value +")";
+                                }
+                                reply({type: 'text', text: message , options:{parse_mode: "Markdown"}});
+
+                            }
+                        });
+                    })(originalKeys[i]);
+                };
+            });
         }
     });
 
