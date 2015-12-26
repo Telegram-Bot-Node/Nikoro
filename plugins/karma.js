@@ -15,7 +15,6 @@
 
         
 */
-var fs = require('fs');
 var Util = require('./../src/Util');
 
 var karma = function(){
@@ -37,11 +36,11 @@ var karma = function(){
             operator = matchKarma[2];
             chat = msg.chat.id;
 
-            /*if(uname.toLowerCase() == msg.from.username.toLowerCase())
+            if(uname.toLowerCase() == msg.from.username.toLowerCase())
             {
                 reply({type: 'text', text: "Hey! You can't karma yourself!"});
                 return;
-            }*/
+            }
             
             if(operator == "--" || operator == "—")
             {
@@ -71,6 +70,7 @@ var karma = function(){
                     return;
                 }
                 for (var i = 0; i < originalKeys.length; i++) {
+
                     (function(k) {
                         self.db.get(k, function(err, v){
                             ranking.push({key: k.replace(chat + ":",""), value: v});
@@ -90,6 +90,7 @@ var karma = function(){
                             }
                         });
                     })(originalKeys[i]);
+                    
                 };
             });
         }
