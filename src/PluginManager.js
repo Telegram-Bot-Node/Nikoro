@@ -57,7 +57,8 @@ function PluginManager() {
             
             util.inherits(PluginHelper, EventEmitter);
             self.PluginHelper = new PluginHelper();
-
+            self.PluginHelper.db = new DBWrapper("PluginHelper");
+            
             self.PluginHelper.emit("init", function(){
 
                 var toInitialize = loadedPlugins.slice(); // copy array

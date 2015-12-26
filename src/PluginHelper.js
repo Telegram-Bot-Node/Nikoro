@@ -29,7 +29,11 @@ var PluginHelper = function(){
 
     this.on("stop", function (callback){
         console.log("Stopping PluginHelper");
-        callback();
+        
+        this.db.save(function(){
+            console.log("Redis DB - Saved");
+            callback();
+        });
     });
 
     this.on("text", function (msg, reply){

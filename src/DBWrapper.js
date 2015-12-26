@@ -37,5 +37,10 @@ DBWrapper.prototype.keys = function(keyWC, callback) {
     });
 };
 
+DBWrapper.prototype.save = function(callback) {
+    this.db.bgsave(function() {
+        if(callback) callback.apply(callback, arguments);
+    });
+};
 
 module.exports = DBWrapper;
