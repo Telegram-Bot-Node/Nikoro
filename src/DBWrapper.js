@@ -44,10 +44,46 @@ DBWrapper.prototype.del = function(key, callback) {
 
 DBWrapper.prototype.keys = function(keyWC, callback) {
     keyWC = "ntb:" + this.pluginName+":" + keyWC;
-    self = this;
+    var self = this;
     this.redisdb.keys(keyWC, function(err, keys) {
         for (var i = 0; i < keys.length; i++) {
             keys[i] = keys[i].replace("ntb:" + self.pluginName+":", "");
+        };
+        if(callback) callback(err,keys)
+    });
+};
+
+DBWrapper.prototype.delKeys = function(keyWC, callback) {
+    keyWC = "ntb:" + this.pluginName+":" + keyWC;
+    var self = this;
+    self.redisdb.keys(keyWC, function(err, keys) {
+        var _keys = keys.splice();
+        for (var i = 0; i < keys.length; i++) {
+            (function(key) {
+                self.redisdb.del(key, function(){
+                    _keys.splice(0,1);
+                    if(_keys.length == 0 && callback)
+                        callback.apply(callback, arguments);
+                });
+            })(keys[i]);
+        };
+        if(callback) callback(err,keys)
+    });
+};
+
+DBWrapper.prototype.flushall = function(callback) {
+    keyWC = "ntb:" + this.pluginName+":*";
+    var self = this;
+    self.redisdb.keys(keyWC, function(err, keys) {
+        var _keys = keys.splice();
+        for (var i = 0; i < keys.length; i++) {
+            (function(key) {
+                self.redisdb.del(key, function(){
+                    _keys.splice(0,1);
+                    if(_keys.length == 0 && callback)
+                        callback.apply(callback, arguments);
+                });
+            })(keys[i]);
         };
         if(callback) callback(err,keys)
     });
