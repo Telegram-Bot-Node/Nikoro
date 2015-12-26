@@ -20,6 +20,20 @@ DBWrapper.prototype.get = function(key, callback) {
     });
 };
 
+DBWrapper.prototype.incr = function(key, callback) {
+    key = "ntb:"  + this.pluginName + ":"+key;
+    this.redisdb.incr(key, function() {
+        if(callback) callback.apply(callback, arguments);
+    });
+};
+
+DBWrapper.prototype.decr = function(key, callback) {
+    key = "ntb:"  + this.pluginName + ":"+key;
+    this.redisdb.decr(key, function() {
+        if(callback) callback.apply(callback, arguments);
+    });
+};
+
 DBWrapper.prototype.del = function(key, callback) {
     key = "ntb:" + this.pluginName + ":"+key;
 
