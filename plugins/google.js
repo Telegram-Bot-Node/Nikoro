@@ -20,57 +20,65 @@
 var request = require('request');
 var Util = require('./../src/Util');
 
-var google = function(){
+var google = function() {
 
-    var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
+    var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || "";
 
     this.properties = {
         shortDescription: "Search anything on Google.",
         fullHelp: "`/google query` or `/g query` and you are ready to find stuff on the Internet.\nBe careful! It is pretty big!"
     };
 
-    this.check = function(){
+    this.check = function() {
         return GOOGLE_API_KEY == "" ? false : true;
     };
 
-    this.on("text", function (msg, reply){
+    this.on("text", function(msg, reply) {
 
-        var args = Util.parseCommand(msg.text,["google","g"], {joinParams: true});
+        var args = Util.parseCommand(msg.text, ["google", "g"], {
+            joinParams: true
+        });
 
-        if(args != null){
+        if (args != null) {
+            query = args[1];
 
-            query = args[1]
+            if (query.length > 0) {
 
-            if(query.length > 0){
-
-                reply({type:"status", status: "typing"});
+                reply({
+                    type: "status",
+                    status: "typing"
+                });
 
                 console.log("\tGoogle: " + query);
                 link = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=" + encodeURIComponent(query) + "&key=" + GOOGLE_API_KEY;
-                
-                request(link, function (error, response, data) {
-                    if (!error && response.statusCode == 200) {
-                        
-                        data = JSON.parse(data);
-                        
-                        if(data["responseData"])
-                        {
-                            if(data["responseData"]["results"])
-                            {
-                                var result = data["responseData"]["results"][0];
-                                
-                                title = result["titleNoFormatting"];
-                                link = result["url"];
-                               
 
-                                if(title && link)
-                                    reply({type:"text", text: "[" + title + "](" + link + ")", options:{parse_mode: "Markdown"}})       
+                request(link, function(error, response, data) {
+                    if (!error && response.statusCode == 200) {
+
+                        data = JSON.parse(data);
+
+                        if (data["responseData"]) {
+                            if (data["responseData"]["results"]) {
+                                var result = data["responseData"]["results"][0];
+
+                                title = result["titleNoFormatting"];
+                                link = decodeURIComponent(result["url"]).split("(").join("%28").split(")").join("%29");
+
+                                if (title && link) {
+                                    reply({
+                                        type: "text",
+                                        text: "[" + title + "](" + link + ")",
+                                        options: {
+                                            parse_mode: "Markdown"
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
                 });
 
-                
+
             }
         }
     });
