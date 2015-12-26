@@ -2,21 +2,20 @@ var redis = require("redis");
 
 var DBWrapper = function (pluginName) {
     this.pluginName = pluginName;
-    this.db = redis.createClient();
+    this.redisdb = redis.createClient();
 };
 
 DBWrapper.prototype.set = function(key, value, callback) {
     key = "ntb:"+this.pluginName+":"+key;
     
-    this.db.set(key, value, function(){
+    this.redisdb.set(key, value, function(){
         if(callback) callback.apply(callback, arguments);
     });
 };
 
 DBWrapper.prototype.get = function(key, callback) {
-    key = "ntb:"  +this.pluginName + ":"+key;
-
-    this.db.get(key, function() {
+    key = "ntb:"  + this.pluginName + ":"+key;
+    this.redisdb.get(key, function() {
         if(callback) callback.apply(callback, arguments);
     });
 };
@@ -24,21 +23,24 @@ DBWrapper.prototype.get = function(key, callback) {
 DBWrapper.prototype.del = function(key, callback) {
     key = "ntb:" + this.pluginName + ":"+key;
 
-    this.db.del(key, function() {
+    this.redisdb.del(key, function() {
         if(callback) callback.apply(callback, arguments);
     });
 };
 
 DBWrapper.prototype.keys = function(keyWC, callback) {
     keyWC = "ntb:" + this.pluginName+":" + keyWC;
-
-    this.db.keys('*', function() {
-        if(callback) callback.apply(callback, arguments);
+    self = this;
+    this.redisdb.keys(keyWC, function(err, keys) {
+        for (var i = 0; i < keys.length; i++) {
+            keys[i] = keys[i].replace("ntb:" + self.pluginName+":", "");
+        };
+        if(callback) callback(err,keys)
     });
 };
 
 DBWrapper.prototype.save = function(callback) {
-    this.db.bgsave(function() {
+    this.redisdb.bgsave(function() {
         if(callback) callback.apply(callback, arguments);
     });
 };
