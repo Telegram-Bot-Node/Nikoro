@@ -94,6 +94,7 @@ Util.parseCommand = function(message, commandName, options){
 
 
 Util.startsWith = function(string,what){
-    return string.slice(0, prefix.length) == prefix;
+    return string.slice(0, what.length) == what;
 }
+
 module.exports = Util;
