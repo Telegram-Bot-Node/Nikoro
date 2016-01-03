@@ -92,4 +92,8 @@ Util.parseCommand = function(message, commandName, options){
     } 
 }
 
+
+Util.startsWith = function(string,what){
+    return string.slice(0, prefix.length) == prefix;
+}
 module.exports = Util;
