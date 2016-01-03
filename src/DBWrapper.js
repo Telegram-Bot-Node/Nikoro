@@ -20,6 +20,13 @@ DBWrapper.prototype.get = function(key, callback) {
     });
 };
 
+DBWrapper.prototype.getMe = function(key, callback) {
+    key = "ntb:telegram-me:username";
+    this.redisdb.get(key, function() {
+        if(callback) callback.apply(callback, arguments);
+    });
+};
+
 DBWrapper.prototype.incr = function(key, callback) {
     key = "ntb:"  + this.pluginName + ":"+key;
     this.redisdb.incr(key, function() {

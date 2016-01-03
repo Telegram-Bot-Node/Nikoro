@@ -32,16 +32,16 @@ function PluginManager() {
         names in the plugins directory.
     */
 
-    PluginManager.prototype.runPlugins = function(plugins, callback) {
+    PluginManager.prototype.runPlugins = function(plugins, botInfo, callback) {
         console.log(plugins.length + " Plugins activated");
 
-        var loadedPlugins = PluginManager.prototype.loadPlugins(plugins);
+        var loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
         console.log(loadedPlugins.length + " Plugins loaded and checked");
         this.loadedPlugins = loadedPlugins;
 
         console.log("Initializing Plugins");
         var self = this;
-        PluginManager.prototype.initPlugins(loadedPlugins).then(function(plugins){
+        PluginManager.prototype.initPlugins(loadedPlugins, botInfo).then(function(plugins){
             self.runningPlugins = plugins;
             callback(plugins);
 
@@ -50,7 +50,7 @@ function PluginManager() {
         });
     }
 
-    PluginManager.prototype.initPlugins = function(loadedPlugins) {
+    PluginManager.prototype.initPlugins = function(loadedPlugins, botInfo) {
         var self = this;
 
         return new Promise( function(resolve, reject){
@@ -58,7 +58,8 @@ function PluginManager() {
             util.inherits(PluginHelper, EventEmitter);
             self.PluginHelper = new PluginHelper();
             self.PluginHelper.db = new DBWrapper("PluginHelper");
-            
+            self.PluginHelper.botInfo = botInfo;
+
             self.PluginHelper.emit("init", function(){
 
                 var toInitialize = loadedPlugins.slice(); // copy array
@@ -67,10 +68,6 @@ function PluginManager() {
                 for (var idx in toInitialize) {
                     var loadedPlugin = toInitialize[idx];
 
-                    if(loadedPlugin.properties.databaseAccess)
-                    {
-                        loadedPlugin.db = new DBWrapper(loadedPlugin.properties.name);
-                    }
 
                     loadedPlugin.emit("init",function(err, plugin) {
                         if (err) {
@@ -102,13 +99,13 @@ function PluginManager() {
 
         @return -  An array of loaded, configured plugin modules or functions.
     */
-    PluginManager.prototype.loadPlugins = function(plugins) {
+    PluginManager.prototype.loadPlugins = function(plugins, botInfo) {
         var loadedPlugins = [];
         var loadedPluginNames = [];
 
         for (var idx in plugins) {
             var pluginName = plugins[idx];
-            var module = PluginManager.prototype.loadPlugin(pluginName);
+            var module = PluginManager.prototype.loadPlugin(pluginName, botInfo);
 
             if (module != null && PluginManager.prototype.validatePlugin(module)) {
                 loadedPlugins.push(module);
@@ -132,7 +129,7 @@ function PluginManager() {
 
         @return -  A new instance of the specified plugin.
     */
-    PluginManager.prototype.loadPlugin = function(pluginName) {
+    PluginManager.prototype.loadPlugin = function(pluginName, botInfo) {
         try {
             var module = require('./../plugins/' + pluginName);
 
@@ -140,6 +137,13 @@ function PluginManager() {
 
             module = new module();
             module.properties.name = pluginName;
+
+            module.botInfo = botInfo;
+                    
+            if(module.properties.databaseAccess)
+            {
+                module.db = new DBWrapper(module.properties.name);
+            }
 
             if (module.listeners('init').length == 0) {
                 module.addListener("init", function (done, db){

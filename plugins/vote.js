@@ -29,13 +29,13 @@ var vote = function(){
                 return;
 
             self.db.set(chat + ":vote:" + uname, option, function (err) {
-                reply({type: 'text', text: "Your vote has been registered.", options: { reply_to_message: msg }});
+                reply({type: 'text', text: "Your vote has been registered.", options: { reply_to_message_id: msg.message_id }});
             });
         }
         else if(matchClearVote){
             self.db.del(chat+":question", function (err) {
                 self.db.delKeys(chat+":vote:*", function (err) {
-                    reply({type: 'text', text: "Current vote has been cleared.", options: { reply_to_message: msg }});
+                    reply({type: 'text', text: "Current vote has been cleared.", options: { reply_to_message_id: msg.message_id }});
                 });
             });
         }
@@ -45,7 +45,7 @@ var vote = function(){
                 return;
 
             self.db.set(chat + ":question", option, function (err) {
-                reply({type: 'text', text: "Vote topic set.", options: { reply_to_message: msg }});
+                reply({type: 'text', text: "Vote topic set.", options: { reply_to_message_id: msg.message_id }});
             });
         }
         else if(matchGetVote){

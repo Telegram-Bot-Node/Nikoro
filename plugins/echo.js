@@ -13,7 +13,13 @@ var echo = function(){
 
         if (matchEcho)
             if(matchEcho[1])
-                reply({type: 'text', text: matchEcho[1]}); 
+            {
+                text = matchEcho[1];
+                if(text.startsWith("!") || text.startsWith("/"))
+                    reply({type: 'text', text: "I am not echoing that.", options: { reply_to_message_id: msg.message_id }}); 
+                else 
+                    reply({type: 'text', text: matchEcho[1]}); 
+            }
     });
 
 };

@@ -71,23 +71,24 @@ var PluginHelper = function(){
         } 
         else if (matchStart) 
         {
-            message = "Type /list or /help to see a list of available plugins. Use /info to get more info about me.";
+            message = "Type `/list` or `/help` to see a list of available plugins. Use `/info` to get more info about me.";
             reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
         }
         else if (matchInfo) 
         {
-            message = "*Factotum Bot*\n\nThe only Telegram bot you will ever need.\n\n[Source Code](https://github.com/crisbal/Node-Telegram-Bot)";
-            reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
+            message = "*Factotum Bot*\n\nThe only Telegram bot you will ever need.\n\nCreator: @crisbal | [Source Code](https://github.com/crisbal/Node-Telegram-Bot)";
+            reply({type:"text", text: message, options:{parse_mode: "Markdown", disable_web_page_preview: true} });
         }
     });
 
     
     this.on("new_chat_participant", function (msg, reply){
-        user = msg.new_chat_participant;
-        if(user.username.toLowerCase()=="factotum_bot")
+        newUser = msg.new_chat_participant;
+        if(newUser.username == this.botInfo.username)
         {
-            reply({type: 'text', text: "Hello, I am Factotum Bot! Use /help or /list to see a list of available plugins. Use /info to get more info about me."});
-        }
+            reply({type: 'text', text: "Hello, I am Factotum Bot! Use  `/help` or `/list` to see a list of available plugins. Use `/info` to get more info about me.", options:{parse_mode: "Markdown"}});
+            
+        } 
     });
 
 

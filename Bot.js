@@ -9,17 +9,26 @@ var bot = new TelegramBot(token, {
     polling: true
 });
 
+
 console.log("The bot is starting...");
-plugins.runPlugins(config.activePlugins, function(){
-    console.log("All plugins are now running!");
-    
-    var events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
-    events.forEach(function(eventName){
-        bot.on(eventName, function(message){
-            emitHandleReply(eventName, message);
+
+bot.getMe().then(function (me) {
+
+    plugins.runPlugins(config.activePlugins, me, function(){
+        console.log("All plugins are now running!");
+
+        var events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
+            events.forEach(function(eventName){
+            bot.on(eventName, function(message){
+                emitHandleReply(eventName, message);
+            });
         });
     });
+
+}, function(){
+    console.log("Can't getMe! Is the token set?");
 });
+
 
 function emitHandleReply(eventName, message){
     var chatId = message.chat.id; 

@@ -66,9 +66,9 @@ var set = function(){
                 {  
                     var key = keys[i].replace(chat + ":","");
 
-                    if(message.indexOf(key) > -1) //lightweight check
+                    if(message.toLowerCase().indexOf(key) > -1) //lightweight check
                     {
-                        var re = new RegExp("(^|\\s+)(" + key + ")(\\s+|$)","gi"); //we really check with regex for word boundaries
+                        var re = new RegExp("\b(" + key + ")\b","gi"); //we really check with regex for word boundaries
                         match = re.exec(message);
                         if(match)
                         {    
