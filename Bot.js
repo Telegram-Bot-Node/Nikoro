@@ -17,10 +17,14 @@ bot.getMe().then(function (me) {
     plugins.runPlugins(config.activePlugins, me, function(){
         console.log("All plugins are now running!");
 
+
         var events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
             events.forEach(function(eventName){
             bot.on(eventName, function(message){
-                emitHandleReply(eventName, message);
+                if(process.argv[2]) //pass a parameter to the node Bot.js command if you want to just listen to events and don't reply, useful if the bot crashed and it now has a big backlog.
+                    console.log(eventName);
+                else   
+                    emitHandleReply(eventName, message);
             });
         });
     });
