@@ -1,14 +1,10 @@
-/*
-    
-
-*/
 var Util = require('./../src/Util');
 
 var vote = function(){
 
     this.properties = {
         shortDescription: "A simple vote plugin.",
-        fullHelp: "",
+        fullHelp: "`/vote <option>` to vote for an option\n`/clearvote` to clear the current vote\n`/setvote <topic>` to set the current topic for the vote\n`\getvote` or `\voteresults` to get info and results about the current vote.",
         databaseAccess: true
     };
 
