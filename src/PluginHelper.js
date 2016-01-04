@@ -59,14 +59,14 @@ var PluginHelper = function(){
             }
             else
             {
-                message = generateHelp();
+                message = this.generateList();
                 reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
             }
             
         } 
         else if (matchList) 
         {
-            message = generateHelp();
+            message = this.generateList();
             reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
         } 
         else if (matchStart) 
@@ -96,7 +96,7 @@ var PluginHelper = function(){
         this.plugins[plugin.properties.name] = plugin.properties;
     };
 
-    this.generateHelp = function(){
+    this.generateList = function(){
         var message = "*Enabled Plugins*\n\n"
 
         pluginNames = Object.keys(this.plugins)
