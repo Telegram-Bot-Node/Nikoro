@@ -64,17 +64,17 @@ DBWrapper.prototype.delKeys = function(keyWC, callback) {
     keyWC = "ntb:" + this.pluginName+":" + keyWC;
     var self = this;
     self.redisdb.keys(keyWC, function(err, keys) {
-        var _keys = keys.splice();
+        var _keys = keys.slice();
+        var _args = arguments.slice();
         for (var i = 0; i < keys.length; i++) {
             (function(key) {
                 self.redisdb.del(key, function(){
                     _keys.splice(0,1);
                     if(_keys.length == 0 && callback)
-                        callback.apply(callback, arguments);
+                        callback.apply(callback, _args);
                 });
             })(keys[i]);
         };
-        if(callback) callback(err,keys)
     });
 };
 
@@ -82,17 +82,17 @@ DBWrapper.prototype.flushall = function(callback) {
     keyWC = "ntb:" + this.pluginName+":*";
     var self = this;
     self.redisdb.keys(keyWC, function(err, keys) {
-        var _keys = keys.splice();
+        var _keys = keys.slice();
+        var _args = arguments.slice();
         for (var i = 0; i < keys.length; i++) {
             (function(key) {
                 self.redisdb.del(key, function(){
                     _keys.splice(0,1);
                     if(_keys.length == 0 && callback)
-                        callback.apply(callback, arguments);
+                        callback.apply(callback, _args);
                 });
             })(keys[i]);
         };
-        if(callback) callback(err,keys)
     });
 };
 
