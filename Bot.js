@@ -77,7 +77,6 @@ function handleReply(chatId, reply){
 
 
 function handleAnswerInlineQuery(chatId, results, options){
-    console.log(results);
     bot.answerInlineQuery(chatId, results, options);
 }
 
