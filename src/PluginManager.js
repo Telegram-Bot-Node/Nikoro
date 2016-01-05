@@ -190,7 +190,6 @@ function PluginManager() {
 
     PluginManager.prototype.emit = function() {
         var runningPlugins = this.runningPlugins;
-        
         try {
             this.PluginHelper.emit.apply(this.PluginHelper, arguments);
 

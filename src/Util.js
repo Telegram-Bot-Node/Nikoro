@@ -46,6 +46,7 @@ Util.parseCommand = function(message, commandName, options){
     options = options || {};
     var splitBy = options.splitBy || " ";
     var joinParams = options.joinParams || false;
+    var noRequireTrigger = options.noRequireTrigger || false;
 
     if (!splitBy)
         splitBy = " ";
@@ -64,7 +65,12 @@ Util.parseCommand = function(message, commandName, options){
             regexParam += "|";
     }
     
-    var re = new RegExp("^(?:\\/)(" + regexParam +")\\s+(.*)"); 
+    var trigger = "";
+    if(!noRequireTrigger)
+        trigger = "(?:\\/)";
+
+    var re = new RegExp("^" + trigger + "(" + regexParam +")\\s+(.*)"); 
+
     var match = re.exec(message + " "); //we have to add this space because we specified "\s+" in the regex, to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"] 
 
     var args = [];
@@ -95,6 +101,14 @@ Util.parseCommand = function(message, commandName, options){
 
 Util.startsWith = function(string,what){
     return string.slice(0, what.length) == what;
+}
+
+
+Util.parseInline = function(message, commandName, options){
+    options = options || {};
+    options.noRequireTrigger = true;
+
+    return this.parseCommand(message,commandName,options);
 }
 
 module.exports = Util;
