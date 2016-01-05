@@ -1,17 +1,3 @@
-/*
-    DESCRIPTION: 
-        Ping - pong
-
-    AUTHOR: 
-        Cristian Baldi
-
-    COMMANDS:
-        ping
-
-    EXAMPLE:
-        You: ping
-        Bot: pong
-*/
 var Util = require('./../src/Util');
 var s = require("underscore.string");
 
@@ -19,6 +5,7 @@ var reverse = function(){
 
     this.properties = {
         inline: true,
+        onlyInline: true,
         shortDescription: "Reverse any text.",
         fullHelp: "Only available inline.\n`reverse <text>`"
     };

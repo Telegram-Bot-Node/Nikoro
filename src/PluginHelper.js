@@ -98,18 +98,18 @@ var PluginHelper = function(){
 
     this.generateList = function(){
         var message = "*Enabled Plugins*\n\n"
-        var messageInline = "*Inline Plugins*\n\n"
+        var messageInline = "\n*Inline Plugins*\n\n"
         pluginNames = Object.keys(this.plugins)
         for(var i in pluginNames)
         {
             plugin = this.plugins[pluginNames[i]];
-            if(!plugin.hidden && !plugin.inline)
+            if(!plugin.hidden && !plugin.onlyInline)
                 message += "• " + plugin.name + "\n";
             else if(!plugin.hidden && plugin.inline)
                 messageInline += "• " + plugin.name + "\n";
         }
         message += messageInline;
-        message += "\nUse `/help commandName` to get help about a specific plugin.";
+        message += "\nUse `/help pluginName` to get help about a specific plugin.";
 
         return message;
     }
