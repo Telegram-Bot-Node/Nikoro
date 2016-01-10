@@ -105,7 +105,8 @@ var PluginHelper = function(){
             plugin = this.plugins[pluginNames[i]];
             if(!plugin.hidden && !plugin.onlyInline)
                 message += "• " + plugin.name + "\n";
-            else if(!plugin.hidden && plugin.inline)
+            
+            if(!plugin.hidden && plugin.inline)
                 messageInline += "• " + plugin.name + "\n";
         }
         message += messageInline;
