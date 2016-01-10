@@ -21,6 +21,8 @@ var util = require('util');
 var PluginHelper = require('./PluginHelper');
 var DBWrapper = require('./DBWrapper');
 
+var log = require('winston');
+var category1 = winston.loggers.get('category1');
 
 function PluginManager() {
 
@@ -33,54 +35,65 @@ function PluginManager() {
     */
 
     PluginManager.prototype.runPlugins = function(plugins, botInfo, callback) {
-        console.log(plugins.length + " Plugins activated");
+        log.info(plugins.length + " plugins activated");
 
-        var loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
-        console.log(loadedPlugins.length + " Plugins loaded and checked");
-        this.loadedPlugins = loadedPlugins;
+        this.loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
+        log.info(this.loadedPlugins + " plugins imported and checked");
 
-        console.log("Initializing Plugins");
+        log.info("Initializing plugins");
         var self = this;
         PluginManager.prototype.initPlugins(loadedPlugins, botInfo).then(function(plugins){
+            log.info("All the plugins are initialized");
             self.runningPlugins = plugins;
             callback(plugins);
-
         }, function(error){
-            console.log("Error initializing plugins: " + error);
+            log.critical("Error initializing plugins: " + error);
         });
     }
 
-    PluginManager.prototype.initPlugins = function(loadedPlugins, botInfo) {
+    PluginManager.prototype.initPlugins = function(pluginsToInit, botInfo) {
         var self = this;
 
+        log.verbose("initPlugins Initializing " + pluginsToInit.length + " plugins");
+        
         return new Promise( function(resolve, reject){
             
+            log.verbose("Loading PluginHelper");
+
             util.inherits(PluginHelper, EventEmitter);
+            log.debug("PluginHelper inherited from EventEmitter");
+
             self.PluginHelper = new PluginHelper();
+            log.debug("PluginHelper created");
+
             self.PluginHelper.db = new DBWrapper("PluginHelper");
-            self.PluginHelper.botInfo = botInfo;
+            log.debug("PluginHelper now has a DBWrapper");
 
+            self.PluginHelper.botInfo = botInfo; 
+            log.debug("PluginHelper now has botInfo");
+
+            log.verbose("Emitting init to PluginHelper");
             self.PluginHelper.emit("init", function(){
+                log.info("PluginHelper is now initialized");
 
-                var toInitialize = loadedPlugins.slice(); // copy array
+                var toInitialize = pluginsToInit.slice(); // copy array
                 var inittedPlugins = [];
 
+                log.verbose("Emitting init to all the plugins");
                 for (var idx in toInitialize) {
                     var loadedPlugin = toInitialize[idx];
-
 
                     loadedPlugin.emit("init",function(err, plugin) {
                         if (err) {
                             reject(err);
                         };
-                        
 
                         inittedPlugins.push(plugin);
-
                         self.PluginHelper.addPlugin(plugin);
 
-                        loadedPlugins.splice(0, 1); // remove plugin because it is already loaded
-                        if (loadedPlugins.length == 0) {
+                        pluginsToInit.splice(0, 1); // remove plugin because it is already loaded
+                        if (pluginsToInit.length == 0) {
+                            log.verbose("All the plugins are initialized");
                             resolve(inittedPlugins);
                         }
                     });
@@ -100,23 +113,24 @@ function PluginManager() {
         @return -  An array of loaded, configured plugin modules or functions.
     */
     PluginManager.prototype.loadPlugins = function(plugins, botInfo) {
+        
+        log.verbose("Loading " + plugins.length + " plugins");
+
         var loadedPlugins = [];
-        var loadedPluginNames = [];
 
         for (var idx in plugins) {
             var pluginName = plugins[idx];
+            log.verbose("Now loading " + pluginName);
+
             var module = PluginManager.prototype.loadPlugin(pluginName, botInfo);
+            log.verbose("Loaded " + pluginName);
 
             if (module != null && PluginManager.prototype.validatePlugin(module)) {
                 loadedPlugins.push(module);
-                loadedPluginNames.push(pluginName);
-
             } else {
-                console.log("\t"+ pluginName + " configuration failed. Plugin not activated.");
+                log.error("\t"+ pluginName + " configuration failed. Plugin not activated.");
             }
         }
-
-        this.loadedPluginNames = loadedPluginNames;
         return loadedPlugins;
     }
 
@@ -132,20 +146,27 @@ function PluginManager() {
     PluginManager.prototype.loadPlugin = function(pluginName, botInfo) {
         try {
             var module = require('./../plugins/' + pluginName);
-
+            log.debug("Required " + pluginName);
             util.inherits(module, EventEmitter); //ability to listen and emit events
+            log.debug(pluginName + " inherited from EventEmitter");
 
             module = new module();
+            log.debug(pluginName + " created");
+            
             module.properties.name = pluginName;
+            log.debug(pluginName + " named");
 
             module.botInfo = botInfo;
+            log.debug(pluginName + " has botInfo");
                     
             if(module.properties.databaseAccess)
             {
                 module.db = new DBWrapper(module.properties.name);
+                log.debug(pluginName + " has database");
             }
 
             if (module.listeners('init').length == 0) {
+                log.verbose(pluginName + " added init");
                 module.addListener("init", function (done, db){
                     
                     done(null, module);
@@ -153,11 +174,12 @@ function PluginManager() {
             }
 
             if (module.listeners('stop').length == 0){
+                log.verbose(pluginName + " added stop");
                 module.addListener("stop", function (done){
                     done();
                 });
             }
-            //core handles plugin
+
             return module;
         } catch (err) {
             console.log("Error: " + err);
@@ -189,16 +211,19 @@ function PluginManager() {
 
 
     PluginManager.prototype.emit = function() {
+
         var runningPlugins = this.runningPlugins;
         try {
+            log.debug("Emitting event to PluginHelper");
             this.PluginHelper.emit.apply(this.PluginHelper, arguments);
-
+            log.debug("Emitting event to plugins");
             for (var idx in runningPlugins) {
                 var runningPlugin = runningPlugins[idx];
                 runningPlugin.emit.apply(runningPlugin, arguments); //emit all the params passed
             }
+
         } catch (ex) {
-            console.log(ex);
+            log.critical(ex);
         }
     }
 
@@ -212,10 +237,12 @@ function PluginManager() {
     PluginManager.prototype.shutDown = function(done) {
 
         var self = this;
+        log.verbose("Emitting shutDown");
 
         return new Promise( function(resolve, reject){
             var existingPlugins = self.runningPlugins.slice(); // copy array
             var runningPlugins = self.runningPlugins;
+
             for (var idx in existingPlugins) {
                 var runningPlugin = existingPlugins[idx];
                 runningPlugin.emit("stop", function(err) {
@@ -224,8 +251,11 @@ function PluginManager() {
                     };
                     runningPlugins.splice(0, 1); // remove plugin
                     if (runningPlugins.length == 0) {
+                        log.verbose("Plugins shutted down");
                         self.runningPlugins = [];
+                        log.verbose("Shutting down PluginHelper");
                         self.PluginHelper.emit("stop",function(){
+                            log.verbose("PluginManager shutted down");
                             resolve();
                         })
                     }

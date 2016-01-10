@@ -23,15 +23,11 @@ var PluginHelper = function(){
     this.plugins = {};
 
     this.on("init", function (callback){
-        console.log("Initting PluginHelper");
         callback();
     });
 
-    this.on("stop", function (callback){
-        console.log("Stopping PluginHelper");
-        
+    this.on("stop", function (callback){        
         this.db.save(function(){
-            console.log("Redis DB - Saved");
             callback();
         });
     });

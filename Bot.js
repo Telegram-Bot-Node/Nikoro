@@ -1,3 +1,5 @@
+var log = require('winston');
+
 var config = require('./Config');
 var token = config.telegramToken;
 
@@ -5,46 +7,52 @@ var PluginManager = require('./src/PluginManager');
 var plugins = new PluginManager();
 
 var TelegramBot = require('node-telegram-bot-api');
+log.verbose("Creating instance of TelegramBot with token " + token);
 var bot = new TelegramBot(token, {
     polling: true
 });
+log.verbose("TelegramBot created");
 
 
-console.log("The bot is starting...");
+log.info("The bot is starting");
 
+log.verbose("Calling getMe");
 bot.getMe().then(function (me) {
+    log.verbose("getMe successfull: " + me);
 
+    log.info("Running the plugins");
     plugins.runPlugins(config.activePlugins, me, function(){
-        console.log("All plugins are now running!");
-
+        log.info("All the plugins are now running");
 
         var events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
         events.forEach(function(eventName){
             bot.on(eventName, function(message){
-                if(process.argv[2]) //pass a parameter to the node Bot.js command if you want to just listen to events and don't reply, useful if the bot crashed and it now has a big backlog.
-                    console.log(eventName);
-                else   
+                log.debug("Triggered event: " + eventName);
+                if(!process.argv[2]) //pass a parameter to the node Bot.js command if you want to just listen to events and don't reply, useful if the bot crashed and it now has a big backlog.
                     emitHandleReply(eventName, message);
             });
         });
 
         bot.on("inline_query", function(query){
+            log.debug("Triggered event: inline_query");
             plugins.emit("inline_query", query, function(results, options) {
+                log.debug("Inside callback for emit inline_query");
                 handleAnswerInlineQuery(query.id, results, options);
             });
         });
-
     });
 
 }, function(){
-    console.log("Can't getMe! Is the token set?");
+    log.critical("Can't getMe! Is the token set?");
 });
 
 
 function emitHandleReply(eventName, message){
     var chatId = message.chat.id; 
+    log.debug("Emitting event to plugins: " + eventName);
     try{
         plugins.emit(eventName, message, function(reply) { //have to do this to avoid problems with chatId. Not the cleanest way.
+            log.debug("Inside callback for emit");
             handleReply(chatId,reply);
         });
     } catch (ex){
@@ -54,6 +62,9 @@ function emitHandleReply(eventName, message){
 };
 
 function handleReply(chatId, reply){
+
+    log.verbose("Produced a reply for " + chatId);
+
     switch (reply.type) {
         case "text":
             bot.sendMessage(chatId, reply.text, reply.options);
@@ -71,13 +82,14 @@ function handleReply(chatId, reply){
             bot.sendSticker(chatId, reply.sticker, reply.options);
             break;
         default:
-            console.log("Error: Unrecognized reply type");
+            console.warn("Unrecognized reply type");
     }
 }
 
 
-function handleAnswerInlineQuery(chatId, results, options){
-    bot.answerInlineQuery(chatId, results, options);
+function handleAnswerInlineQuery(queryId, results, options){
+    log.verbose("Produced an inline answer for " + queryId);
+    bot.answerInlineQuery(queryId, results, options);
 }
 
 // If `CTRL+C` is pressed we stop the bot safely.
@@ -87,9 +99,9 @@ process.on('SIGINT', shutDown);
 //process.on('uncaughtException', shutDown);
 
 function shutDown() {
-    console.log("The bot is shutting down, stopping plugins");
+    log.info("The bot is shutting down, stopping safely all the plugins");
     plugins.shutDown().then(function(){
-        console.log("All plugins stopped correctly!")
+        log.info("All plugins stopped correctly")
         process.exit();
     });
 }
