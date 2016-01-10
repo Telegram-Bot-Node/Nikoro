@@ -5,11 +5,11 @@
   "main": "Bot.js",
   "dependencies": {
     "cheerio": "*",
+    "google-images": "^1.0.0",
     "mathjs": "^2.5.0",
     "node-telegram-bot-api": "git://github.com/yagop/node-telegram-bot-api.git",
     "redis": "*",
     "request": "^2.67.0",
-    "twitter": "*",
     "underscore.string": "^3.2.2"
   },
   "devDependencies": {
