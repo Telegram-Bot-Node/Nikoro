@@ -9,7 +9,9 @@ var TelegramBot = require('node-telegram-bot-api');
 console.log("The tester is starting...");
 var self = this;
 
-plugins.runPlugins(config.activePlugins, function(){
+me = { id: 0, first_name: 'ManualPluginTester', username: 'ManualPluginTesterBot' };
+
+plugins.runPlugins(config.activePlugins, me, function(){
     console.log("All plugins are now running!");
     
     var events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];

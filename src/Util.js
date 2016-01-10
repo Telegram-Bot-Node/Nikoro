@@ -96,12 +96,12 @@ Util.parseCommand = function(message, commandName, options){
     } else {
         return null;
     } 
-}
+};
 
 
 Util.startsWith = function(string,what){
     return string.slice(0, what.length) == what;
-}
+};
 
 
 Util.parseInline = function(message, commandName, options){
@@ -109,6 +109,11 @@ Util.parseInline = function(message, commandName, options){
     options.noRequireTrigger = true;
 
     return this.parseCommand(message,commandName,options);
-}
+};
+
+Util.escapeRegExp = function(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+};
+
 
 module.exports = Util;

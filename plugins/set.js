@@ -41,7 +41,7 @@ var set = function(){
             chat = msg.chat.id;
             this.db.set(chat+":"+key, value);
 
-            reply({type: 'text', text: "`" + key + "` = `" + value + "`", options:{parse_mode: "Markdown"}})
+            reply({type: 'text', text: key + " = " + value})
 
             console.log("\tSET: " + key + " = " + value + " on " + chat);
 
@@ -52,7 +52,7 @@ var set = function(){
             chat = msg.chat.id;
 
             this.db.del(chat+":"+key);
-            reply({type: 'text', text: "Unset `" + key + "`", options:{parse_mode: "Markdown"} });
+            reply({type: 'text', text: "Unset " + key + ""});
             console.log("\tSET: unset " + key + " on " + chat);
 
         }
@@ -68,6 +68,8 @@ var set = function(){
 
                     if(message.indexOf(key) > -1) //lightweight check
                     {
+                        var key = Util.escapeRegExp(key);
+
                         var re = new RegExp("\\b(" + key + ")\\b","gi"); //we really check with regex for word boundaries
                         match = re.exec(message);
                         if(match)
