@@ -81,11 +81,11 @@ var karma = function(){
                                     return b.value - a.value;
                                 });
                                 
-                                message = "👑 *Karma Ranking* 👑\n";
+                                message = "👑 Karma Ranking 👑\n";
                                 for (var j = 0; j < ranking.length; j++) {
                                     message+= "\n" + (j+1) +") " + ranking[j].key + " (" + ranking[j].value +")";
                                 }
-                                reply({type: 'text', text: message , options:{parse_mode: "Markdown"}});
+                                reply({type: 'text', text: message});
 
                             }
                         });

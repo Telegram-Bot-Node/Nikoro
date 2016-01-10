@@ -52,7 +52,7 @@ var vote = function(){
             self.db.keys(chat + ":vote:*", function(err, keys){
                 var originalKeys = keys.slice();
 
-                if(originalKeys.length == 0) //1 is the question
+                if(originalKeys.length == 0)
                 {
                     reply({type: 'text', text: "No votes registered."});
                     return;
