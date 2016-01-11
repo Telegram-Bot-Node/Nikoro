@@ -10,7 +10,8 @@
     "node-telegram-bot-api": "git://github.com/yagop/node-telegram-bot-api.git",
     "redis": "*",
     "request": "^2.67.0",
-    "underscore.string": "^3.2.2"
+    "underscore.string": "^3.2.2",
+    "winston": "^2.1.1"
   },
   "devDependencies": {
     "mocha": "~2.3.4",

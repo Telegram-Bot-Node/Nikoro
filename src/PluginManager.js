@@ -21,7 +21,9 @@ var util = require('util');
 var PluginHelper = require('./PluginHelper');
 var DBWrapper = require('./DBWrapper');
 
-var log = require('winston');
+var winston = require('winston');
+log = winston.loggers.get('pluginManager');
+
 var category1 = winston.loggers.get('category1');
 
 function PluginManager() {
@@ -37,11 +39,12 @@ function PluginManager() {
     PluginManager.prototype.runPlugins = function(plugins, botInfo, callback) {
         log.info(plugins.length + " plugins activated");
 
-        this.loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
-        log.info(this.loadedPlugins + " plugins imported and checked");
+        var loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
+        log.info(loadedPlugins.length + " plugins imported and checked");
 
         log.info("Initializing plugins");
         var self = this;
+
         PluginManager.prototype.initPlugins(loadedPlugins, botInfo).then(function(plugins){
             log.info("All the plugins are initialized");
             self.runningPlugins = plugins;
@@ -255,7 +258,7 @@ function PluginManager() {
                         self.runningPlugins = [];
                         log.verbose("Shutting down PluginHelper");
                         self.PluginHelper.emit("stop",function(){
-                            log.verbose("PluginManager shutted down");
+                            log.verbose("PluginHelper shutted down");
                             resolve();
                         })
                     }

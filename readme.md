@@ -8,6 +8,8 @@ Written in Node.js
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
+Less than 50MB of Disk Space required to run.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ###Table of Contents

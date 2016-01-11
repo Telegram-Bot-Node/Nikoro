@@ -1,28 +1,33 @@
-var log = require('winston');
+var winston = require('winston');
 
+var TelegramBot = require('node-telegram-bot-api');
 var config = require('./Config');
 var token = config.telegramToken;
 
 var PluginManager = require('./src/PluginManager');
-var plugins = new PluginManager();
 
-var TelegramBot = require('node-telegram-bot-api');
+require('./src/Loggers')('info'); //init loggers 
+
+log = winston.loggers.get('bot');
+
 log.verbose("Creating instance of TelegramBot with token " + token);
 var bot = new TelegramBot(token, {
     polling: true
 });
 log.verbose("TelegramBot created");
 
+var plugins = new PluginManager();
+
 
 log.info("The bot is starting");
 
 log.verbose("Calling getMe");
 bot.getMe().then(function (me) {
-    log.verbose("getMe successfull: " + me);
+    log.verbose("getMe successful: " + me.toString());
 
     log.info("Running the plugins");
     plugins.runPlugins(config.activePlugins, me, function(){
-        log.info("All the plugins are now running");
+        log.info("The bot is online!");
 
         var events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
         events.forEach(function(eventName){
