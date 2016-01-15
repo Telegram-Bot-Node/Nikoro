@@ -22,9 +22,7 @@ var PluginHelper = require('./PluginHelper');
 var DBWrapper = require('./DBWrapper');
 
 var winston = require('winston');
-log = winston.loggers.get('pluginManager');
-
-var category1 = winston.loggers.get('category1');
+var log = winston.loggers.get('pluginManager');
 
 function PluginManager() {
 
