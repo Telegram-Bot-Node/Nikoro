@@ -36,7 +36,7 @@ var karma = function(){
             operator = matchKarma[2];
             chat = msg.chat.id;
 
-            if(uname.toLowerCase() == msg.from.username.toLowerCase())
+            if(msg.from.username && (uname.toLowerCase() == msg.from.username.toLowerCase()))
             {
                 reply({type: 'text', text: "Hey! You can't karma yourself!"});
                 return;
