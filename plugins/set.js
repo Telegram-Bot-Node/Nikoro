@@ -39,7 +39,7 @@ var set = function(){
             if(!key || !value)
                 return;
             chat = msg.chat.id;
-            this.db.set(chat+":"+key, value);
+            this.db.set(chat+":"+Util.escapeRegExp(key), value);
 
             reply({type: 'text', text: key + " = " + value})
 
@@ -51,7 +51,7 @@ var set = function(){
             key = matchUnset[1];
             chat = msg.chat.id;
 
-            this.db.del(chat+":"+key);
+            this.db.del(chat+":"+Util.escapeRegExp(key));
             reply({type: 'text', text: "Unset " + key + ""});
             console.log("\tSET: unset " + key + " on " + chat);
 

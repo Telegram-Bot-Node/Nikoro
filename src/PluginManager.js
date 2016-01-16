@@ -159,7 +159,15 @@ function PluginManager() {
 
             module.botInfo = botInfo;
             log.debug(pluginName + " has botInfo");
-                    
+            
+            winston.loggers.add('plugin:'+pluginName, {
+                console: {
+                    level: 'info',
+                    colorize: true,
+                    label: pluginName
+                }
+            });
+
             if(module.properties.databaseAccess)
             {
                 module.db = new DBWrapper(module.properties.name);
