@@ -21,8 +21,8 @@ var util = require('util');
 var PluginHelper = require('./PluginHelper');
 var DBWrapper = require('./DBWrapper');
 
-var winston = require('winston');
-var log = winston.loggers.get('pluginManager');
+var logger = require('./Logger');
+var log = logger.get("PluginManager");
 
 function PluginManager() {
 
@@ -48,7 +48,7 @@ function PluginManager() {
             self.runningPlugins = plugins;
             callback(plugins);
         }, function(error){
-            log.critical("Error initializing plugins: " + error);
+            log.error("Error initializing plugins: " + error);
         });
     }
 
@@ -121,7 +121,7 @@ function PluginManager() {
 
         for (var idx in plugins) {
             var pluginName = plugins[idx];
-            log.verbose("Now loading " + pluginName);
+            log.verbose("Loading " + pluginName);
 
             var module = PluginManager.prototype.loadPlugin(pluginName, botInfo);
             log.verbose("Loaded " + pluginName);
@@ -146,6 +146,7 @@ function PluginManager() {
     */
     PluginManager.prototype.loadPlugin = function(pluginName, botInfo) {
         try {
+            
             var module = require('./../plugins/' + pluginName);
             log.debug("Required " + pluginName);
             util.inherits(module, EventEmitter); //ability to listen and emit events
@@ -160,13 +161,8 @@ function PluginManager() {
             module.botInfo = botInfo;
             log.debug(pluginName + " has botInfo");
             
-            winston.loggers.add('plugin:'+pluginName, {
-                console: {
-                    level: 'info',
-                    colorize: true,
-                    label: pluginName
-                }
-            });
+            module.log = logger.get(pluginName);
+            log.debug(pluginName + " has log");
 
             if(module.properties.databaseAccess)
             {
@@ -175,7 +171,7 @@ function PluginManager() {
             }
 
             if (module.listeners('init').length == 0) {
-                log.verbose(pluginName + " added init");
+                log.debug(pluginName + " added init");
                 module.addListener("init", function (done, db){
                     
                     done(null, module);
@@ -183,7 +179,7 @@ function PluginManager() {
             }
 
             if (module.listeners('stop').length == 0){
-                log.verbose(pluginName + " added stop");
+                log.debug(pluginName + " added stop");
                 module.addListener("stop", function (done){
                     done();
                 });
@@ -232,7 +228,7 @@ function PluginManager() {
             }
 
         } catch (ex) {
-            log.critical(ex);
+            log.error(ex);
         }
     }
 

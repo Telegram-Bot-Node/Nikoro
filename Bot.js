@@ -1,14 +1,10 @@
-var winston = require('winston');
-
 var TelegramBot = require('node-telegram-bot-api');
 var config = require('./Config');
 var token = config.telegramToken;
 
 var PluginManager = require('./src/PluginManager');
 
-require('./src/Loggers')('info'); //init loggers 
-
-log = winston.loggers.get('bot');
+var log = require('./src/Logger').get('Bot');
 
 log.verbose("Creating instance of TelegramBot with token " + token);
 var bot = new TelegramBot(token, {
@@ -48,7 +44,7 @@ bot.getMe().then(function (me) {
     });
 
 }, function(){
-    log.critical("Can't getMe! Is the token set?");
+    log.error("Can't getMe! Are you connected to the Internet!?");
 });
 
 
@@ -58,6 +54,9 @@ function emitHandleReply(eventName, message){
     try{
         plugins.emit(eventName, message, function(reply) { //have to do this to avoid problems with chatId. Not the cleanest way.
             log.debug("Inside callback for emit");
+
+            logReplyTo(message);
+
             handleReply(chatId,reply);
         });
     } catch (ex){
@@ -67,8 +66,6 @@ function emitHandleReply(eventName, message){
 };
 
 function handleReply(chatId, reply){
-
-    log.verbose("Produced a reply for " + chatId);
 
     switch (reply.type) {
         case "text":
@@ -87,7 +84,7 @@ function handleReply(chatId, reply){
             bot.sendSticker(chatId, reply.sticker, reply.options);
             break;
         default:
-            console.warn("Unrecognized reply type");
+            log.warn("Unrecognized reply type");
     }
 }
 
@@ -95,6 +92,15 @@ function handleReply(chatId, reply){
 function handleAnswerInlineQuery(queryId, results, options){
     log.verbose("Produced an inline answer for " + queryId);
     bot.answerInlineQuery(queryId, results, options);
+}
+
+function logReplyTo(msg){
+    text = "Reply to chat " + msg.chat.id;
+    if(! (msg.type == "private")){
+        text += " '" + msg.chat.title + "'"; 
+    }
+    text += " from " + ( "@" + (msg.from.username || "nousername")) + " " + (msg.from.first_name || "")+ " " + (msg.from.last_name || ""); 
+    log.verbose(text);
 }
 
 // If `CTRL+C` is pressed we stop the bot safely.

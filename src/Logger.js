@@ -1,16 +1,26 @@
 var winston = require('winston');
+var config = require('./../Config');
 
-var Loggers(level) {
+var loggers = [];
 
-    this.getOrAdd = function (loggerName) {
-        winston.loggers.add(loggerName, {
+function get(loggerName, level) {
+    if(!level)
+        level = config.loggingLevel || "info";
+
+    /*if (loggerName in loggers){
+        return winston.loggers.get(loggerName);
+    }else{
+        loggers.push(loggerName);*/
+        return winston.loggers.add(loggerName, {
             console: {
                 level: level,
                 colorize: true,
-                label: 'PLUGIN'
+                label: loggerName
             }
         });
-    };
-}
+    //}
+};
 
-module.exports.Logger = Logger;    
+module.exports = {
+  get: get
+};

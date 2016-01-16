@@ -9,6 +9,7 @@ var Util = {};
 var request = require('request');
 var crypto = require('crypto');
 var fs = require('fs');
+var log = require('./Logger').get("Util");
 
 /*
     A bit hacked together but it works.
@@ -115,17 +116,19 @@ Util.parseInline = function(message, commandName, options){
 };
 
 Util.escapeRegExp = function(str) {
-  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    log.debug("Escaping RegExp: " + str);
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 };
 
 
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
+
+    log.info("Downloading and saving resource from " + url);
+
     var current_date = (new Date()).valueOf().toString();
     var random = Math.random().toString();
     var fn = "/tmp/ntb-tempres" + crypto.createHash('sha1').update(current_date + random).digest('hex') + "." + extension;
-    
-    //console.log("\tUtil.downloadAndSaveTempResource: " + url)
-    
+        
     var options = {
         url: url,
         headers: {
