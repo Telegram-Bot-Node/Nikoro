@@ -12,13 +12,15 @@ var bot = new TelegramBot(token, {
 });
 log.verbose("TelegramBot created");
 
-var plugins = new PluginManager();
 
+var plugins = null;
 
 log.info("The bot is starting");
 
 log.verbose("Calling getMe");
 bot.getMe().then(function (me) {
+
+    plugins = new PluginManager(me);
     log.verbose("getMe successful: " + me.toString());
 
     log.info("Running the plugins");

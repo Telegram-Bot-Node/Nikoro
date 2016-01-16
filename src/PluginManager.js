@@ -24,8 +24,9 @@ var DBWrapper = require('./DBWrapper');
 var logger = require('./Logger');
 var log = logger.get("PluginManager");
 
-function PluginManager() {
+function PluginManager(botInfo) {
 
+    this.botInfo = botInfo;
     /*
         Performs all setup necessary to begin running a list of plugins.
         Includes loading, configuring and initialization.
@@ -34,16 +35,16 @@ function PluginManager() {
         names in the plugins directory.
     */
 
-    PluginManager.prototype.runPlugins = function(plugins, botInfo, callback) {
+    PluginManager.prototype.runPlugins = function(plugins, callback) {
         log.info(plugins.length + " plugins activated");
 
-        var loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
+        var loadedPlugins = PluginManager.prototype.loadPlugins(plugins);
         log.info(loadedPlugins.length + " plugins imported and checked");
 
         log.info("Initializing plugins");
         var self = this;
 
-        PluginManager.prototype.initPlugins(loadedPlugins, botInfo).then(function(plugins){
+        PluginManager.prototype.initPlugins(loadedPlugins).then(function(plugins){
             log.info("All the plugins are initialized");
             self.runningPlugins = plugins;
             callback(plugins);
@@ -52,7 +53,7 @@ function PluginManager() {
         });
     }
 
-    PluginManager.prototype.initPlugins = function(pluginsToInit, botInfo) {
+    PluginManager.prototype.initPlugins = function(pluginsToInit) {
         var self = this;
 
         log.verbose("initPlugins Initializing " + pluginsToInit.length + " plugins");
@@ -70,7 +71,7 @@ function PluginManager() {
             self.PluginHelper.db = new DBWrapper("PluginHelper");
             log.debug("PluginHelper now has a DBWrapper");
 
-            self.PluginHelper.botInfo = botInfo; 
+            self.PluginHelper.botInfo = self.botInfo; 
             log.debug("PluginHelper now has botInfo");
 
             log.verbose("Emitting init to PluginHelper");
@@ -83,21 +84,22 @@ function PluginManager() {
                 log.verbose("Emitting init to all the plugins");
                 for (var idx in toInitialize) {
                     var loadedPlugin = toInitialize[idx];
+                    if(loadedPlugin){
+                        loadedPlugin.emit("init",function(err, plugin) {
+                            if (err) {
+                                reject(err);
+                            };
 
-                    loadedPlugin.emit("init",function(err, plugin) {
-                        if (err) {
-                            reject(err);
-                        };
+                            inittedPlugins.push(plugin);
+                            self.PluginHelper.addPlugin(plugin);
 
-                        inittedPlugins.push(plugin);
-                        self.PluginHelper.addPlugin(plugin);
-
-                        pluginsToInit.splice(0, 1); // remove plugin because it is already loaded
-                        if (pluginsToInit.length == 0) {
-                            log.verbose("All the plugins are initialized");
-                            resolve(inittedPlugins);
-                        }
-                    });
+                            pluginsToInit.splice(0, 1); // remove plugin because it is already loaded
+                            if (pluginsToInit.length == 0) {
+                                log.verbose("All the plugins are initialized");
+                                resolve(inittedPlugins);
+                            }
+                        });
+                    }
                 }
             });
 
@@ -113,7 +115,7 @@ function PluginManager() {
 
         @return -  An array of loaded, configured plugin modules or functions.
     */
-    PluginManager.prototype.loadPlugins = function(plugins, botInfo) {
+    PluginManager.prototype.loadPlugins = function(plugins) {
         
         log.verbose("Loading " + plugins.length + " plugins");
 
@@ -123,7 +125,7 @@ function PluginManager() {
             var pluginName = plugins[idx];
             log.verbose("Loading " + pluginName);
 
-            var module = PluginManager.prototype.loadPlugin(pluginName, botInfo);
+            var module = PluginManager.prototype.loadPlugin(pluginName);
             log.verbose("Loaded " + pluginName);
 
             if (module != null && PluginManager.prototype.validatePlugin(module)) {
@@ -132,6 +134,7 @@ function PluginManager() {
                 log.error("\t"+ pluginName + " configuration failed. Plugin not activated.");
             }
         }
+
         return loadedPlugins;
     }
 
@@ -144,9 +147,10 @@ function PluginManager() {
 
         @return -  A new instance of the specified plugin.
     */
-    PluginManager.prototype.loadPlugin = function(pluginName, botInfo) {
+    PluginManager.prototype.loadPlugin = function(pluginName) {
+        var self = this;
         try {
-            
+
             var module = require('./../plugins/' + pluginName);
             log.debug("Required " + pluginName);
             util.inherits(module, EventEmitter); //ability to listen and emit events
@@ -158,7 +162,7 @@ function PluginManager() {
             module.properties.name = pluginName;
             log.debug(pluginName + " named");
 
-            module.botInfo = botInfo;
+            module.botInfo = self.botInfo;
             log.debug(pluginName + " has botInfo");
             
             module.log = logger.get(pluginName);
@@ -243,7 +247,7 @@ function PluginManager() {
 
         var self = this;
         log.verbose("Emitting shutDown");
-
+        
         return new Promise( function(resolve, reject){
             var existingPlugins = self.runningPlugins.slice(); // copy array
             var runningPlugins = self.runningPlugins;

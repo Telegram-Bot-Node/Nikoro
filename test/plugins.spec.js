@@ -1,5 +1,5 @@
-var PluginManager = require('../plugins');
-var util = require('../util');
+var PluginManager = require('../src/PluginManager');
+var Util = require('../src/Util');
 
 var chai = require('chai');
 var sinon = require('sinon');
@@ -8,28 +8,35 @@ chai.use(sinonChai);
 var should = chai.should();
 
 describe('PluginManager', function() {
-    var plugins = new PluginManager();
+
+    var botInfo = {
+        id: -1,
+        first_name: "FakeBotForTest",
+        username: "FakeBotForTest"
+    }
+
+
+    var pluginManager = new PluginManager(botInfo);
     var loadedPlugins, runningPlugins;
     var ping, google, set, yt;
 
     beforeEach(function() {
-        ping = plugins.loadPlugin("ping");
-        google = plugins.loadPlugin("google");
-        set = plugins.loadPlugin("set");
-        yt = plugins.loadPlugin("yt");
+        ping = pluginManager.loadPlugin("ping");
+        google = pluginManager.loadPlugin("google");
+        set = pluginManager.loadPlugin("set");
+        yt = pluginManager.loadPlugin("youtube");
     });
 
     describe('loading plugins', function() {
         before(function() {
-            loadedPlugins = plugins.loadPlugins(["ping", "google", "set", "yt"]);
-            runningPlugins = plugins.initializePlugins(loadedPlugins);
+            loadedPlugins = pluginManager.loadPlugins(["ping", "google", "set", "youtube"]);
         });
 
         it('should validate plugin configuration if required', function() {
-            plugins.validatePlugin(ping).should.equal(true);
-            plugins.validatePlugin(google).should.equal(false); // requires an api key
-            plugins.validatePlugin(set).should.equal(true);
-            plugins.validatePlugin(yt).should.equal(false); // requires an api key
+            pluginManager.validatePlugin(ping).should.equal(true);
+            pluginManager.validatePlugin(google).should.equal(false); // requires an api key
+            pluginManager.validatePlugin(set).should.equal(true);
+            pluginManager.validatePlugin(yt).should.equal(false); // requires an api key
         });
 
         it('should ignore unconfigured plugins', function() {
@@ -37,46 +44,45 @@ describe('PluginManager', function() {
         });
 
         it('should load all configured plugins', function() {
-            plugins.loadedPluginNames[0].should.equal('ping');
-            plugins.loadedPluginNames[1].should.equal('set');
+            loadedPlugins[0].properties.name.should.equal('ping');
+            loadedPlugins[1].properties.name.should.equal('set');
         });
 
         it('should ignore missing or invalid plugin names', function() {
-            var invalidPlugin = plugins.loadPlugin("this doesn't exist");
+            var invalidPlugin = pluginManager.loadPlugin("this doesn't exist");
             should.equal(invalidPlugin, null);
 
-            var randomPlugins = plugins.loadPlugins(["ping", "nonexistent", "set", "fake"]);
+            var randomPlugins = pluginManager.loadPlugins(["ping", "non-existent", "set", "fakestPlugin"]);
             randomPlugins.should.have.length(2);
         });
     });
 
     describe('initializing plugins', function() {
-        var pingSpy, googleSpy, setSpy, ytSpy;
+        var initSpy;
+        var pingSpy,setSpy;
+        var runningPlugins = [];
 
         before(function() {
-            pingSpy = sinon.spy(ping, "init");
-            googleSpy = sinon.spy(google, "init");
-            setSpy = sinon.spy(set, "init");
-            ytSpy = sinon.spy(yt, "init");
+            initSpy = sinon.spy();
+            pingSpy = sinon.spy();
+            setSpy = sinon.spy();
 
-            plugins.initializePlugins([ping, google, set, yt]);
-        });
+            ping.on("init", pingSpy);
+            set.on("init", setSpy);
 
-        after(function() {
-            pingSpy.restore();
-            googleSpy.restore();
-            setSpy.restore();
-            ytSpy.restore();
+            runningPlugins = pluginManager.initPlugins([ping, set]).then(function(plugins){
+                runningPlugins = plugins;
+                initSpy();
+            });
         });
 
         it('should initialize all loaded plugins', function() {
             runningPlugins.should.have.length(2);
-
-            pingSpy.should.have.been.called;
-            googleSpy.should.have.been.called;
+            initSpy.should.have.been.called;
             setSpy.should.have.been.called;
-            ytSpy.should.have.been.called;
+            pingSpy.should.have.been.called;
         });
+
     });
 
     describe('message forwarding', function() {
@@ -87,20 +93,20 @@ describe('PluginManager', function() {
         };
         var callback = sinon.spy();
 
-        beforeEach(function() {
-            plugins.runPlugins(["ping", "google", "set", "yt"]);
-            ping = plugins.runningPlugins[0];
-            set = plugins.runningPlugins[1];
+        before(function(done) {
+            pluginManager.runPlugins(["ping", "google", "set", "youtube"], function(plugins){
 
-            pingSpy = sinon.spy(ping, "doMessage");
-            setSpy = sinon.spy(set, "doMessage");
+                pingSpy = sinon.spy();
+                setSpy = sinon.spy();
 
-            plugins.doMessage(message, callback);
-        });
-
-        afterEach(function() {
-            pingSpy.restore();
-            setSpy.restore();
+                pluginManager.runningPlugins[0].on("text", pingSpy);
+                pluginManager.runningPlugins[1].on("text", setSpy);
+                
+                pluginManager.emit("text", message, callback);
+                pluginManager.emit("text", message, function(){
+                    done();
+                });                
+            });
         });
 
         it('should forward messages to each plugin', function() {
@@ -109,42 +115,48 @@ describe('PluginManager', function() {
         });
 
         it('should handle reply callbacks from plugins', function() {
-            callback.should.have.been.calledTwice;
+            callback.should.have.been.calledOnce;
         });
 
-        it('should handle text reply types'); //pending
+        /*it('should handle text reply types'); //pending
 
         it('should handle audio reply types'); //pending
 
         it('should handle photo reply types'); //pending
 
-        it('should handle status reply types'); //pending
+        it('should handle status reply types'); //pending*/
 
     });
 
-    describe('shutdown', function() {
+    describe('stop', function() {
         var pingSpy, setSpy;
         var callback = sinon.spy();
 
-        before(function() {
-            plugins.runPlugins(["ping", "google", "set", "yt"]);
-            ping = plugins.runningPlugins[0];
-            set = plugins.runningPlugins[1];
+        before(function(done) {
+            pluginManager.runPlugins(["ping", "google", "set", "youtube"], function(){
+                pingSpy = sinon.spy();
+                setSpy = sinon.spy();
 
-            pingSpy = sinon.spy(ping, "doStop");
-            setSpy = sinon.spy(set, "doStop");
+                ping = pluginManager.runningPlugins[0].on("stop", pingSpy);
+                set = pluginManager.runningPlugins[1].on("stop", setSpy);
 
-            plugins.shutDown(callback);
+                pluginManager.shutDown().then(function(){
+                    callback();
+                    done();
+                });
+                
+            });
         });
 
         it('should ask plugins to shutdown safely', function() {
-            pingSpy.should.have.been.called;
-            setSpy.should.have.been.called;
+            pingSpy.should.have.been.calledOnce;
+            setSpy.should.have.been.calledOnce;
         });
 
         it('should wait to safely stop all plugins before shutdown', function() {
-            callback.should.have.been.called; // called only once, after all shutdown
+            callback.should.have.been.calledOnce;
         });
+
     });
 
 });
@@ -160,20 +172,16 @@ describe('Util Module', function() {
 
         it('should parse commands correctly', function() {
 
-            util.parseCommand(message1, ["command"]).length.should.equal(["command","arg1","arg2","arg3"].length);
-            (util.parseCommand(message1, ["anotherCommand"]) == null).should.be.true;
+            Util.parseCommand(message1, ["command"]).length.should.equal(["command","arg1","arg2","arg3"].length);
+            (Util.parseCommand(message1, ["anotherCommand"]) == null).should.be.true;
 
-            util.parseCommand(message2, ["command"],{splitBy: "-"}).length.should.equal(["command", "arg1", "arg2 arg2"].length);
+            Util.parseCommand(message2, ["command"],{splitBy: "-"}).length.should.equal(["command", "arg1", "arg2 arg2"].length);
             
-            (util.parseCommand(message3, ["command"]) == null).should.be.true;
+            (Util.parseCommand(message3, ["command"]) == null).should.be.true;
 
-            util.parseCommand(message4, ["command"], {joinParams: true}).length.should.equal(["command", "only one arg very long"].length);
-            
-
+            Util.parseCommand(message4, ["command"], {joinParams: true}).length.should.equal(["command", "only one arg very long"].length);
         });
 
-
      });
-
 
 });
