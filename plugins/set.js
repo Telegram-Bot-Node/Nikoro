@@ -31,7 +31,7 @@ var set = function(){
 
     this.on("text", function (msg, reply){
         var matchSet = Util.parseCommand(msg.text,["set"], {splitBy: "-"});  
-        var matchUnset = Util.parseCommand(msg.text,["unset"]);  
+        var matchUnset = Util.parseCommand(msg.text,["unset"], {joinParams: true});  
 
         if(matchSet){
             key = matchSet[1];
