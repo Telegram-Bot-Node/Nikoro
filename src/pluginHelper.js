@@ -80,11 +80,12 @@ var PluginHelper = function(){
     
     this.on("new_chat_participant", function (msg, reply){
         newUser = msg.new_chat_participant;
-        if(newUser.username == this.botInfo.username)
-        {
-            reply({type: 'text', text: "Hello, I am Factotum Bot!\n\nUse `/help` to see a list of available plugins.\n\nUse `/info` to get more info about me.", options:{parse_mode: "Markdown"}});
-            
-        } 
+        if(newUser.username)
+            if(newUser.username == this.botInfo.username)
+            {
+                reply({type: 'text', text: "Hello, I am Factotum Bot!\n\nUse `/help` to see a list of available plugins.\n\nUse `/info` to get more info about me.", options:{parse_mode: "Markdown"}});
+                
+            } 
     });
 
 
