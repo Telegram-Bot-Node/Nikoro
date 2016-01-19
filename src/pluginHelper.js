@@ -72,7 +72,7 @@ var PluginHelper = function(){
         }
         else if (matchInfo) 
         {
-            message = "*Factotum Bot*\n\nThe only Telegram bot you will ever need.\n\nCreator: @crisbal | [Source Code](https://github.com/crisbal/Node-Telegram-Bot)";
+            message = "*Factotum Bot*\n\nThe only Telegram bot you will ever need.\n\nCreator: @crisbal | [Source Code](https://github.com/crisbal/Telegram-Bot-Node)";
             reply({type:"text", text: message, options:{parse_mode: "Markdown", disable_web_page_preview: true} });
         }
     });

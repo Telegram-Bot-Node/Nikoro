@@ -1,21 +1,20 @@
-#Node-Telegram-Bot 
+#Telegram-Bot-Node
 
-[![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)  
+[![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=master)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
-[![bitHound Overall Score](https://www.bithound.io/github/crisbal/Node-Telegram-Bot/badges/score.svg)](https://www.bithound.io/github/crisbal/Node-Telegram-Bot)
+[![bitHound Overall Score](https://www.bithound.io/github/crisbal/Telegram-Bot-Node/badges/score.svg)](https://www.bithound.io/github/crisbal/Telegram-Bot-Node)
 
-A Telegram Bot which supports user-made plugins
+An all-in-one, plugin-based, Telegram Bot written in Node.js. 
 
-Written in Node.js
+See it in action on `@Factotum_Bot`
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
-
-Less than 50MB of Disk Space required to run.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ###Table of Contents
 
+- [Features](#features)
 - [Running the Bot](#running-the-bot)
 - [Using the Bot](#using-the-bot)
 - [Plugins](#plugins)
@@ -28,13 +27,25 @@ Less than 50MB of Disk Space required to run.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+##Features
+
+* Plugin-based: run many bots in one, have a plugin for everything.
+    * 20+ plugins already available!
+    * Inline plugins available!
+* Completely customizable: see something you don't like? Just change it!
+* Written in Node.js: one of the most powerful and easiest programming language available.
+* Easy to install: just a few simple commands and your bot is up and running!
+* Easy-to-write plugins: with many helper functions write powerful plugins in a few minutes. 
+    * Connect to a database, download files, parse commands without writing any code: everything is already here for you   
+* Open Source :D
+
 ##Running the Bot
 
 * Clone/Download/Fork the repository
 * Install `redis` (and check if it is working)
 * `npm install`
-* Create a Bot Account 
-    * Get the associated token (https://core.telegram.org/bots/#botfather)
+* Create a Bot on Telegram 
+    * Get the associated HTTP Api Token (https://core.telegram.org/bots/#botfather)
 * Set the required Environment Variables (two methods)
     1. Via `setup.sh`
         * Edit `setup.sh`

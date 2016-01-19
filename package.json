@@ -1,8 +1,8 @@
 {
-  "name": "node-telegram-bot",
-  "version": "0.0.0",
-  "description": "Fully customizable, plugin-based Telegram Bot developed with node-telegram-bot-api",
-  "main": "Bot.js",
+  "name": "telegram-bot-node",
+  "version": "0.9",
+  "description": "An all-in-one, plugin-based, Telegram Bot.",
+  "main": "bot.js",
   "dependencies": {
     "cheerio": "*",
     "google-images": "^1.0.0",
@@ -20,7 +20,7 @@
     "sinon-chai": "~2.8.0"
   },
   "scripts": {
-    "start": "node Bot.js",
+    "start": "node bot.js",
     "test": "mocha test"
   },
   "author": "Cristian Baldi",

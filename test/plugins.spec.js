@@ -1,5 +1,5 @@
-var PluginManager = require('../src/PluginManager');
-var Util = require('../src/Util');
+var PluginManager = require('../src/pluginManager');
+var Util = require('../src/util');
 
 var chai = require('chai');
 var sinon = require('sinon');
