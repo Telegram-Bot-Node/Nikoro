@@ -1,6 +1,8 @@
 #Node-Telegram-Bot 
 
-[![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)
+[![Build Status](https://travis-ci.org/crisbal/Node-Telegram-Bot.svg)](https://travis-ci.org/crisbal/Node-Telegram-Bot)  
+
+[![bitHound Overall Score](https://www.bithound.io/github/crisbal/Node-Telegram-Bot/badges/score.svg)](https://www.bithound.io/github/crisbal/Node-Telegram-Bot)
 
 A Telegram Bot which supports user-made plugins
 

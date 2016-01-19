@@ -50,7 +50,6 @@ DBWrapper.prototype.del = function(key, callback) {
 };
 
 DBWrapper.prototype.keys = function(keyWC, callback) {
-    keyWC = keyWC.replace(/[\?\[\]\^\*\-]/g,"\\$&");
     keyWC = "ntb:" + this.pluginName+":" + keyWC;
     var self = this;
     this.redisdb.keys(keyWC, function(err, keys) {
@@ -62,7 +61,6 @@ DBWrapper.prototype.keys = function(keyWC, callback) {
 };
 
 DBWrapper.prototype.delKeys = function(keyWC, callback) {
-    keyWC = keyWC.replace(/[\?\[\]\^\*\-]/g,"\\$&");
     keyWC = "ntb:" + this.pluginName+":" + keyWC;
     var self = this;
     self.redisdb.keys(keyWC, function(err, keys) {

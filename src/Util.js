@@ -120,6 +120,10 @@ Util.escapeRegExp = function(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 };
 
+Util.escapeRedisKeys = function(str){
+    log.debug("Escaping Redis Keys: " + str);
+    return str = str.replace(/[\?\[\]\^\*\-]/g,"\\$&");
+}
 
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
 
