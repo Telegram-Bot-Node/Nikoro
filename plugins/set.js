@@ -20,7 +20,7 @@
         Bot: ... <- Nothing, you removed the trigger
 */
 var fs = require('fs');
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 var set = function(){
 
     this.properties = {

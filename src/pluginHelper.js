@@ -16,7 +16,7 @@
         TODO
 */
 
-var Util = require('./Util');
+var Util = require('./util');
 
 var PluginHelper = function(){
 

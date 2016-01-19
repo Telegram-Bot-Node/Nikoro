@@ -1,5 +1,5 @@
 var winston = require('winston');
-var config = require('./../Config');
+var config = require('./../config');
 
 var loggers = [];
 

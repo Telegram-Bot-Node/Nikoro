@@ -9,7 +9,7 @@ var Util = {};
 var request = require('request');
 var crypto = require('crypto');
 var fs = require('fs');
-var log = require('./Logger').get("Util");
+var log = require('./logger').get("Util");
 
 /*
     A bit hacked together but it works.
@@ -123,7 +123,7 @@ Util.escapeRegExp = function(str) {
 Util.escapeRedisKeys = function(str){
     log.debug("Escaping Redis Keys: " + str);
     return str = str.replace(/[\?\[\]\^\*\-]/g,"\\$&");
-}
+};
 
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
 
@@ -143,6 +143,6 @@ Util.downloadAndSaveTempResource = function(url, extension, callback) {
     request(options).pipe(fs.createWriteStream(fn)).on('close', function(){
         callback(fn);
     });
-}
+};
 
 module.exports = Util;

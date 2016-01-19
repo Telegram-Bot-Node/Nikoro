@@ -14,7 +14,7 @@
 */
 
 var cheerio = require('cheerio'), request = require('request');
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 
 var xvideos = function(){
 

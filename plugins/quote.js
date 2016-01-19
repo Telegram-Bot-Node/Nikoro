@@ -12,7 +12,7 @@
         You: !q
         Bot: This is Sparta!
 */
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 var fs = require('fs');
 
 var quote = function(){

@@ -1,10 +1,10 @@
 var TelegramBot = require('node-telegram-bot-api');
-var config = require('./Config');
-var token = config.telegramToken;
+var config = require('./config');
+var token = config.TELEGRAM_TOKEN;
 
-var PluginManager = require('./src/PluginManager');
+var PluginManager = require('./src/pluginManager');
 
-var log = require('./src/Logger').get('Bot');
+var log = require('./src/logger').get('Bot');
 
 log.verbose("Creating instance of TelegramBot with token " + token);
 var bot = new TelegramBot(token, {

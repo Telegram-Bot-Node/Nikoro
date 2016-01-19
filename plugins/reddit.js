@@ -15,7 +15,7 @@
 */
 
 var request = require('request');
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 
 var reddit = function() {
     

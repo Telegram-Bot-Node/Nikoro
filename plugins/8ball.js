@@ -12,7 +12,7 @@
         You: !8ball am i ugly?
         Bot: Yes.
 */
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 
 var ball = function(){
 

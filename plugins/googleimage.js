@@ -12,10 +12,12 @@ var request = require('request');
 var crypto = require('crypto');
 var fs = require('fs');
 
+var Config = require('./../config');
+
 var google = function() {
 
-    var CSE_ID = process.env.CSE_ID || "";
-    var CSE_API_KEY = process.env.CSE_API_KEY || "";
+    var CSE_ID = Config.CSE_ID || "";
+    var CSE_API_KEY = Config.CSE_API_KEY || "";
 
     this.properties = {
         inline: true,

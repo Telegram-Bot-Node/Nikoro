@@ -1,4 +1,4 @@
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 var s = require("underscore.string");
 
 var reverse = function(){

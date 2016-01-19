@@ -41,13 +41,15 @@ Less than 50MB of Disk Space required to run.
             * Set `TELEGRAM_TOKEN` with the auth token of your bot
             * Set the other API Keys if you want to enable the relative plugins.
         * Run `source setup.sh`
-    2. Set them manually
-        * Check setup.sh to see the required Environment Variables.
-* Edit Config.js
+    2. Set them manually in `config.js`
+        * If you are more comfortable this way
+    3. Set them in any other way in your system
+        * If you can't/won't use the `source` command     
+* Edit config.js
     * Edit `activePlugins` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
-        * You can find the plugins in the `plugins` folder.
+        * You can find all the available plugins in the `plugins` folder.
 * Run the bot
-    * `node Bot.js` 
+    * `node bot.js` 
     * Stop it at any time with CTRL+C
 
 ##Using the Bot
@@ -71,7 +73,7 @@ Basic Class Skeleton
 ``` javascript
 var pluginName = function(){
     
-    this.help = {
+    this.properties = {
         shortDescription: "Set a simple and short description for your plugin here.",
         fullHelp: "Add examples, an in-depth explanation here."
         //both these fields are required
@@ -80,7 +82,7 @@ var pluginName = function(){
     this.on('text', function (msg, reply) {
         //this will be executed whenever your bot get a text message
         //you can listen to many events, just take a look at the example plugins.
-
+        
         /*
             1. Check if the msg.text matches the trigger for your plugin
             2. Do stuff you need
@@ -92,24 +94,19 @@ var pluginName = function(){
             4. Post the reply
                 reply(replyText); //for example
 
+
         */
+        if(msg.text == "hello")
+            reply({type:"text", text:"Hey there!"});
     });
 
 };
 
 module.exports = pluginName;
 ```
-##TODO
-* Tests!
-* Improve utilities module (downloading files , common database, generate markdown links)
-* More Plugins
-* Documentation
-* Website
-* Promotion
-
 
 ##Contributing
-Did you made a plugin you want to share with everyone? Did you improve the code in any way?
+Did you made a plugin you want to share with everyone? Did you improve the code in any way? Did you fix an issue?
 
 Submit a pull request! 
 
@@ -133,7 +130,6 @@ In Alphabetical Order
     
 ##Need help?
 Send me a mail or create an issue, I will answer ASAP. :+1:
-
 
 ##License
 

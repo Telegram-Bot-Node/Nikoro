@@ -15,7 +15,7 @@
 
         
 */
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 
 var karma = function(){
 

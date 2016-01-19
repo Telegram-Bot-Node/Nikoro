@@ -12,7 +12,7 @@
         You: !imgur
         Bot: https://i.imgur.com/ExIhYmu.png
 */
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 var http = require('http');
 
 var imgur = function(){

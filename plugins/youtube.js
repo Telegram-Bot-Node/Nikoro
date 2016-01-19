@@ -18,11 +18,12 @@
 */
 
 var request = require('request');
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
+var Config = require('./../config');
 
 var youtube = function(){
 
-    var GOOGLE_API_KEY = process.env.GOOGLE_API_KEY || ""
+    var GOOGLE_API_KEY = Config.GOOGLE_API_KEY || ""
 
     this.properties = {
         shortDescription: "Search for videos on YouTube.",

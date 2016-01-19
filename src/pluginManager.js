@@ -18,11 +18,11 @@
 var EventEmitter = require('events').EventEmitter; //these two are used to add event capabilities to plugins
 var util = require('util');
 
-var PluginHelper = require('./PluginHelper');
-var DBWrapper = require('./DBWrapper');
+var PluginHelper = require('./pluginHelper');
+var DBWrapper = require('./dbWrapper');
 
-var logger = require('./Logger');
-var log = logger.get("PluginManager");
+var logger = require('./logger');
+var log = logger.get("pluginManager");
 
 function PluginManager(botInfo) {
 

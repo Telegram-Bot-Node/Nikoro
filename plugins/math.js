@@ -13,7 +13,7 @@
         Bot: 6
 */
 
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 var mathjs = require('mathjs');
 
 var math = function(){
