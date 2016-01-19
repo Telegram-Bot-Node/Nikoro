@@ -5,7 +5,7 @@
 
 "use strict";
 
-var Util = require('./../src/Util');
+var Util = require('./../src/util');
 var googleImages = require('google-images');
 
 var request = require('request');
