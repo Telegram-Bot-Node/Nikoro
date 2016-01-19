@@ -20,7 +20,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 - [Plugins](#plugins)
   - [Writing custom plugins](#writing-custom-plugins)
 - [Contributing](#contributing)
-- [Constributors](#constributors)
+- [Contributors](#contributors)
 - [Need help?](#need-help)
 - [License](#license)
 
@@ -122,7 +122,7 @@ Submit a pull request!
 
 This project will only grow if *YOU* help!
 
-##Constributors
+##Contributors
 In Alphabetical Order
 
 * [Cristian Baldi](https://github.com/crisbal/)
