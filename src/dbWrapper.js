@@ -55,8 +55,8 @@ DBWrapper.prototype.keys = function(keyWC, callback) {
     this.redisdb.keys(keyWC, function(err, keys) {
         for (var i = 0; i < keys.length; i++) {
             keys[i] = keys[i].replace("ntb:" + self.pluginName+":", "");
-        };
-        if(callback) callback(err,keys)
+        }
+        if(callback) callback(err,keys);
     });
 };
 
@@ -74,12 +74,12 @@ DBWrapper.prototype.delKeys = function(keyWC, callback) {
                         callback.apply(callback, _args);
                 });
             })(keys[i]);
-        };
+        }
     });
 };
 
 DBWrapper.prototype.flushall = function(callback) {
-    keyWC = "ntb:" + this.pluginName+":*";
+    var keyWC = "ntb:" + this.pluginName+":*";
     var self = this;
     self.redisdb.keys(keyWC, function(err, keys) {
         var _keys = keys.slice();
@@ -92,7 +92,7 @@ DBWrapper.prototype.flushall = function(callback) {
                         callback.apply(callback, _args);
                 });
             })(keys[i]);
-        };
+        }
     });
 };
 

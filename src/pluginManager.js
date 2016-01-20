@@ -15,13 +15,13 @@
     6. Plugin now safely stopped
 */
 
-var EventEmitter = require('events').EventEmitter; //these two are used to add event capabilities to plugins
-var util = require('util');
+var EventEmitter = require("events").EventEmitter; //these two are used to add event capabilities to plugins
+var util = require("util");
 
-var PluginHelper = require('./pluginHelper');
-var DBWrapper = require('./dbWrapper');
+var PluginHelper = require("./pluginHelper");
+var DBWrapper = require("./dbWrapper");
 
-var logger = require('./logger');
+var logger = require("./logger");
 var log = logger.get("pluginManager");
 
 function PluginManager(botInfo) {
@@ -51,7 +51,7 @@ function PluginManager(botInfo) {
         }, function(error){
             log.error("Error initializing plugins: " + error);
         });
-    }
+    };
 
     PluginManager.prototype.initPlugins = function(pluginsToInit) {
         var self = this;
@@ -88,7 +88,7 @@ function PluginManager(botInfo) {
                         loadedPlugin.emit("init",function(err, plugin) {
                             if (err) {
                                 reject(err);
-                            };
+                            }
 
                             inittedPlugins.push(plugin);
                             self.PluginHelper.addPlugin(plugin);
@@ -104,7 +104,7 @@ function PluginManager(botInfo) {
             });
 
         });
-    }
+    };
 
     /*
         Loads a list of plugins by requiring the necessary module
@@ -136,7 +136,7 @@ function PluginManager(botInfo) {
         }
 
         return loadedPlugins;
-    }
+    };
 
 
     /*
@@ -151,7 +151,7 @@ function PluginManager(botInfo) {
         var self = this;
         try {
 
-            var module = require('./../plugins/' + pluginName);
+            var module = require("./../plugins/" + pluginName);
             log.debug("Required " + pluginName);
             util.inherits(module, EventEmitter); //ability to listen and emit events
             log.debug(pluginName + " inherited from EventEmitter");
@@ -174,15 +174,14 @@ function PluginManager(botInfo) {
                 log.debug(pluginName + " has database");
             }
 
-            if (module.listeners('init').length == 0) {
+            if (module.listeners("init").length == 0) {
                 log.debug(pluginName + " added init");
-                module.addListener("init", function (done, db){
-                    
+                module.addListener("init", function (done){
                     done(null, module);
                 });
             }
 
-            if (module.listeners('stop').length == 0){
+            if (module.listeners("stop").length == 0){
                 log.debug(pluginName + " added stop");
                 module.addListener("stop", function (done){
                     done();
@@ -191,10 +190,10 @@ function PluginManager(botInfo) {
 
             return module;
         } catch (err) {
-            console.log("Error: " + err);
+            log.error(err);
             return null;
         }
-    }
+    };
 
     /*
         Validates an individual plugin by checking that all configuration
@@ -207,7 +206,7 @@ function PluginManager(botInfo) {
         configuration returns `true`. Otherwise returns `false` and is ignored.
     */
     PluginManager.prototype.validatePlugin = function(plugin) {
-        if (typeof plugin.check == 'function') {
+        if (typeof plugin.check == "function") {
             if (plugin.check()) {
                 return true;
             } else {
@@ -215,7 +214,7 @@ function PluginManager(botInfo) {
             }
         }
         return true;
-    }
+    };
 
 
 
@@ -234,16 +233,13 @@ function PluginManager(botInfo) {
         } catch (ex) {
             log.error(ex);
         }
-    }
+    };
 
     /*
         Shuts down each running plugin module by calling plugin's
-        internal `doStop` method.
-
-        @param - done - A callback function to be performed when shutDown
-        all plugins have safely prepared to terminate. 
+        internal `doStop` method. 
     */
-    PluginManager.prototype.shutDown = function(done) {
+    PluginManager.prototype.shutDown = function() {
 
         var self = this;
         log.verbose("Emitting shutDown");
@@ -255,9 +251,11 @@ function PluginManager(botInfo) {
             for (var idx in existingPlugins) {
                 var runningPlugin = existingPlugins[idx];
                 runningPlugin.emit("stop", function(err) {
+                    
                     if (err) {
                         reject(err);
-                    };
+                    }
+
                     runningPlugins.splice(0, 1); // remove plugin
                     if (runningPlugins.length == 0) {
                         log.verbose("Plugins shutted down");
@@ -266,12 +264,12 @@ function PluginManager(botInfo) {
                         self.PluginHelper.emit("stop",function(){
                             log.verbose("PluginHelper shutted down");
                             resolve();
-                        })
+                        });
                     }
                 });
             }
         });
-    }
+    };
 
     
 }

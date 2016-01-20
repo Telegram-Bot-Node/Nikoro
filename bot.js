@@ -1,10 +1,10 @@
-var TelegramBot = require('node-telegram-bot-api');
-var config = require('./config');
+var TelegramBot = require("node-telegram-bot-api");
+var config = require("./config");
 var token = config.TELEGRAM_TOKEN;
 
-var PluginManager = require('./src/pluginManager');
+var PluginManager = require("./src/pluginManager");
 
-var log = require('./src/logger').get('Bot');
+var log = require("./src/logger").get("Bot");
 
 log.verbose("Creating instance of TelegramBot with token " + token);
 var bot = new TelegramBot(token, {
@@ -62,31 +62,31 @@ function emitHandleReply(eventName, message){
             handleReply(chatId,reply);
         });
     } catch (ex){
-        console.log(ex);
+        log.error(ex);
     }
     
-};
+}
 
 function handleReply(chatId, reply){
 
     switch (reply.type) {
-        case "text":
-            bot.sendMessage(chatId, reply.text, reply.options);
-            break;
-        case "audio":
-            bot.sendAudio(chatId, reply.audio, reply.options);
-            break;
-        case "photo":
-            bot.sendPhoto(chatId, reply.photo, reply.options);
-            break;
-        case "status": case "chatAction":
-            bot.sendChatAction(chatId, reply.status, reply.options);
-            break;
-        case "sticker":
-            bot.sendSticker(chatId, reply.sticker, reply.options);
-            break;
-        default:
-            log.warn("Unrecognized reply type");
+    case "text":
+        bot.sendMessage(chatId, reply.text, reply.options);
+        break;
+    case "audio":
+        bot.sendAudio(chatId, reply.audio, reply.options);
+        break;
+    case "photo":
+        bot.sendPhoto(chatId, reply.photo, reply.options);
+        break;
+    case "status": case "chatAction":
+        bot.sendChatAction(chatId, reply.status, reply.options);
+        break;
+    case "sticker":
+        bot.sendSticker(chatId, reply.sticker, reply.options);
+        break;
+    default:
+        log.warn("Unrecognized reply type");
     }
 }
 
@@ -97,7 +97,7 @@ function handleAnswerInlineQuery(queryId, results, options){
 }
 
 function logReplyTo(msg){
-    text = "Reply to chat " + msg.chat.id;
+    var text = "Reply to chat " + msg.chat.id;
     if(! (msg.type == "private")){
         text += " '" + msg.chat.title + "'"; 
     }
@@ -106,15 +106,15 @@ function logReplyTo(msg){
 }
 
 // If `CTRL+C` is pressed we stop the bot safely.
-process.on('SIGINT', shutDown);
+process.on("SIGINT", shutDown);
 
 // Stop safely in case of `uncaughtException`.
-//process.on('uncaughtException', shutDown);
+//process.on("uncaughtException", shutDown);
 
 function shutDown() {
     log.info("The bot is shutting down, stopping safely all the plugins");
     plugins.shutDown().then(function(){
-        log.info("All plugins stopped correctly")
+        log.info("All plugins stopped correctly");
         process.exit();
     });
 }

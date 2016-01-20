@@ -1,7 +1,5 @@
-var winston = require('winston');
-var config = require('./../config');
-
-var loggers = [];
+var winston = require("winston");
+var config = require("./../config");
 
 function get(loggerName, level) {
     if(!level)
@@ -11,16 +9,16 @@ function get(loggerName, level) {
         return winston.loggers.get(loggerName);
     }else{
         loggers.push(loggerName);*/
-        return winston.loggers.add(loggerName, {
-            console: {
-                level: level,
-                colorize: true,
-                label: loggerName
-            }
-        });
+    return winston.loggers.add(loggerName, {
+        console: {
+            level: level,
+            colorize: true,
+            label: loggerName
+        }
+    });
     //}
-};
+}
 
 module.exports = {
-  get: get
+    get: get
 };

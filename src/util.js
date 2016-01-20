@@ -6,10 +6,10 @@
 
 var Util = {};
 
-var request = require('request');
-var crypto = require('crypto');
-var fs = require('fs');
-var log = require('./logger').get("Util");
+var request = require("request");
+var crypto = require("crypto");
+var fs = require("fs");
+var log = require("./logger").get("Util");
 
 /*
     A bit hacked together but it works.
@@ -55,8 +55,8 @@ Util.parseCommand = function(message, commandName, options){
     if (!splitBy)
         splitBy = " ";
 
-    var regexParam = ""
-    if (typeof commandName === 'string')
+    var regexParam = "";
+    if (typeof commandName === "string")
         commandName = [commandName];
 
     //let's build a valid regex that matches any of the passed commands
@@ -89,8 +89,8 @@ Util.parseCommand = function(message, commandName, options){
             params = [params.join(" ")];
         
         
-        for (var i=0;i<params.length;i++) {
-            var param = params[i].trim();
+        for (var j=0;j<params.length;j++) {
+            var param = params[j].trim();
             if(param.length>0)
                 args.push(param);
         }
@@ -131,16 +131,16 @@ Util.downloadAndSaveTempResource = function(url, extension, callback) {
 
     var current_date = (new Date()).valueOf().toString();
     var random = Math.random().toString();
-    var fn = "/tmp/ntb-tempres" + crypto.createHash('sha1').update(current_date + random).digest('hex') + "." + extension;
+    var fn = "/tmp/ntb-tempres" + crypto.createHash("sha1").update(current_date + random).digest("hex") + "." + extension;
         
     var options = {
         url: url,
         headers: {
-            'User-Agent': 'stagefright/1.2 (Linux;Android 5.0)'
+            "User-Agent": "stagefright/1.2 (Linux;Android 5.0)"
         }
     };
 
-    request(options).pipe(fs.createWriteStream(fn)).on('close', function(){
+    request(options).pipe(fs.createWriteStream(fn)).on("close", function(){
         callback(fn);
     });
 };

@@ -16,7 +16,7 @@
         TODO
 */
 
-var Util = require('./util');
+var Util = require("./util");
 
 var PluginHelper = function(){
 
@@ -42,21 +42,22 @@ var PluginHelper = function(){
 
         if(matchHelp)
         {
-            plugin = matchHelp[1];
+            var plugin = matchHelp[1];
+            var message = "";
 
             if(plugin)
             {
                 if(this.plugins[plugin] && !this.plugins[plugin].hidden)
                 {   
-                    help = this.plugins[plugin];
-                    message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp
-                    reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+                    var help = this.plugins[plugin];
+                    message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp;
+                    reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
                 }
             }
             else
             {
                 message = this.generateList();
-                reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+                reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
             }
             
         } 
@@ -79,11 +80,11 @@ var PluginHelper = function(){
 
     
     this.on("new_chat_participant", function (msg, reply){
-        newUser = msg.new_chat_participant;
+        var newUser = msg.new_chat_participant;
         if(newUser.username)
             if(newUser.username == this.botInfo.username)
             {
-                reply({type: 'text', text: "Hello, I am Factotum Bot!\n\nUse `/help` to see a list of available plugins.\n\nUse `/info` to get more info about me.", options:{parse_mode: "Markdown"}});
+                reply({type: "text", text: "Hello, I am Factotum Bot!\n\nUse `/help` to see a list of available plugins.\n\nUse `/info` to get more info about me.", options:{parse_mode: "Markdown"}});
                 
             } 
     });
@@ -94,12 +95,14 @@ var PluginHelper = function(){
     };
 
     this.generateList = function(){
-        var message = "*Enabled Plugins*\n\n"
-        var messageInline = "\n*Inline Plugins*\n\n"
-        pluginNames = Object.keys(this.plugins)
+        var message = "*Enabled Plugins*\n\n";
+        var messageInline = "\n*Inline Plugins*\n\n";
+
+        var pluginNames = Object.keys(this.plugins);
+
         for(var i in pluginNames)
         {
-            plugin = this.plugins[pluginNames[i]];
+            var plugin = this.plugins[pluginNames[i]];
             if(!plugin.hidden && !plugin.onlyInline)
                 message += "• " + plugin.name + "\n";
             
@@ -110,7 +113,7 @@ var PluginHelper = function(){
         message += "\nUse `/help pluginName` to get help about a specific plugin.\n\nUse `/info` to get more info about me.";
 
         return message;
-    }
+    };
 };
 
 module.exports = PluginHelper;
