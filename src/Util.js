@@ -60,19 +60,17 @@ Util.parseCommand = function(message, commandName, options){
 
     //let's build a valid regex that matches any of the passed commands
     //["g","google","ggl"] -> g|google|ggl
-    regexParam = ""; 
-    for (var i = 0; i < commandName.length; i++) {
-        regexParam += commandName[i];
-
+    regexParam = commandName.reduce((prev, cur, i) => {
+        prev += cur;
         if (i != commandName.length - 1)
-            regexParam += "|";
-    }
+            prev += '|';
+    }); 
     
     var trigger = "";
     if(!noRequireTrigger)
         trigger = "(?:\\/)";
 
-    var re = new RegExp("^" + trigger + "(" + regexParam +")\\s+(.*)"); 
+    var re = new RegExp(`^${trigger}(${regexParam})\\s+(.*)`); 
 
     var match = re.exec(message + " "); //we have to add this space because we specified "\s+" in the regex, to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"] 
 
@@ -88,30 +86,25 @@ Util.parseCommand = function(message, commandName, options){
             params = [params.join(" ")];
         
         
-        for (var i=0;i<params.length;i++) {
-            var param = params[i].trim();
-            if(param.length>0)
-                args.push(param);
-        }
+        args = params.map(x => x.trim()).filter(x => x.length > 0);
 
         return args;
-
     } else {
         return null;
     } 
 };
 
 
-Util.startsWith = function(string,what){
+Util.startsWith = function(string,what) {
     return string.slice(0, what.length) == what;
 };
 
 
-Util.parseInline = function(message, commandName, options){
+Util.parseInline = function(message, commandName, options) {
     options = options || {};
     options.noRequireTrigger = true;
 
-    return this.parseCommand(message,commandName,options);
+    return this.parseCommand(message, commandName, options);
 };
 
 Util.escapeRegExp = function(str) {

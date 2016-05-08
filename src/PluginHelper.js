@@ -36,7 +36,7 @@ var PluginHelper = function(){
         });
     });
 
-    this.on("text", function (msg, reply){
+    this.on("text", function (msg, reply) {
 
         var matchHelp = Util.parseCommand(msg.text,["help"]);
         var matchList = Util.parseCommand(msg.text,["list"]);
@@ -44,55 +44,69 @@ var PluginHelper = function(){
         var matchInfo = Util.parseCommand(msg.text,["info"]);
 
 
-        if(matchHelp)
-        {
+        if (matchHelp) {
             plugin = matchHelp[1];
 
-            if(plugin)
-            {
-                if(this.plugins[plugin] && !this.plugins[plugin].hidden)
-                {   
+            if (plugin) {
+                if (this.plugins[plugin] && !this.plugins[plugin].hidden) {
                     help = this.plugins[plugin];
-                    message = "*" + help.name + "*\n" + "" + help.shortDescription + "\n\n" + help.fullHelp
-                    reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+                    message = `*${help.name}*\n${help.shortDescription}\n\n${help.fullHelp}`;
+                    reply({
+                        type:"text",
+                        text: message,
+                        options: {parse_mode: "Markdown"}
+                    });
                 }
-            }
-            else
-            {
+            } else {
                 message = this.generateList();
-                reply({type:"text", text: message, options:{parse_mode: "Markdown"} })
+                reply({
+                    type:"text",
+                    text: message,
+                    options: {parse_mode: "Markdown"}
+                });
             }
             
-        } 
-        else if (matchList) 
-        {
+        } else if (matchList) {
             message = this.generateList();
-            reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
-        } 
-        else if (matchStart) 
-        {
+            reply({
+                type:"text",
+                text: message,
+                options:{parse_mode: "Markdown"}
+            });
+        } else if (matchStart) {
             message = "Type `/list` or `/help` to see a list of available plugins. Use `/info` to get more info about me.";
-            reply({type:"text", text: message, options:{parse_mode: "Markdown"} });
-        }
-        else if (matchInfo) 
-        {
+            reply({
+                type:"text",
+                text: message,
+                options: {parse_mode: "Markdown"}
+            });
+        } else if (matchInfo) {
             message = "*Factotum Bot*\n\nThe only Telegram bot you will ever need.\n\nCreator: @crisbal | [Source Code](https://github.com/crisbal/Node-Telegram-Bot)";
-            reply({type:"text", text: message, options:{parse_mode: "Markdown", disable_web_page_preview: true} });
+            reply({
+                type:"text",
+                text: message,
+                options: {
+                    parse_mode: "Markdown",
+                    disable_web_page_preview: true
+                }
+            });
         }
     });
 
     
-    this.on("new_chat_participant", function (msg, reply){
-        newUser = msg.new_chat_participant;
-        if(newUser.username == this.botInfo.username)
-        {
-            reply({type: 'text', text: "Hello, I am Factotum Bot! Use  `/help` or `/list` to see a list of available plugins. Use `/info` to get more info about me.", options:{parse_mode: "Markdown"}});
-            
+    this.on("new_chat_participant", function (msg, reply) {
+        const newUser = msg.new_chat_participant;
+        if(newUser.username == this.botInfo.username) {
+            reply({
+                type: 'text',
+                text: "Hello, I am Factotum Bot! Use  `/help` or `/list` to see a list of available plugins. Use `/info` to get more info about me.",
+                options: {parse_mode: "Markdown"}
+            });
         } 
     });
 
 
-    this.addPlugin = function(plugin){
+    this.addPlugin = function(plugin) {
         this.plugins[plugin.properties.name] = plugin.properties;
     };
 
@@ -100,8 +114,7 @@ var PluginHelper = function(){
         var message = "*Enabled Plugins*\n\n"
         var messageInline = "\n*Inline Plugins*\n\n"
         pluginNames = Object.keys(this.plugins)
-        for(var i in pluginNames)
-        {
+        for(var i in pluginNames) {
             plugin = this.plugins[pluginNames[i]];
             if(!plugin.hidden && !plugin.onlyInline)
                 message += "• " + plugin.name + "\n";
