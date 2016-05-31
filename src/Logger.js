@@ -1,9 +1,9 @@
-var winston = require("winston");
-var config = require("./../config");
+import winston from "winston";
+import Config from "./../Config";
 
 function get(loggerName, level) {
     if(!level)
-        level = config.loggingLevel || "info";
+        level = Config.loggingLevel || "info";
 
     /*if (loggerName in loggers){
         return winston.loggers.get(loggerName);
@@ -11,7 +11,7 @@ function get(loggerName, level) {
         loggers.push(loggerName);*/
     return winston.loggers.add(loggerName, {
         console: {
-            level: level,
+            level,
             colorize: true,
             label: loggerName
         }
@@ -19,6 +19,6 @@ function get(loggerName, level) {
     //}
 }
 
-module.exports = {
-    get: get
+export default {
+    get
 };
