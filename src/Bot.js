@@ -44,7 +44,7 @@ function initBot() {
             const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
             for (const eventName of events) {
                 bot.on(eventName, message => {
-                    const chatID = message;
+                    const chatID = message.chat.id;
                     log.debug("Triggered event: " + eventName);
                     pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
                 })
