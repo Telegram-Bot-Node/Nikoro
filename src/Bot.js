@@ -6,7 +6,7 @@ import Config from "./../Config";
 
 import PluginManager from "./PluginManager";
 
-var log = Logger.get("Bot");
+const log = Logger.get("Bot");
 
 log.info("The bot is starting...");
 
@@ -18,15 +18,9 @@ log.verbose("TelegramBot succesfully created");
 let pluginManager = null;
 
 getMe()
-.then( ([me]) => {
-    return connectToDb(Config.MONGO_URL, me);
-})
-.then(result => {
-    return saveMeToDb(...result); //db, me
-})
-.then(result => {
-    initBot(...result); //db, me
-})
+.then(([me]) => connectToDb(Config.MONGO_URL, me))
+.then(result => saveMeToDb(...result)) //db, me
+.then(result => initBot(...result))
 .catch(die);
 
 
@@ -44,24 +38,20 @@ function initBot() {
     .then(() => {
         log.info("Plugins started");
     })
-    .then(() => {
-        return new Promise(
-            (resolve, reject) => {
-                log.info("Setting up events");
-                const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
-                for (const eventName of events) {
-                    bot.on(eventName, (message) => {
-                        const _message = message;
-                        log.debug("Triggered event: " + eventName);
-                        pluginManager.emit(eventName, message, (reply) => {
-                            handleReply(_message.chat.id, reply);
-                        });
-                    })
-                }
-                resolve();
+    .then(() => new Promise(
+        (resolve, reject) => {
+            log.info("Setting up events");
+            const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
+            for (const eventName of events) {
+                bot.on(eventName, message => {
+                    const chatID = message;
+                    log.debug("Triggered event: " + eventName);
+                    pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
+                })
             }
-        );
-    })
+            resolve();
+        }
+    ))
     .then(() => {
         log.info("The bot is online!");
     })
@@ -90,7 +80,7 @@ function handleReply(chatId, reply){
         break;
 
     default:
-        log.warn("Unrecognized reply type: " + reply.type);
+        log.warn(`Unrecognized reply type: ${reply.type}`);
   }
 }
 
@@ -110,16 +100,16 @@ process.on("SIGINT", handleShutdown);
 //process.on("uncaughtException", shutDown);
 
 function handleShutdown() {
-  log.info("The bot is shutting down, stopping safely all the plugins");
-  pluginManager.stopPlugins().then(function(){
-    log.info("All plugins stopped correctly");
-    process.exit();
-  });
+    log.info("The bot is shutting down, stopping safely all the plugins");
+    pluginManager.stopPlugins().then(function(){
+        log.info("All plugins stopped correctly");
+        process.exit();
+    });
 }
 
 function die(err) {
-  log.error(err);
-  process.exit(-1);
+    log.error(err);
+    process.exit(-1);
 }
 
 function getMe(...params) {
@@ -156,9 +146,9 @@ function saveMeToDb(db, me, ...other) {
             let botCollection = db.collection('bot');
             botCollection.updateOne({}, me, {upsert: true})
             .then(db => {
-              log.verbose("Write succesful");
-              resolve([db, me, ...other]);
-            }, error => reject(error));
+                log.verbose("Write succesful");
+                resolve([db, me, ...other]);
+            }, reject);
         }
     );
 }
