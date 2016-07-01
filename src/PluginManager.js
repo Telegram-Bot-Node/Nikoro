@@ -33,10 +33,10 @@ function PluginManager() {
     */
 
     PluginManager.prototype.runPlugins = function(plugins, botInfo, callback) {
-        console.log(plugins.length + " Plugins activated");
+        console.log(`${plugins.length} plugins activated`);
 
         var loadedPlugins = PluginManager.prototype.loadPlugins(plugins, botInfo);
-        console.log(loadedPlugins.length + " Plugins loaded and checked");
+        console.log(`${loadedPlugins.length} plugins loaded and checked`);
         this.loadedPlugins = loadedPlugins;
 
         console.log("Initializing Plugins");
@@ -45,9 +45,7 @@ function PluginManager() {
             self.runningPlugins = plugins;
             callback(plugins);
 
-        }, function(error){
-            console.log("Error initializing plugins: " + error);
-        });
+        }, error => console.log(`Error initializing plugins: ${error}`));
     }
 
     PluginManager.prototype.initPlugins = function(loadedPlugins, botInfo) {
@@ -68,21 +66,15 @@ function PluginManager() {
                 for (var idx in toInitialize) {
                     var loadedPlugin = toInitialize[idx];
 
-
                     loadedPlugin.emit("init",function(err, plugin) {
-                        if (err) {
-                            reject(err);
-                        };
-                        
+                        if (err) reject(err);                        
 
                         inittedPlugins.push(plugin);
 
                         self.PluginHelper.addPlugin(plugin);
 
                         loadedPlugins.splice(0, 1); // remove plugin because it is already loaded
-                        if (loadedPlugins.length == 0) {
-                            resolve(inittedPlugins);
-                        }
+                        if (loadedPlugins.length == 0) resolve(inittedPlugins);
                     });
                 }
             });
@@ -112,7 +104,7 @@ function PluginManager() {
                 loadedPluginNames.push(pluginName);
 
             } else {
-                console.log("\t"+ pluginName + " configuration failed. Plugin not activated.");
+                console.log(`\t${pluginName} configuration failed. Plugin not activated.`);
             }
         }
 
@@ -141,26 +133,18 @@ function PluginManager() {
             module.botInfo = botInfo;
                     
             if(module.properties.databaseAccess)
-            {
                 module.db = new DBWrapper(module.properties.name);
-            }
 
-            if (module.listeners('init').length == 0) {
-                module.addListener("init", function (done, db){
-                    
-                    done(null, module);
-                });
-            }
+            if (module.listeners('init').length == 0)
+                module.addListener("init", (done, db) => done(null, module));
 
-            if (module.listeners('stop').length == 0){
-                module.addListener("stop", function (done){
-                    done();
-                });
-            }
+            if (module.listeners('stop').length == 0)
+                module.addListener("stop", done => done());
+
             //core handles plugin
             return module;
         } catch (err) {
-            console.log("Error: " + err);
+            console.log(`Error: ${err}`);
             return null;
         }
     }
@@ -176,14 +160,8 @@ function PluginManager() {
         configuration returns `true`. Otherwise returns `false` and is ignored.
     */
     PluginManager.prototype.validatePlugin = function(plugin) {
-        if (typeof plugin.check == 'function') {
-            if (plugin.check()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
+        if (typeof plugin.check == 'function') return !!(plugin.check());
+        else return true;
     }
 
 
@@ -210,24 +188,19 @@ function PluginManager() {
         all plugins have safely prepared to terminate. 
     */
     PluginManager.prototype.shutDown = function(done) {
-
         var self = this;
 
-        return new Promise( function(resolve, reject){
+        return new Promise(function(resolve, reject){
             var existingPlugins = self.runningPlugins.slice(); // copy array
             var runningPlugins = self.runningPlugins;
             for (var idx in existingPlugins) {
                 var runningPlugin = existingPlugins[idx];
                 runningPlugin.emit("stop", function(err) {
-                    if (err) {
-                        reject(err);
-                    };
+                    if (err) reject(err);
                     runningPlugins.splice(0, 1); // remove plugin
                     if (runningPlugins.length == 0) {
                         self.runningPlugins = [];
-                        self.PluginHelper.emit("stop",function(){
-                            resolve();
-                        })
+                        self.PluginHelper.emit("stop", () => resolve());
                     }
                 });
             }
