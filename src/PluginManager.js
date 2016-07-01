@@ -51,10 +51,10 @@ export default class PluginManager {
     loadPlugins(pluginNames) {
         return new Promise(
             (resolve, reject) => {
-                this.log.verbose("Loading " + pluginNames.length + " plugins");
+                this.log.verbose(`Loading ${pluginNames.length} plugins`);
 
                 for (var pluginName of pluginNames) {
-                    this.log.verbose("Loading " + pluginName);
+                    this.log.verbose(`Loading ${pluginName}`);
 
                     let loadedPlugin = this.loadPlugin(pluginName);
 
@@ -62,7 +62,7 @@ export default class PluginManager {
                         this.log.verbose("Loaded " + pluginName);
                         this.loadedPlugins.push(loadedPlugin);
                     } else {
-                        this.log.error("\t"+ pluginName + " configuration failed. Plugin not activated.");
+                        this.log.error(`\t${pluginName} configuration failed. Plugin not activated.`);
                     }
                 }
                 resolve();
@@ -71,25 +71,11 @@ export default class PluginManager {
     };
 
     startPlugins() {
-        return new Promise(
-            (resolve, reject) => {
-                Promise.all(this.loadedPlugins.map(pl => pl.start()))
-                .then(() => {
-                    resolve();
-                })
-            }
-        );
+        return Promise.all(this.loadedPlugins.map(pl => pl.start()));
     }
 
     stopPlugins() {
-        return new Promise(
-            (resolve, reject) => {
-                Promise.all(this.loadedPlugins.map(pl => pl.stop()))
-                .then(() => {
-                    resolve();
-                })
-            }
-        );
+        return Promise.all(this.loadedPlugins.map(pl => pl.stop()));
     }
 
     emit(event, message, callback) {

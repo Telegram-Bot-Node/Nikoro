@@ -11,47 +11,45 @@ const log = Logger.get("Bot");
 log.info("The bot is starting...");
 
 log.verbose(`Creating instance of TelegramBot
-            with token '${Config.TELEGRAM_TOKEN}'`);
+            with token '${Config.TELEGRAM_TOKEN}'...`);
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, { polling: true });
-log.verbose("TelegramBot succesfully created");
+log.verbose("Created.");
 
 let pluginManager = null;
 
 getMe()
-.then(([me]) => connectToDb(Config.MONGO_URL, me))
-.then(result => saveMeToDb(...result)) //db, me
-.then(result => initBot(...result))
+.then(connectToDb)
+.then(saveMeToDb)
+.then(initBot)
 .catch(die);
 
 
 function initBot() {
 
-    pluginManager = new PluginManager();
+    log.info("Loading plugins...");
 
-    log.info("Loading the plugins");
+    pluginManager = new PluginManager();
     pluginManager.loadPlugins(Config.activePlugins)
     .then(() => {
-        log.info("Plugins loaded");
-        log.info("Starting the plugins");
+        log.info("Plugins loaded.");
+        log.info("Starting the plugins...");
     })
-    .then(pluginManager.startPlugins())
+    .then(() => pluginManager.startPlugins())
     .then(() => {
-        log.info("Plugins started");
+        log.info("Plugins started.");
     })
-    .then(() => new Promise(
-        (resolve, reject) => {
-            log.info("Setting up events");
-            const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
-            for (const eventName of events) {
-                bot.on(eventName, message => {
-                    const chatID = message.chat.id;
-                    log.debug("Triggered event: " + eventName);
-                    pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
-                })
-            }
-            resolve();
+    .then(() => {
+        log.info("Setting up events...");
+        const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
+        for (const eventName of events) {
+            bot.on(eventName, message => {
+                const chatID = message.chat.id;
+                log.debug(`Triggered event: ${eventName}`);
+                pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
+            })
         }
-    ))
+        log.info("Events set.");
+    })
     .then(() => {
         log.info("The bot is online!");
     })
@@ -80,7 +78,7 @@ function handleReply(chatId, reply){
         break;
 
     default:
-        log.warn(`Unrecognized reply type: ${reply.type}`);
+        log.warn(`Unrecognized reply type ${reply.type}`);
   }
 }
 
@@ -100,9 +98,9 @@ process.on("SIGINT", handleShutdown);
 //process.on("uncaughtException", shutDown);
 
 function handleShutdown() {
-    log.info("The bot is shutting down, stopping safely all the plugins");
+    log.info("The bot is shutting down, stopping safely all the plugins...");
     pluginManager.stopPlugins().then(function(){
-        log.info("All plugins stopped correctly");
+        log.info("All plugins stopped correctly.");
         process.exit();
     });
 }
@@ -112,43 +110,35 @@ function die(err) {
     process.exit(-1);
 }
 
-function getMe(...params) {
-    return new Promise(
-        (resolve, reject) => {
-            log.verbose("Calling TelegramBot.getMe()");
+function getMe(params = {}) {
+    log.verbose("Calling TelegramBot.getMe()...");
 
-            bot.getMe()
-            .then(me => {
-              log.verbose("TelegramBot.getMe() succesful");
-              resolve([me, ...params]);
-            }, error => reject(error));
-        }
-    );
+    return bot.getMe()
+        .then(me => {
+            log.verbose("TelegramBot.getMe() successful.");
+            params.me = me;
+            return params;
+        })
 }
 
-function connectToDb(url, ...other) {
-    return new Promise(
-        (resolve, reject) => {
-            MongoClient.connect(url)
-              .then(db => {
-                log.verbose("Connected to Mongo database");
-                resolve([db, ...other]);
-            }, error => reject(error));
-        }
-    );
+function connectToDb(settings) {
+    log.verbose("Connecting to Mongo...")
+    return MongoClient.connect(Config.MONGO_URL)
+        .then(db => {
+            log.verbose("Connected.");
+            settings.db = db;
+            return settings;
+        })
 }
 
-function saveMeToDb(db, me, ...other) {
-    return new Promise(
-        (resolve, reject) => {
-            log.verbose("Writing getMe() result to Database");
+function saveMeToDb(settings) {
+    log.verbose("Writing getMe() result to database...");
 
-            let botCollection = db.collection('bot');
-            botCollection.updateOne({}, me, {upsert: true})
-            .then(db => {
-                log.verbose("Write succesful");
-                resolve([db, me, ...other]);
-            }, reject);
-        }
-    );
+    let botCollection = settings.db.collection('bot');
+
+    return botCollection.updateOne({}, settings.me, {upsert: true})
+        .then(() => {
+            log.verbose("Written.");
+            return settings;
+        })
 }
