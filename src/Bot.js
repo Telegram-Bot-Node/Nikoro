@@ -17,11 +17,13 @@ log.verbose("Created.");
 
 let pluginManager = null;
 
-getMe()
-.then(connectToDb)
-.then(saveMeToDb)
-.then(initBot)
-.catch(die);
+Promise.all([
+    getMe()
+    .then(connectToDb)
+    .then(saveMeToDb),
+    initBot()
+])
+.then(() => log.info("The bot is online!"))
 
 
 function initBot() {
@@ -29,7 +31,7 @@ function initBot() {
     log.info("Loading plugins...");
 
     pluginManager = new PluginManager();
-    pluginManager.loadPlugins(Config.activePlugins)
+    return pluginManager.loadPlugins(Config.activePlugins)
     .then(() => {
         log.info("Plugins loaded.");
         log.info("Starting the plugins...");
