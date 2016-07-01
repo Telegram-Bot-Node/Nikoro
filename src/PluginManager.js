@@ -15,7 +15,7 @@
     6. Plugin now safely stopped
 */
 
-
+const EventEmitter = require("events");
 
 import Logger from "./Logger";
 
@@ -24,6 +24,7 @@ export default class PluginManager {
     constructor(pluginNames) {
         this.pluginNames = pluginNames;
         this.loadedPlugins = [];
+        this.emitter = new EventEmitter();
 
         this.log = Logger.get("PluginManager");
     }
@@ -34,7 +35,7 @@ export default class PluginManager {
 
             this.log.debug("Required " + pluginName);
 
-            let loadedPlugin = new plugin();
+            let loadedPlugin = new plugin(this.emitter);
             this.log.debug(pluginName + " created");
 
             if(this.validatePlugin(loadedPlugin))
@@ -79,9 +80,7 @@ export default class PluginManager {
     }
 
     emit(event, message, callback) {
-        for (var plugin of this.loadedPlugins) {
-            plugin.emit(event, message, callback);
-        }
+        this.emitter.emit(event, {message, callback})
     }
     validatePlugin(loadedPlugin){
         return loadedPlugin.check();

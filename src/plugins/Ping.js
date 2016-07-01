@@ -9,12 +9,14 @@ export default class Ping extends Plugin {
         help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
     };
 
-    onText(message, reply) {
-        if (message.text == "ping"){
-            this.log.info("Got a `ping`");
-            reply({type: 'text', text: 'pong'});
-        }
-    };
-
+    init() {
+        var logger = this.log;
+        this.interface.on("text", function({message, callback: reply}) {
+            if (message.text == "ping"){
+                logger.info("Got a `ping`");
+                reply({type: 'text', text: 'pong'});
+            }
+        });
+    }
 };
 
