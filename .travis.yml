@@ -4,5 +4,7 @@ language: node_js
 node_js:
 - '0.12'
 - '4.1'
-script: node node_modules/babel-cli/bin/babel src/ -d dist/
-script: node node_modules/babel-cli/bin/babel test-src/ -d test/
+install: npm install
+before_script: node node_modules/babel-cli/bin/babel src/ -d dist/
+before_script: node node_modules/babel-cli/bin/babel test-src/ -d test/
+script: node_modules/.bin/mocha
