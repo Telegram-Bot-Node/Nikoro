@@ -4,12 +4,11 @@
     which could be used when developing plugins
 */
 
-var Util = {};
-
 var request = require("request");
 var crypto = require("crypto");
 var fs = require("fs");
-var log = require("./Logger").get("Util");
+import Util from "./Logger";
+var log = Util;
 
 /*
     A bit hacked together but it works.

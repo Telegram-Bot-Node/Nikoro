@@ -65,7 +65,8 @@ export default class PluginManager {
                         this.log.error(`\t${pluginName} configuration failed. Plugin not activated.`);
                     }
                 }
-                resolve();
+                // Returns the array of plugins that were loaded
+                resolve(this.loadedPlugins);
             }
         );
     };
