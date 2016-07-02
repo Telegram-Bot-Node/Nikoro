@@ -1,9 +1,7 @@
-import {EventEmitter} from "events";
-
 //import DatabaseWrapper from "./DatabaseWrapper";
 import Logger from "./Logger";
 
-export default class Plugin extends EventEmitter {
+export default class Plugin {
 
     Type = {
         NORMAL: 0,
@@ -30,20 +28,23 @@ export default class Plugin extends EventEmitter {
         }
     };
 
-    constructor() {
+    constructor(emitter) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
-        super();
 
         this.log = Logger.get(this.plugin.name);
+        this.interface = emitter;
+
+        this.init();
 
         /*if(this.plugin.needs.database)
             this.database = DatabaseWrapper(this.plugin.name);*/
-
-        if(typeof this.onText == 'function')
-            this.on("text", (...args) => this.onText(...args));
     };
+
+    init() {
+
+    }
 
     check() {
         return true;
