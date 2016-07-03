@@ -18,6 +18,7 @@
 import Logger from "./Logger";
 import MasterPlugin from "./MasterPlugin";
 
+import {EventEmitter} from "events";
 
 export default class PluginManager {
 
@@ -27,7 +28,9 @@ export default class PluginManager {
         this.pluginNames = pluginNames;
         this.plugins = [];
 
-        this.masterPlugin = new MasterPlugin(this);
+        this.emitter = new EventEmitter();
+
+        this.masterPlugin = new MasterPlugin(this.emitter, this);
         this.addPlugin(this.masterPlugin);
     }
 
@@ -39,7 +42,7 @@ export default class PluginManager {
 
                     this.log.debug("Required " + pluginName);
 
-                    let loadedPlugin = new plugin();
+                    let loadedPlugin = new plugin(this.emitter);
                     this.log.debug(`Created ${pluginName}.`);
 
 
@@ -103,10 +106,7 @@ export default class PluginManager {
     }
 
     emit(event, message, callback) {
-        for (var plugin of this.plugins) {
-            //if plugin is active in chat
-            plugin.emit(event, message, callback);
-        }
+        this.emitter.emit(event, message, callback)
     }
 
     validatePlugin(loadedPlugin){

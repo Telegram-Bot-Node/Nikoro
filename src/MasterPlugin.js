@@ -17,8 +17,8 @@ export default class MasterPlugin extends Plugin {
         }
     };
 
-    constructor(pluginManager) {
-        super();
+    constructor(listener, pluginManager) {
+        super(listener);
 
         this.pluginManager = pluginManager;
     }
