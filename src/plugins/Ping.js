@@ -4,7 +4,7 @@ import Plugin from "./../Plugin";
 export default class Ping extends Plugin {
 
     plugin = {
-        name: "Plugin",
+        name: "Ping",
         description: "Ping - Pong",
         help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
     };
