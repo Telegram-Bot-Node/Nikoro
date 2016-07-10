@@ -6,7 +6,8 @@
   "dependencies": {
     "mongodb": "^2.1.21",
     "node-telegram-bot-api": "^0.21.1",
-    "winston": "^2.1.1"
+    "winston": "^2.1.1",
+    "safe-regex": "^1.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.7.7",
