@@ -47,19 +47,11 @@ export default class Plugin {
     };
 
     start() {
-        return new Promise (
-            (resolve, reject) => {
-                resolve();
-            }
-        );
+        return Promise.resolve();
     };
 
     stop() {
-        return new Promise (
-            (resolve, reject) => {
-                resolve();
-            }
-        );
+        return Promise.resolve();
     };
 
 }
