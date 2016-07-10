@@ -6,6 +6,8 @@ import Config from "./../Config";
 
 import PluginManager from "./PluginManager";
 
+import MessageProxy from "./Proxy";
+
 const log = Logger.get("Bot");
 
 log.info("The bot is starting...");
@@ -25,8 +27,9 @@ getMe()
 
 
 function initBot() {
-
     log.info("Loading plugins...");
+
+    var lastMessage = {};
 
     pluginManager = new PluginManager();
     pluginManager.loadPlugins(Config.activePlugins)
@@ -40,19 +43,21 @@ function initBot() {
     })
     .then(() => {
         log.info("Setting up events...");
+        const messageProxy = new MessageProxy();
         const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
         for (const eventName of events) {
-            bot.on(eventName, message => {
+            bot.on(eventName, message => messageProxy.sniff(message).then(function(message) {
                 const chatID = message.chat.id;
                 log.debug(`Triggered event: ${eventName}`);
                 pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
-            })
+            }))
         }
         log.info("Events set.");
     })
     .then(() => {
         log.info("The bot is online!");
     })
+    .catch(err => log.error(err))
 }
 
 /*
