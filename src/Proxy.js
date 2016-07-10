@@ -6,7 +6,7 @@ export default class MessageProxy {
 
 	sniff(message) {
 		const now = (new Date()).getTime();
-		const author = message.chat.username;
+		const author = message.from.id;
 		var rejected = false;
 		const lastMessage = this.lastMessage[author];
 		// The difference is in milliseconds.
