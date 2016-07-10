@@ -40,6 +40,27 @@ export default class Plugin {
 
         if(typeof this.onText == 'function')
             this.listener.on("text", (...args) => this.onText(...args));
+
+        //media
+        if(typeof this.onAudio == 'function')
+            this.listener.on("audio", (...args) => this.onAudio(...args));
+        if(typeof this.onDocument == 'function')
+            this.listener.on("document", (...args) => this.onDocument(...args));
+        if(typeof this.onPhoto == 'function')
+            this.listener.on("photo", (...args) => this.onPhoto(...args));
+        if(typeof this.onSticker == 'function')
+            this.listener.on("sticker", (...args) => this.onSticker(...args));
+        if(typeof this.onVideo == 'function')
+            this.listener.on("video", (...args) => this.onVideo(...args));
+        if(typeof this.onVoice == 'function')
+            this.listener.on("voice", (...args) => this.onVoice(...args));
+
+        //other
+        if(typeof this.onContact == 'function')
+            this.listener.on("contact", (...args) => this.onContact(...args));
+        if(typeof this.onLocation == 'function')
+            this.listener.on("location", (...args) => this.onLocation(...args));
+
     };
 
     check() {
