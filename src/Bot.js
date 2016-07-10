@@ -62,20 +62,23 @@ function handleReply(chatId, reply){
 
   switch (reply.type) {
     case "text":
-        bot.sendMessage(chatId, reply.text, reply.options);
-        break;
+        return bot.sendMessage(chatId, reply.text, reply.options);
+
     case "audio":
-        bot.sendAudio(chatId, reply.audio, reply.options);
-        break;
+        return bot.sendAudio(chatId, reply.audio, reply.options);
+    case "document":
+        return bot.sendDocument(chatId, reply.document, reply.options);
     case "photo":
-        bot.sendPhoto(chatId, reply.photo, reply.options);
-        break;
-    case "status": case "chatAction":
-        bot.sendChatAction(chatId, reply.status, reply.options);
-        break;
+        return bot.sendPhoto(chatId, reply.photo, reply.options);
     case "sticker":
-        bot.sendSticker(chatId, reply.sticker, reply.options);
-        break;
+        return bot.sendSticker(chatId, reply.sticker, reply.options);
+    case "video":
+        return bot.sendVideo(chatId, reply.video, reply.options);
+    case "voice":
+        return bot.sendVoice(chatId, reply.voice, reply.options);
+
+    case "status": case "chatAction":
+        return bot.sendChatAction(chatId, reply.status, reply.options);
 
     default:
         log.warn(`Unrecognized reply type ${reply.type}`);
