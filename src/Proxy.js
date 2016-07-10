@@ -11,7 +11,7 @@ export default class MessageProxy {
 		if (message_types.indexOf(eventName) == -1) return Promise.resolve(message);
 
 		const now = (new Date()).getTime();
-		const author = message.chat.username;
+		const author = message.from.id;
 		var rejected = false;
 		const lastMessage = this.lastMessage[author];
 		// The difference is in milliseconds.
