@@ -28,11 +28,14 @@ export default class Plugin {
         }
     };
 
-    constructor(listener) {
+    constructor(listener, db) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
         this.listener = listener;
+
+        if (db)
+            this.db = db;
 
         this.log = Logger.get(this.plugin.name);
         /*if(this.plugin.needs.database)

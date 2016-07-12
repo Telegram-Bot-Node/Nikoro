@@ -10,19 +10,23 @@ export default class RegexSet extends Plugin {
         help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar',
     };
 
-    replacements = [];
+    constructor(a, b) {
+        super(a, b);
+        if (!this.db.replacements)
+            this.db.replacements = [];
+    }
 
     onText(message, reply) {
-        for (let item of this.replacements) {
+        Object.keys(this.db.replacements).forEach(key => {
+            let item = this.db.replacements[key];
             const matches = message.text.match(item.regex);
-            if (!matches) continue;
-            var replacement = item.text;
+            if (!matches) return;
+            let replacement = item.text;
             for (let i = 0; i < matches.length; i++) {
                 replacement = replacement.replace(new RegExp("\\$" + String(i), "g"), matches[i]);
             }
-            if (message.text.match(item.regex))
-                reply({type: "text", text: replacement});
-        }
+            reply({type: "text", text: replacement});
+        });
 
         this.regexset(message.text, reply);
         this.regexlist(message.text, reply);
@@ -58,7 +62,7 @@ export default class RegexSet extends Plugin {
             reply({type: "text", text: "That regular expression seems to be inefficient."});
             return;
         }
-        this.replacements.push({regex: literal_regex, text});
+        this.db.replacements.push({regex: literal_regex, text});
         reply({type: "text", text: "Done."});
     }
 
@@ -66,12 +70,12 @@ export default class RegexSet extends Plugin {
         const parts = Util.parseCommand(text, "regexlist", {splitBy: '-'});
         if (!parts) return;
         var string = "";
-        for (let ID in this.replacements) {
-            let item = this.replacements[ID];
+        for (let ID in this.db.replacements) {
+            let item = this.db.replacements[ID];
             console.log(ID, item);
             string += `${ID}: regex ${item.regex}, text ${item.text}`
         }
-        if (this.replacements.length == 0) {
+        if (this.db.replacements.length == 0) {
             string = "List empty."
         }
         reply({type: "text", text: string});
@@ -85,8 +89,8 @@ export default class RegexSet extends Plugin {
             return;
         }
         const ID = Number(parts[1]);
-        if (this.replacements[ID]) {
-            this.replacements.splice(ID, 1);
+        if (this.db.replacements[ID]) {
+            this.db.replacements.splice(ID, 1);
             reply({type: "text", text: "Deleted."})            
         } else {
             reply({type: "text", text: "No such expression."})            
