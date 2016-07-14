@@ -4,7 +4,12 @@ export default class MessageProxy {
 	lastMessage = {}
 	spamInterval = 1000
 
-	sniff(message) {
+	sniff(message, eventName) {
+		// Types that represent "actual" data and not events
+		const message_types = ["text","audio","document","photo","sticker","video","voice","contact","location"];
+		// Let events through
+		if (message_types.indexOf(eventName) == -1) return Promise.resolve(message);
+
 		const now = (new Date()).getTime();
 		const author = message.from.id;
 		var rejected = false;

@@ -9,29 +9,31 @@ export default class MediaSet extends Plugin {
         help: '',
     };
 
-    triggers = {}; /*
-    triggers = {
-        "chat_id": {
-            "trigger": {}
+    constructor(a, b) {
+        super(a, b);
+        /*
+        triggers = {
+            "chat_id": {
+                "trigger": {}
+            }
         }
+        */
+        this.db.triggers = {};
+        this.db.pending_requests = {};
     }
-    */
-    pending_requests = {};
 
     onText(message, reply) {
         const text = message.text;
 
-        const triggers = this.triggers[message.chat.id] || {};
+        const triggers = this.db.triggers[message.chat.id] || {};
         for (let trigger in triggers) {
-            if(message.text.indexOf(trigger) > -1){
-                const re = new RegExp("\\b(" + Util.escapeRegExp(trigger) + ")\\b","g");
-                const match = re.exec(message.text);
-                if(match){
-                    const media = triggers[trigger];
-                    console.log(media);
-                    reply({type: media.type, [media.type]: media.fileId});
-                }
-            }
+            if (message.text.indexOf(trigger) == -1) continue;
+            const re = new RegExp("\\b(" + Util.escapeRegExp(trigger) + ")\\b","g");
+            const match = re.exec(message.text);
+            if (!match) continue;
+            const media = triggers[trigger];
+            console.log(media);
+            reply({type: media.type, [media.type]: media.fileId});
         }
 
         this.setStepOne(message, reply);
@@ -67,50 +69,49 @@ export default class MediaSet extends Plugin {
             return;
         }
 
-        if(!this.pending_requests[message.chat.id])
-            this.pending_requests[message.chat.id] = {}
+        if(!this.db.pending_requests[message.chat.id])
+            this.db.pending_requests[message.chat.id] = {}
 
-        reply({type: "text", text: "Perfect! Now send me the media as a reply to this message!"})
+        reply({
+            type: "text",
+            text: "Perfect! Now send me the media as a reply to this message!"
+        })
         .then(message => {
-            this.pending_requests[message.chat.id][message.message_id] = args[1];
+            this.db.pending_requests[message.chat.id][message.message_id] = args[1];
         });
     }
 
     setStepTwo(message, reply, mediaType) {
         //is this a reply for a "now send media" message?
-        if(message.hasOwnProperty('reply_to_message')){
-            if(this.pending_requests[message.chat.id]) {
+        if (!message.hasOwnProperty('reply_to_message')) return;
+        if (!this.db.pending_requests[message.chat.id]) return;
 
-                for (let request in this.pending_requests[message.chat.id]) {
-                    if(message.reply_to_message.message_id == request){
+        for (let request in this.db.pending_requests[message.chat.id]) {
+            if (message.reply_to_message.message_id != request) break;
+            const trigger = this.db.pending_requests[message.chat.id][request];
 
-                        const trigger = this.pending_requests[message.chat.id][request];
+            if(!this.db.triggers[message.chat.id])
+                this.db.triggers[message.chat.id] = {};
 
-                        if(!this.triggers[message.chat.id])
-                            this.triggers[message.chat.id] = {};
+            console.log(mediaType);
+            console.log(message.voice);
+            var fileId = null;
+            if(mediaType == "photo")
+                fileId = message.photo[0].file_id;
+            else
+                fileId = message[mediaType].file_id;
 
-                        console.log(mediaType);
-                        console.log(message.voice);
-                        var fileId = null;
-                        if(mediaType == "photo")
-                            fileId = message.photo[0].file_id;
-                        else
-                            fileId = message[mediaType].file_id;
+            this.db.triggers[message.chat.id][trigger] = {
+                "type": mediaType,
+                "fileId": fileId
+            };
 
-                        this.triggers[message.chat.id][trigger] = {
-                            "type": mediaType,
-                            "fileId": fileId
-                        };
+            delete this.db.pending_requests[message.chat.id][request];
 
-                        delete this.pending_requests[message.chat.id][request];
-
-                        reply({type: "text", text: "Done! Enjoy!"})
-                        return;
-                    }
-                }
-
-            }
+            reply({type: "text", text: "Done! Enjoy!"})
+            return;
         }
+
     }
 
     /*unset(message, reply) {
