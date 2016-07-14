@@ -17,20 +17,26 @@ export default class RegexSet extends Plugin {
     }
 
     onText(message, reply) {
+        try {
+
         Object.keys(this.db.replacements).forEach(key => {
             let item = this.db.replacements[key];
             const matches = message.text.match(item.regex);
             if (!matches) return;
             let replacement = item.text;
             for (let i = 0; i < matches.length; i++) {
-                replacement = replacement.replace(new RegExp("\\$" + String(i), "g"), matches[i]);
+                replacement = replacement.replace(new RegExp("\\$" + String(i), "g" + item.flags), matches[i]);
             }
+            replacement = replacement.replace(/\$name/g, message.from.first_name);
+            replacement = replacement.replace(/\$username/g, message.from.username);
+            console.log(message);
             reply({type: "text", text: replacement});
         });
 
         this.regexset(message.text, reply);
         this.regexlist(message.text, reply);
         this.regexdelete(message.text, reply);
+        } catch(e) {console.log(e)}
     };
 
     regexset(text, reply) {
@@ -53,7 +59,7 @@ export default class RegexSet extends Plugin {
                 return;
         }
         try {
-            var regex = new RegExp(literal_regex, flags);
+            var regex = new RegExp(literal_regex, "g" + flags);
         } catch (e) {
             reply({type: "text", text: "Cannot compile regular expression."});
             return;
@@ -62,7 +68,7 @@ export default class RegexSet extends Plugin {
             reply({type: "text", text: "That regular expression seems to be inefficient."});
             return;
         }
-        this.db.replacements.push({regex: literal_regex, text});
+        this.db.replacements.push({regex: literal_regex, text, flags});
         reply({type: "text", text: "Done."});
     }
 
