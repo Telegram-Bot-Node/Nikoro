@@ -17,29 +17,30 @@ export default class RegexSet extends Plugin {
     }
 
     onText(message, reply) {
-        try {
-
+        const chatID = message.from.id;
         Object.keys(this.db.replacements).forEach(key => {
             let item = this.db.replacements[key];
+
+            if (chatID != item.chatID) return;
+
             const matches = message.text.match(item.regex);
             if (!matches) return;
+
             let replacement = item.text;
             for (let i = 0; i < matches.length; i++) {
                 replacement = replacement.replace(new RegExp("\\$" + String(i), "g" + item.flags), matches[i]);
             }
             replacement = replacement.replace(/\$name/g, message.from.first_name);
             replacement = replacement.replace(/\$username/g, message.from.username);
-            console.log(message);
             reply({type: "text", text: replacement});
         });
 
-        this.regexset(message.text, reply);
-        this.regexlist(message.text, reply);
-        this.regexdelete(message.text, reply);
-        } catch(e) {console.log(e)}
+        this.regexset(message.text, reply, chatID);
+        this.regexlist(message.text, reply, chatID);
+        this.regexdelete(message.text, reply, chatID);
     };
 
-    regexset(text, reply) {
+    regexset(text, reply, chatID) {
         var parts = Util.parseCommand(text, "regexset", {splitBy: '-'});
         if (!parts) return;
         var literal_regex = parts[1],
@@ -68,7 +69,7 @@ export default class RegexSet extends Plugin {
             reply({type: "text", text: "That regular expression seems to be inefficient."});
             return;
         }
-        this.db.replacements.push({regex: literal_regex, text, flags});
+        this.db.replacements.push({regex: literal_regex, text, flags, chatID});
         reply({type: "text", text: "Done."});
     }
 
@@ -78,7 +79,6 @@ export default class RegexSet extends Plugin {
         var string = "";
         for (let ID in this.db.replacements) {
             let item = this.db.replacements[ID];
-            console.log(ID, item);
             string += `${ID}: regex ${item.regex}, text ${item.text}`
         }
         if (this.db.replacements.length == 0) {
