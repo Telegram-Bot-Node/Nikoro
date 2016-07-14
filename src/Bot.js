@@ -1,5 +1,4 @@
 import TelegramBot from "node-telegram-bot-api";
-import {MongoClient} from 'mongodb';
 import Logger from "./Logger";
 
 import Config from "./../Config";
@@ -19,14 +18,12 @@ log.verbose("Created.");
 
 let pluginManager = null;
 
-getMe()
-.then(connectToDb)
-.then(saveMeToDb)
+bot.getMe()
 .then(initBot)
 .catch(die);
 
 
-function initBot() {
+function initBot(getMe) {
     log.info("Loading plugins...");
 
     var lastMessage = {};
@@ -116,37 +113,4 @@ function handleShutdown() {
 function die(err) {
     log.error(err);
     process.exit(-1);
-}
-
-function getMe(params = {}) {
-    log.verbose("Calling TelegramBot.getMe()...");
-
-    return bot.getMe()
-        .then(me => {
-            log.verbose("TelegramBot.getMe() successful.");
-            params.me = me;
-            return params;
-        })
-}
-
-function connectToDb(settings) {
-    log.verbose("Connecting to Mongo...")
-    return MongoClient.connect(Config.MONGO_URL)
-        .then(db => {
-            log.verbose("Connected.");
-            settings.db = db;
-            return settings;
-        })
-}
-
-function saveMeToDb(settings) {
-    log.verbose("Writing getMe() result to database...");
-
-    let botCollection = settings.db.collection('bot');
-
-    return botCollection.updateOne({}, settings.me, {upsert: true})
-        .then(() => {
-            log.verbose("Written.");
-            return settings;
-        })
 }
