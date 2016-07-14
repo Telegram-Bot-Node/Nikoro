@@ -6,7 +6,7 @@
   "dependencies": {
     "node-telegram-bot-api": "^0.21.1",
     "winston": "^2.1.1",
-    "request": "*",
+    "request": "^2.73.0",
     "safe-regex": "^1.1.0",
     "rebridge": "^1.0.1"
   },
