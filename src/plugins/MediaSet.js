@@ -87,7 +87,7 @@ export default class MediaSet extends Plugin {
         if (!this.db.pending_requests[message.chat.id]) return;
 
         for (let request in this.db.pending_requests[message.chat.id]) {
-            if (message.reply_to_message.message_id != request) return;
+            if (message.reply_to_message.message_id != request) break;
             const trigger = this.db.pending_requests[message.chat.id][request];
 
             if(!this.db.triggers[message.chat.id])
