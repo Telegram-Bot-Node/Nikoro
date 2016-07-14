@@ -1,5 +1,5 @@
 import Plugin from "./../Plugin";
-import Util from "./../util";
+import Util from "./../Util";
 const safe = require("safe-regex");
 
 export default class RegexSet extends Plugin {

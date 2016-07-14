@@ -6,7 +6,6 @@ var Config = {};
 
 // TELEGRAM HTTP API TOKEN
 Config.TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
-Config.MONGO_URL = "mongodb://localhost:27017/Telegram-Bot-node"
 
 // filename without extension of the active plugins
 Config.activePlugins = ["Ping"];
