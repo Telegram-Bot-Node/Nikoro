@@ -28,6 +28,8 @@ export default class Plugin {
         }
     };
 
+    _log_instantiated = false;
+
     constructor(listener, db) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
@@ -37,7 +39,7 @@ export default class Plugin {
         if (db)
             this.db = db;
 
-        this.log = Logger.get(this.plugin.name);
+        // this.log = Logger.get(this.plugin.name);
         /*if(this.plugin.needs.database)
             this.database = DatabaseWrapper(this.plugin.name);*/
 
@@ -77,5 +79,10 @@ export default class Plugin {
     stop() {
         return Promise.resolve();
     };
+
+    get logger() {
+        return Logger.get(this.plugin.name);
+    }
+
 
 }
