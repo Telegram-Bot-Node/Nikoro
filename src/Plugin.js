@@ -28,8 +28,6 @@ export default class Plugin {
         }
     };
 
-    _log_instantiated = false;
-
     constructor(listener, db) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
