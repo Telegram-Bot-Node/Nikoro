@@ -10,10 +10,11 @@ export default class RegexSet extends Plugin {
         help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar',
     };
 
-    constructor(a, b) {
-        super(a, b);
+    start(){
         if (!this.db.replacements)
             this.db.replacements = [];
+
+        return Promise.resolve();
     }
 
     onText(message, reply) {
