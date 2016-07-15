@@ -37,7 +37,7 @@ export default class Plugin {
         if (db)
             this.db = db;
 
-        // this.log = Logger.get(this.plugin.name);
+        this.log = Logger.get(this.self.plugin.name);
         /*if(this.plugin.needs.database)
             this.database = DatabaseWrapper(this.plugin.name);*/
 
@@ -78,9 +78,19 @@ export default class Plugin {
         return Promise.resolve();
     };
 
-    get logger() {
-        return Logger.get(this.plugin.name);
+    get self() {
+        /*
+         * This is a hack.
+         * When the Plugin constructor reads `this`, it gets a reference to the
+         * Plugin class, not to the child (eg. PingPlugin), which means that eg.
+         * `this.plugin.name` will contain "Plugin" and not the correct name
+         * ("Ping").
+         *
+         * With this hack, to get the correct plugin name you'll need to read
+         * `this.self.name`. Note that writing to `this.self` doesn't have any
+         * effect.
+         */
+        return this;
     }
-
 
 }
