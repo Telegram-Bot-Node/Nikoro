@@ -2,7 +2,7 @@ import Plugin from "./../Plugin";
 
 
 export default class Ping extends Plugin {
-
+    
     plugin = {
         name: "Ping",
         description: "Ping - Pong",
@@ -11,7 +11,7 @@ export default class Ping extends Plugin {
 
     onText(message, reply) {
         if (message.text == "ping"){
-            this.log.info("Got a `ping`");
+            this.log.info("Got a ping");
             reply({type: 'text', text: 'pong'});
         }
     };

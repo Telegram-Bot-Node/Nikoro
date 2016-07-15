@@ -146,4 +146,46 @@ Util.downloadAndSaveTempResource = function(url, extension, callback) {
     });
 };
 
+Util.buildPrettyUserName = function(user){
+    var name = "";
+
+    if(user.first_name)
+        name += user.first_name + " ";
+
+    if(user.last_name)
+        name += user.last_name + " ";
+
+    if(user.username)
+        name += ("@" + user.username + " ");
+
+    if(user.id)
+        name += ("[" + user.id + "] ");
+
+    return name.trim();
+};
+
+Util.buildPrettyChatName = function(chat){
+    var name = "";
+
+    if(chat.title)
+        name += chat.title + " ";
+
+    if(chat.username)
+        name += ("@" + chat.username + " ");
+
+    if(chat.first_name)
+        name += chat.first_name + " ";
+
+    if(chat.last_name)
+        name += chat.last_name + " ";
+
+    if(chat.type)
+        name += ("(" + chat.type + ") ");
+
+    if(chat.id)
+        name += ("[" + chat.id + "] ");
+
+    return name.trim();
+}
+
 module.exports = Util;
