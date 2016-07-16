@@ -18,7 +18,7 @@ export default class RegexSet extends Plugin {
     }
 
     onText(message, reply) {
-        const chatID = message.from.id;
+        const chatID = message.chat.id;
         Object.keys(this.db.replacements).forEach(key => {
             let item = this.db.replacements[key];
 
