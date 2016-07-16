@@ -46,9 +46,7 @@ var log = Logger.get("Util");
         Returns null if the message is not a valid command (does not match the specified commands)
 */
 
-Util.parseCommand = function(message, commandName, options){
-
-    options = options || {};
+Util.parseCommand = function(message, commandName, options = {}) {
     var splitBy = options.splitBy || " ";
     var joinParams = options.joinParams || false;
     var noRequireTrigger = options.noRequireTrigger || false;
@@ -60,79 +58,71 @@ Util.parseCommand = function(message, commandName, options){
     if (typeof commandName === "string")
         commandName = [commandName];
 
-    //let's build a valid regex that matches any of the passed commands
-    //["g","google","ggl"] -> g|google|ggl
+    // let's build a valid regex that matches any of the passed commands
+    // ["g","google","ggl"] -> g|google|ggl
     regexParam = "";
     for (var i = 0; i < commandName.length; i++) {
         regexParam += commandName[i];
 
-        if (i != commandName.length - 1)
-            regexParam += "|";
+        if (i !== commandName.length - 1) regexParam += "|";
     }
 
     var trigger = "";
-    if(!noRequireTrigger)
-        trigger = "(?:\\/)";
+    if (!noRequireTrigger) trigger = "(?:\\/)";
 
-    var re = new RegExp("^" + trigger + "(" + regexParam +")\\s+(.*)");
+    var re = new RegExp("^" + trigger + "(" + regexParam + ")\\s+(.*)");
 
-    var match = re.exec(message + " "); //we have to add this space because we specified "\s+" in the regex, to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"]
+    // We have to add this space because we specified "\s+" in the regex,
+    // to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"]
+    var match = re.exec(message + " ");
+    if (!match) return null;
 
     var args = [];
-    if (match) {
+    var command = match[1].trim();
+    args = [command];
 
-        var command = match[1].trim();
-        args = [command];
+    var params = match[2].split(splitBy);
 
-        var params = match[2].split(splitBy);
+    if (joinParams)
+        params = [params.join(" ")];
 
-        if (joinParams)
-            params = [params.join(" ")];
-
-
-        for (var j=0;j<params.length;j++) {
-            var param = params[j].trim();
-            if(param.length>0)
-                args.push(param);
-        }
-
-        return args;
-
-    } else {
-        return null;
+    for (var j = 0; j < params.length; j++) {
+        var param = params[j].trim();
+        if (param.length > 0) args.push(param);
     }
+
+    return args;
 };
 
-
-Util.startsWith = function(string,what){
-    return string.slice(0, what.length) == what;
+Util.startsWith = function(string, what) {
+    return string.slice(0, what.length) === what;
 };
 
-
-Util.parseInline = function(message, commandName, options){
-    options = options || {};
+Util.parseInline = function(message, commandName, options = {}) {
     options.noRequireTrigger = true;
 
-    return this.parseCommand(message,commandName,options);
+    return this.parseCommand(message, commandName, options);
 };
 
 Util.escapeRegExp = function(str) {
-    log.debug("Escaping RegExp: " + str);
+    log.debug(`Escaping RegExp: ${str}`);
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 };
 
-Util.escapeRedisKeys = function(str){
-    log.debug("Escaping Redis Keys: " + str);
-    return str = str.replace(/[\?\[\]\^\*\-]/g,"\\$&");
+Util.escapeRedisKeys = function(str) {
+    log.debug(`Escaping Redis Keys: ${str}`);
+    return str.replace(/[\?\[\]\^\*\-]/g, "\\$&");
 };
 
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
+    log.info(`Downloading and saving resource from ${url}`);
 
-    log.info("Downloading and saving resource from " + url);
-
-    var current_date = (new Date()).valueOf().toString();
+    var currentDate = (new Date()).valueOf().toString();
     var random = Math.random().toString();
-    var fn = "/tmp/ntb-tempres" + crypto.createHash("sha1").update(current_date + random).digest("hex") + "." + extension;
+    var fn =
+        "/tmp/ntb-tempres" +
+        crypto.createHash("sha1").update(currentDate + random).digest("hex") +
+        "." + extension;
 
     var options = {
         url: url,
@@ -141,51 +131,41 @@ Util.downloadAndSaveTempResource = function(url, extension, callback) {
         }
     };
 
-    request(options).pipe(fs.createWriteStream(fn)).on("close", function(){
+    request(options).pipe(fs.createWriteStream(fn)).on("close", function() {
         callback(fn);
     });
 };
 
-Util.buildPrettyUserName = function(user){
+Util.buildPrettyUserName = function(user) {
     var name = "";
 
-    if(user.first_name)
-        name += user.first_name + " ";
+    if (user.first_name) name += user.first_name + " ";
 
-    if(user.last_name)
-        name += user.last_name + " ";
+    if (user.last_name) name += user.last_name + " ";
 
-    if(user.username)
-        name += ("@" + user.username + " ");
+    if (user.username) name += `@${user.username} `;
 
-    if(user.id)
-        name += ("[" + user.id + "] ");
+    if (user.id) name += `[${user.id}] `;
 
     return name.trim();
 };
 
-Util.buildPrettyChatName = function(chat){
+Util.buildPrettyChatName = function(chat) {
     var name = "";
 
-    if(chat.title)
-        name += chat.title + " ";
+    if (chat.title) name += chat.title + " ";
 
-    if(chat.username)
-        name += ("@" + chat.username + " ");
+    if (chat.username) name += `@${chat.username} `;
 
-    if(chat.first_name)
-        name += chat.first_name + " ";
+    if (chat.first_name) name += chat.first_name + " ";
 
-    if(chat.last_name)
-        name += chat.last_name + " ";
+    if (chat.last_name) name += chat.last_name + " ";
 
-    if(chat.type)
-        name += ("(" + chat.type + ") ");
+    if (chat.type) name += `(${chat.type}) `;
 
-    if(chat.id)
-        name += ("[" + chat.id + "] ");
+    if (chat.id) name += `[${chat.id}] `;
 
     return name.trim();
-}
+};
 
 module.exports = Util;

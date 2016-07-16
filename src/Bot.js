@@ -13,7 +13,7 @@ log.info("The bot is starting...");
 
 log.verbose(`Creating instance of TelegramBot
             with token '${Config.TELEGRAM_TOKEN}'...`);
-const bot = new TelegramBot(Config.TELEGRAM_TOKEN, { polling: true });
+const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.verbose("Created.");
 
 let pluginManager = null;
@@ -22,11 +22,8 @@ bot.getMe()
 .then(initBot)
 .catch(die);
 
-
-function initBot(getMe) {
+function initBot(/* getMe */) {
     log.info("Loading plugins...");
-
-    var lastMessage = {};
 
     pluginManager = new PluginManager();
     pluginManager.loadPlugins(Config.activePlugins)
@@ -41,28 +38,32 @@ function initBot(getMe) {
     .then(() => {
         log.info("Setting up events...");
         const messageProxy = new MessageProxy();
-        const events = ["text","audio","document","photo","sticker","video","voice","contact","location","new_chat_participant","left_chat_participant","new_chat_title","new_chat_photo","delete_chat_photo","group_chat_created"];
+        const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
         for (const eventName of events) {
-            bot.on(eventName, message => messageProxy.sniff(message, eventName).then(function(message) {
-                const chatID = message.chat.id;
-                log.debug(`Triggered event: ${eventName}`);
-                pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
-            }))
+            bot.on(
+                eventName,
+                message => messageProxy
+                    .sniff(message, eventName)
+                    .then(function(message) {
+                        const chatID = message.chat.id;
+                        log.debug(`Triggered event: ${eventName}`);
+                        pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
+                    })
+            );
         }
         log.info("Events set.");
     })
     .then(() => {
         log.info("The bot is online!");
     })
-    .catch(err => log.error(err))
+    .catch(err => log.error(err));
 }
 
 /*
 * TODO: port to es6
 */
-function handleReply(chatId, reply){
-
-  switch (reply.type) {
+function handleReply(chatId, reply) {
+    switch (reply.type) {
     case "text":
         return bot.sendMessage(chatId, reply.text, reply.options);
 
@@ -84,27 +85,29 @@ function handleReply(chatId, reply){
 
     default:
         log.warn(`Unrecognized reply type ${reply.type}`);
-  }
+    }
 }
 
-/*function logReplyTo(msg){
+/*
+function logReplyTo(msg){
   var text = "Reply to chat " + msg.chat.id;
   if(! (msg.type == "private")){
     text += " '" + msg.chat.title + "'";
   }
   text += " from " + ( "@" + (msg.from.username || "nousername")) + " " + (msg.from.first_name || "")+ " " + (msg.from.last_name || "");
   log.verbose(text);
-}*/
+}
+*/
 
 // If `CTRL+C` is pressed we stop the bot safely.
 process.on("SIGINT", handleShutdown);
 
 // Stop safely in case of `uncaughtException`.
-//process.on("uncaughtException", shutDown);
+// process.on("uncaughtException", shutDown);
 
 function handleShutdown() {
     log.info("The bot is shutting down, stopping safely all the plugins...");
-    pluginManager.stopPlugins().then(function(){
+    pluginManager.stopPlugins().then(function() {
         log.info("All plugins stopped correctly.");
         process.exit();
     });
