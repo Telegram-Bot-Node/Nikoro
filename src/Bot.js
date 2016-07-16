@@ -26,19 +26,22 @@ function initBot(/* getMe */) {
     log.info("Loading plugins...");
 
     pluginManager = new PluginManager();
+
+    // Loads and prepares root and base plugins
     pluginManager.loadPlugins(Config.activePlugins)
     .then(() => {
         log.info("Plugins loaded.");
         log.info("Starting the plugins...");
+        // Starts every plugin
+        return pluginManager.startPlugins();
     })
-    .then(() => pluginManager.startPlugins())
     .then(() => {
         log.info("Plugins started.");
-    })
-    .then(() => {
         log.info("Setting up events...");
         const messageProxy = new MessageProxy();
         const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
+        // Registers a handler for every Telegram event.
+        // It runs the message through the proxy and forwards it to the plugin manager.
         for (const eventName of events) {
             bot.on(
                 eventName,
@@ -52,8 +55,6 @@ function initBot(/* getMe */) {
             );
         }
         log.info("Events set.");
-    })
-    .then(() => {
         log.info("The bot is online!");
     })
     .catch(err => log.error(err));
