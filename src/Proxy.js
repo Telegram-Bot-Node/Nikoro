@@ -21,14 +21,14 @@ export default class MessageProxy {
 
         const now = (new Date()).getTime();
         const author = message.from.id;
-        this.lastMessage[author] = now;
-
         const lastMessage = this.lastMessage[author];
+
         // The difference is in milliseconds.
         if (lastMessage && ((now - lastMessage) < this.spamInterval)) {
             this.log.info("Rejecting message from " + Util.buildPrettyUserName(message.from));
             return Promise.reject();
         }
+        this.lastMessage[author] = now;
 
         return Promise.resolve(message);
     }

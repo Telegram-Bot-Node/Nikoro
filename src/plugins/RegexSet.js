@@ -4,11 +4,17 @@ const safe = require("safe-regex");
 
 export default class RegexSet extends Plugin {
 
-    plugin = {
-        name: "RegexSet",
-        description: "Regex-capable set command",
-        help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar'
-    };
+    get plugin() {
+        return {
+            name: "RegexSet",
+            description: "Regex-capable set command",
+            help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar',
+
+            needs: {
+                database: true
+            }
+        };
+    }
 
     start() {
         if (!this.db.replacements)

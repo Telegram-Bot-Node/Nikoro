@@ -20,13 +20,10 @@ import MasterPlugin from "./MasterPlugin";
 
 import {EventEmitter} from "events";
 
-import Rebridge from "rebridge";
-
 export default class PluginManager {
 
     constructor(pluginNames) {
         this.log = Logger.get("PluginManager");
-        this.db = new Rebridge();
 
         this.pluginNames = pluginNames;
         this.plugins = [];
@@ -45,11 +42,7 @@ export default class PluginManager {
 
                 this.log.debug("Required " + pluginName);
 
-                if (!this.db["plugin_" + pluginName])
-                    this.db["plugin_" + pluginName] = {};
-
-                let plDb = this.db["plugin_" + pluginName];
-                let loadedPlugin = new ThisPlugin(this.emitter, plDb);
+                let loadedPlugin = new ThisPlugin(this.emitter);
                 this.log.debug(`Created ${pluginName}.`);
 
                 if (!this.validatePlugin(loadedPlugin))

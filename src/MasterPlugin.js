@@ -2,19 +2,21 @@ import Plugin from "./Plugin";
 
 export default class MasterPlugin extends Plugin {
 
-    plugin = {
-        name: "MasterPlugin",
-        description: "",
-        help: "This plugin has access to PluginManager and will perform all the 'meta'/'super' actions.",
+    get plugin() {
+        return {
+            name: "MasterPlugin",
+            description: "",
+            help: "This plugin has access to PluginManager and will perform all the 'meta'/'super' actions.",
 
-        type: this.Type.SPECIAL,
-        visibility: this.Visibility.HIDDEN,
+            type: this.Type.SPECIAL,
+            visibility: this.Visibility.HIDDEN,
 
-        needs: {
-            database: true,
-            utils: true
-        }
-    };
+            needs: {
+                database: true,
+                utils: true
+            }
+        };
+    }
 
     constructor(listener, pluginManager) {
         super(listener);

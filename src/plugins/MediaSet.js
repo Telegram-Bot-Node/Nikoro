@@ -3,11 +3,17 @@ import Util from "./../Util";
 
 export default class MediaSet extends Plugin {
 
-    plugin = {
-        name: "MediaSet",
-        description: "Media-capable set command",
-        help: '/mset `trigger`'
-    };
+    get plugin() {
+        return {
+            name: "MediaSet",
+            description: "Media-capable set command",
+            help: '/mset `trigger`',
+
+            needs: {
+                database: true
+            }
+        };
+    }
 
     start() {
         if (!this.db.triggers)

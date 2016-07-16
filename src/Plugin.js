@@ -1,11 +1,12 @@
 import Logger from "./Logger";
+import Rebridge from "rebridge";
 
 export default class Plugin {
 
     Type = {
-        NORMAL: 0,
-        INLINE: 1,
-        SPECIAL: 99
+        NORMAL: 1,
+        INLINE: 2,
+        SPECIAL: 991
     };
 
     Visibility = {
@@ -13,32 +14,41 @@ export default class Plugin {
         HIDDEN: 1
     };
 
-    plugin = {
-        name: "Plugin",
-        description: "Base Plugin",
-        help: "There is no need to ask for help",
+    get plugin() {
+        return {
+            name: "Plugin",
+            description: "Base Plugin",
+            help: "There is no need to ask for help",
+            needs: {
+                database: false,
+                utils: false
+            },
 
-        type: this.Type.SPECIAL,
-        visibility: this.Visibility.HIDDEN,
+            visibility: this.Visibility.HIDDEN,
+            type: this.Type.SPECIAL
+        };
+    }
 
-        needs: {
-            database: false,
-            utils: false
-        }
-    };
-
-    constructor(listener, db) {
+    constructor(listener) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
+        this.log = Logger.get(this.plugin.name);
         this.listener = listener;
 
-        if (db)
-            this.db = db;
+        if (this.plugin.needs) {
+            if (this.plugin.needs.database) {
+                let db = new Rebridge();
+                if (!db["plugin_" + this.plugin.name]) {
+                    db["plugin_" + this.plugin.name] = {};
+                }
 
-        this.log = Logger.get(this.self.plugin.name);
+                this.db = db;
+            }
+        }
 
+        // text
         if (typeof this.onText === 'function')
             this.listener.on("text", (...args) => this.onText(...args));
 
