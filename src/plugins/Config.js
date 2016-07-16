@@ -20,13 +20,15 @@ export default class Config extends Plugin {
         if (!parts[2]) return reply({
             type: "text",
             text: "Syntax: /config (get|set) Plugin foo.bar [JSON value]"
-        })
+        });
         const pluginName = parts[2];
+        let config;
+        /* eslint-disable no-case-declarations */
         switch (parts[1]) {
         case "get":
-            let config = JSON.parse(JSON.stringify(db["plugin_" + pluginName].config));
+            config = JSON.parse(JSON.stringify(db["plugin_" + pluginName].config));
             if (parts[3])
-                config = parts[3].split('.').reduce((x, d) => x[d], config)
+                config = parts[3].split('.').reduce((x, d) => x[d], config);
             reply({
                 type: 'text',
                 text: JSON.stringify(config)
@@ -36,13 +38,13 @@ export default class Config extends Plugin {
             let value;
             try {
                 value = JSON.parse(parts.splice(4).join(' '));
-            } catch(e) {
+            } catch (e) {
                 return reply({
                     type: "text",
                     text: "Unable to parse the JSON value."
                 });
             }
-            let config = JSON.parse(JSON.stringify(db["plugin_" + pluginName].config));
+            config = JSON.parse(JSON.stringify(db["plugin_" + pluginName].config));
             editTree(config, parts[3].split('.'), value);
             db["plugin_" + pluginName].config = config;
             return reply({type: "text", text: "Done."});
@@ -53,11 +55,11 @@ export default class Config extends Plugin {
 }
 
 function editTree(tree, path, newValue) {
-    if (path.length == 0) return newValue;
+    if (path.length === 0) return newValue;
     let key = path.shift();
-    if (!tree[key])
-        tree[key] = newValue;
-    else
+    if (tree[key])
         tree[key] = editTree(tree[key], path, newValue);
+    else
+        tree[key] = newValue;
     return tree;
 }

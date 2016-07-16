@@ -23,7 +23,7 @@ export default class AuthPlugin extends Plugin {
                 type: "text",
                 text: JSON.stringify(db.admins)
             });
-        
+
         const author = message.from.id;
 
         // The code from here on is admin-only.
@@ -41,7 +41,7 @@ export default class AuthPlugin extends Plugin {
             });
             return;
         }
-        
+
         parts = Util.parseCommand(message.text, "addadmin");
         if (parts) {
             parts[1] = Number(parts[1]);
@@ -52,7 +52,7 @@ export default class AuthPlugin extends Plugin {
             });
             return;
         }
-        
+
         parts = Util.parseCommand(message.text, "delmod");
         if (parts) {
             parts[1] = Number(parts[1]);
@@ -66,7 +66,7 @@ export default class AuthPlugin extends Plugin {
             });
             return;
         }
-        
+
         parts = Util.parseCommand(message.text, "deladmin");
         if (parts) {
             parts[1] = Number(parts[1]);
