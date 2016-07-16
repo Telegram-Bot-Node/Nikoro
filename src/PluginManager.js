@@ -26,7 +26,7 @@ export default class PluginManager {
 
     constructor(pluginNames) {
         this.log = Logger.get("PluginManager");
-        this.db = Rebridge();
+        this.db = new Rebridge();
 
         this.pluginNames = pluginNames;
         this.plugins = [];
@@ -40,50 +40,38 @@ export default class PluginManager {
     loadPlugin(pluginName) {
         return new Promise(
             (resolve, reject) => {
-                try {
-                    let plugin = require('./plugins/' + pluginName).default; //default because of es6 classes
+                // default because of es6 classes
+                let ThisPlugin = require('./plugins/' + pluginName).default;
 
-                    this.log.debug("Required " + pluginName);
+                this.log.debug("Required " + pluginName);
 
-                    if (!this.db["plugin_" + pluginName])
-                        this.db["plugin_" + pluginName] = {};
+                if (!this.db["plugin_" + pluginName])
+                    this.db["plugin_" + pluginName] = {};
 
-                    let plDb = this.db["plugin_" + pluginName];
-                    let loadedPlugin = new plugin(this.emitter, plDb);
-                    this.log.debug(`Created ${pluginName}.`);
+                let plDb = this.db["plugin_" + pluginName];
+                let loadedPlugin = new ThisPlugin(this.emitter, plDb);
+                this.log.debug(`Created ${pluginName}.`);
 
-                    if(this.validatePlugin(loadedPlugin)){
-                        this.log.verbose(`Validated ${pluginName}.`);
-                        resolve(loadedPlugin);
-                    }
-                    else{
-                        this.log.verbose(`Invalid ${pluginName}.`);
-                        resolve(null);
-                    }
+                if (!this.validatePlugin(loadedPlugin))
+                    return reject(`Invalid ${pluginName}.`);
 
-                } catch (err) {
-                    this.log.error(err);
-                    reject(err);
-                }
-            }
-        );
-    };
-
-    addPlugin(loadedPlugin) {
-        return new Promise(
-            (resolve, reject) => {
-                if (loadedPlugin != null) {
-                    this.plugins.push(loadedPlugin);
-                    this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
-                } else {
-                    this.log.error(`\t${pluginName} configuration failed. Plugin not activated.`);
-                }
-                resolve();
+                this.log.verbose(`Validated ${pluginName}.`);
+                resolve(loadedPlugin);
             }
         );
     }
 
-    loadAndAdd(pluginName){
+    addPlugin(loadedPlugin) {
+        if (loadedPlugin === null)
+            // todo: find out plugin name
+            return Promise.reject("Plugin configuration failed. Plugin not activated.");
+
+        this.plugins.push(loadedPlugin);
+        this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
+        return Promise.resolve();
+    }
+
+    loadAndAdd(pluginName) {
         this.log.verbose(`Loading and adding ${pluginName}...`);
 
         return this.loadPlugin(pluginName)
@@ -91,17 +79,13 @@ export default class PluginManager {
     }
 
     loadPlugins(pluginNames) {
-        return new Promise(
-            (resolve, reject) => {
-                this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
+        this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
 
-                for (var pluginName of pluginNames) {
-                    this.loadAndAdd(pluginName);
-                }
-                resolve();
-            }
-        );
-    };
+        for (var pluginName of pluginNames) {
+            this.loadAndAdd(pluginName);
+        }
+        return Promise.resolve();
+    }
 
     startPlugins() {
         return Promise.all(this.plugins.map(pl => pl.start()));
@@ -112,12 +96,12 @@ export default class PluginManager {
     }
 
     emit(event, message, callback) {
-        this.emitter.emit(event, message, callback)
+        this.emitter.emit(event, message, callback);
     }
 
-    validatePlugin(loadedPlugin){
+    validatePlugin(loadedPlugin) {
         return loadedPlugin.check();
-    };
+    }
 
 }
 
