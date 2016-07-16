@@ -4,11 +4,17 @@ const safe = require("safe-regex");
 
 export default class RegexSet extends Plugin {
 
-    plugin = {
-        name: "RegexSet",
-        description: "Regex-capable set command",
-        help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar'
-    };
+    get plugin() {
+        return {
+            name: "RegexSet",
+            description: "Regex-capable set command",
+            help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar',
+
+            needs: {
+                database: true
+            }
+        };
+    }
 
     start() {
         if (!this.db.replacements)
@@ -18,7 +24,7 @@ export default class RegexSet extends Plugin {
     }
 
     onText(message, reply) {
-        const chatID = message.from.id;
+        const chatID = message.chat.id;
         Object.keys(this.db.replacements).forEach(key => {
             let item = this.db.replacements[key];
 

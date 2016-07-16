@@ -1,8 +1,6 @@
 #Telegram-Bot-Node
 
-[![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=master)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
-
-[![bitHound Overall Score](https://www.bithound.io/github/crisbal/Telegram-Bot-Node/badges/score.svg)](https://www.bithound.io/github/crisbal/Telegram-Bot-Node)
+[![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=es6)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
 An all-in-one, plugin-based, Telegram Bot written in Node.js. 
 
