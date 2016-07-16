@@ -6,20 +6,17 @@ export default class MediaSet extends Plugin {
     plugin = {
         name: "MediaSet",
         description: "Media-capable set command",
-        help: '',
+        help: '/mset `trigger`',
     };
 
-    constructor(a, b) {
-        super(a, b);
-        /*
-        triggers = {
-            "chat_id": {
-                "trigger": {}
-            }
-        }
-        */
-        this.db.triggers = {};
-        this.db.pending_requests = {};
+    start(){
+        if(!this.db.triggers)
+            this.db.triggers = {};
+
+        if(!this.db.pending_requests)
+            this.db.pending_requests = {};
+
+        return Promise.resolve();
     }
 
     onText(message, reply) {
@@ -28,11 +25,12 @@ export default class MediaSet extends Plugin {
         const triggers = this.db.triggers[message.chat.id] || {};
         for (let trigger in triggers) {
             if (message.text.indexOf(trigger) == -1) continue;
-            const re = new RegExp("\\b(" + Util.escapeRegExp(trigger) + ")\\b","g");
+            const re = new RegExp("(?:\\b|^)(" + Util.escapeRegExp(trigger) + ")(?:\\b|$)","g");
             const match = re.exec(message.text);
             if (!match) continue;
             const media = triggers[trigger];
-            console.log(media);
+            
+            this.log.verbose("Match on " + Util.buildPrettyChatName(message.chat));
             reply({type: media.type, [media.type]: media.fileId});
         }
 
@@ -65,12 +63,15 @@ export default class MediaSet extends Plugin {
         const args = Util.parseCommand(message.text, "mset");
         if (!args) return;
         if (args.length != 2) {
-            reply({type: "text", text: "Syntax: /mset trigger"});
+            reply({type: "text", text: "Syntax: /mset `trigger`", options: {parse_mode: "Markdown"}});
             return;
         }
+        
+        this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
 
         if(!this.db.pending_requests[message.chat.id])
             this.db.pending_requests[message.chat.id] = {}
+
 
         reply({
             type: "text",
@@ -84,28 +85,35 @@ export default class MediaSet extends Plugin {
     setStepTwo(message, reply, mediaType) {
         //is this a reply for a "now send media" message?
         if (!message.hasOwnProperty('reply_to_message')) return;
+        // are there pending requests for this chat?
         if (!this.db.pending_requests[message.chat.id]) return;
 
+        //foreach request (identified by the "now send media" message id)
         for (let request in this.db.pending_requests[message.chat.id]) {
-            if (message.reply_to_message.message_id != request) break;
+            //if the message is not replying just continue
+            if (message.reply_to_message.message_id != request) continue; 
+            
             const trigger = this.db.pending_requests[message.chat.id][request];
 
+            //do we have triggers for this chat?
             if(!this.db.triggers[message.chat.id])
                 this.db.triggers[message.chat.id] = {};
 
-            console.log(mediaType);
-            console.log(message.voice);
+            //build the trigger
             var fileId = null;
             if(mediaType == "photo")
                 fileId = message.photo[0].file_id;
             else
                 fileId = message[mediaType].file_id;
 
+            this.log.verbose("Added trigger on " + Util.buildPrettyChatName(message.chat));
+            //set the trigger
             this.db.triggers[message.chat.id][trigger] = {
                 "type": mediaType,
                 "fileId": fileId
             };
 
+            //delete pending request
             delete this.db.pending_requests[message.chat.id][request];
 
             reply({type: "text", text: "Done! Enjoy!"})

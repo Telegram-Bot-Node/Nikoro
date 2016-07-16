@@ -1,8 +1,14 @@
 // This is called on every message. It can reject a message, or transform it, or let it through.
+import Util from "./Util";
+import Logger from "./Logger";
 
 export default class MessageProxy {
 	lastMessage = {}
 	spamInterval = 1000
+
+	constructor(){
+        this.log = Logger.get("Proxy");
+	}
 
 	sniff(message, eventName) {
 		// Types that represent "actual" data and not events
@@ -15,8 +21,10 @@ export default class MessageProxy {
 		var rejected = false;
 		const lastMessage = this.lastMessage[author];
 		// The difference is in milliseconds.
-		if (lastMessage && ((now - lastMessage) < this.spamInterval))
+		if (lastMessage && ((now - lastMessage) < this.spamInterval)){
 			rejected = true;
+			this.log.info("Rejecting message from " + Util.buildPrettyUserName(message.from));
+		}
 
 		this.lastMessage[author] = now;
 		if (rejected)
