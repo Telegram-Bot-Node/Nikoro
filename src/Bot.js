@@ -1,11 +1,9 @@
 import TelegramBot from "node-telegram-bot-api";
 import Logger from "./Logger";
-
 import Config from "./../Config";
-
 import PluginManager from "./PluginManager";
-
 import MessageProxy from "./Proxy";
+import Auth from "./Auth";
 
 const log = Logger.get("Bot");
 
@@ -55,6 +53,11 @@ function initBot(/* getMe */) {
             );
         }
         log.info("Events set.");
+    })
+    .then(() => {
+        log.info("Configuring permissions...");
+        Auth.init();
+        log.info("Configured.");
         log.info("The bot is online!");
     })
     .catch(err => log.error(err));

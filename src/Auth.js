@@ -1,23 +1,30 @@
-import Plugin from "./../Plugin";
 import Rebridge from "rebridge";
 
 var db = new Rebridge();
 
 export default class Auth {
-    isMod(ID) {
-        return this.mods.indexOf(ID) !== -1;
+    static init() {
+        if (!db.mods) {
+            db.mods = [];
+            db.admins = [95357956];
+        }
     }
 
-    isAdmin(ID) {
-        return this.admins.indexOf(ID) !== -1;
+    static isMod(ID) {
+        if (Auth.isAdmin(ID)) return true;
+        return Auth.mods.indexOf(ID) !== -1;
     }
 
-    get mods() {
+    static isAdmin(ID) {
+        return Auth.admins.indexOf(ID) !== -1;
+    }
+
+    static get mods() {
         // Return a clone, because Rebridge doesn't support everything
         return db.mods.slice(0);
     }
 
-    get admins() {
+    static get admins() {
         // Return a clone, because Rebridge doesn't support everything
         return db.admins.slice(0);
     }

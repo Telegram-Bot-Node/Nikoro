@@ -9,6 +9,9 @@ export default class Ping extends Plugin {
             help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
             needs: {
                 database: 1
+            },
+            defaults: {
+                message: "Pong!"
             }
         };
     }

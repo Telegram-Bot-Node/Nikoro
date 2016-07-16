@@ -45,12 +45,14 @@ export default class Plugin {
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
                 let db = new Rebridge();
+                let firstTime = false;
                 if (!db["plugin_" + this.plugin.name]) {
                     db["plugin_" + this.plugin.name] = {};
-                    this.db.config = {};
+                    firstTime = true;
                 }
 
                 this.db = db["plugin_" + this.plugin.name];
+                if (firstTime) this.db.config = this.plugin.defaults;
             }
         }
 
