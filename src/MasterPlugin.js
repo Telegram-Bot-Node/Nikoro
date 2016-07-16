@@ -1,6 +1,5 @@
 import Plugin from "./Plugin";
 
-
 export default class MasterPlugin extends Plugin {
 
     plugin = {
@@ -11,8 +10,8 @@ export default class MasterPlugin extends Plugin {
         type: this.Type.SPECIAL,
         visibility: this.Visibility.HIDDEN,
 
-        needs : {
-            database : true,
+        needs: {
+            database: true,
             utils: true
         }
     };
@@ -23,10 +22,12 @@ export default class MasterPlugin extends Plugin {
         this.pluginManager = pluginManager;
     }
 
-    onText(message, reply){
-        /*if (message.text == "/addping"){
+    /*
+    onText(message, reply) {
+        if (message.text == "/addping"){
             this.pluginManager.loadAndAdd("Ping")
             reply({type: "text", text: "`Ping` loaded"});
-        }*/
+        }
     }
+    */
 }

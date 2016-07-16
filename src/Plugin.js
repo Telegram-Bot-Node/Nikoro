@@ -1,4 +1,3 @@
-//import DatabaseWrapper from "./DatabaseWrapper";
 import Logger from "./Logger";
 
 export default class Plugin {
@@ -11,7 +10,7 @@ export default class Plugin {
 
     Visibility = {
         VISIBLE: 0,
-        HIDDEN: 1,
+        HIDDEN: 1
     };
 
     plugin = {
@@ -22,8 +21,8 @@ export default class Plugin {
         type: this.Type.SPECIAL,
         visibility: this.Visibility.HIDDEN,
 
-        needs : {
-            database : false,
+        needs: {
+            database: false,
             utils: false
         }
     };
@@ -32,51 +31,49 @@ export default class Plugin {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
+
         this.listener = listener;
 
         if (db)
             this.db = db;
 
         this.log = Logger.get(this.self.plugin.name);
-        /*if(this.plugin.needs.database)
-            this.database = DatabaseWrapper(this.plugin.name);*/
 
-        if(typeof this.onText == 'function')
+        if (typeof this.onText === 'function')
             this.listener.on("text", (...args) => this.onText(...args));
 
-        //media
-        if(typeof this.onAudio == 'function')
+        // media
+        if (typeof this.onAudio === 'function')
             this.listener.on("audio", (...args) => this.onAudio(...args));
-        if(typeof this.onDocument == 'function')
+        if (typeof this.onDocument === 'function')
             this.listener.on("document", (...args) => this.onDocument(...args));
-        if(typeof this.onPhoto == 'function')
+        if (typeof this.onPhoto === 'function')
             this.listener.on("photo", (...args) => this.onPhoto(...args));
-        if(typeof this.onSticker == 'function')
+        if (typeof this.onSticker === 'function')
             this.listener.on("sticker", (...args) => this.onSticker(...args));
-        if(typeof this.onVideo == 'function')
+        if (typeof this.onVideo === 'function')
             this.listener.on("video", (...args) => this.onVideo(...args));
-        if(typeof this.onVoice == 'function')
+        if (typeof this.onVoice === 'function')
             this.listener.on("voice", (...args) => this.onVoice(...args));
 
-        //other
-        if(typeof this.onContact == 'function')
+        // other
+        if (typeof this.onContact === 'function')
             this.listener.on("contact", (...args) => this.onContact(...args));
-        if(typeof this.onLocation == 'function')
+        if (typeof this.onLocation === 'function')
             this.listener.on("location", (...args) => this.onLocation(...args));
-
-    };
+    }
 
     check() {
         return true;
-    };
+    }
 
     start() {
         return Promise.resolve();
-    };
+    }
 
     stop() {
         return Promise.resolve();
-    };
+    }
 
     get self() {
         /*
@@ -92,5 +89,4 @@ export default class Plugin {
          */
         return this;
     }
-
 }
