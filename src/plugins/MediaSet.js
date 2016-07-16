@@ -13,7 +13,7 @@ export default class MediaSet extends Plugin {
         if(!this.db.triggers)
             this.db.triggers = {};
 
-        if(!this.db.triggers)
+        if(!this.db.pending_requests)
             this.db.pending_requests = {};
 
         return Promise.resolve();
@@ -66,12 +66,12 @@ export default class MediaSet extends Plugin {
             reply({type: "text", text: "Syntax: /mset `trigger`", options: {parse_mode: "Markdown"}});
             return;
         }
-        console.log(Util.buildPrettyChatName(message.chat));
         
         this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
 
         if(!this.db.pending_requests[message.chat.id])
             this.db.pending_requests[message.chat.id] = {}
+
 
         reply({
             type: "text",
