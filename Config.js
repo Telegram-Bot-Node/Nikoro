@@ -8,7 +8,11 @@ var Config = {};
 Config.TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 
 // filename without extension of the active plugins
-Config.activePlugins = ["Ping"];
+Config.activePlugins = [
+	"Auth",
+	"Config",
+	"Ping"
+];
 
 // optional api keys
 Config.GOOGLE_API_KEY = process.env.GOOGLE_API_KEY; // google.js and youtube.js

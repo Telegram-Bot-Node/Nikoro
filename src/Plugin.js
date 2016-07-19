@@ -29,6 +29,11 @@ export default class Plugin {
         };
     }
 
+    get config() {
+        if (!this.db) throw new Error("Plugins without a database can't access config!");
+        return this.db.config;
+    }
+
     constructor(listener) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
@@ -40,11 +45,14 @@ export default class Plugin {
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
                 let db = new Rebridge();
+                let firstTime = false;
                 if (!db["plugin_" + this.plugin.name]) {
                     db["plugin_" + this.plugin.name] = {};
+                    firstTime = true;
                 }
 
-                this.db = db;
+                this.db = db["plugin_" + this.plugin.name];
+                if (firstTime) this.db.config = this.plugin.defaults;
             }
         }
 

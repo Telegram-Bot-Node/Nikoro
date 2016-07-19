@@ -6,13 +6,19 @@ export default class Ping extends Plugin {
         return {
             name: "Ping",
             description: "Ping - Pong",
-            help: "Send `ping`, get `pong`\nIf only life was _this_ easy."
+            help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
+            needs: {
+                database: 1
+            },
+            defaults: {
+                message: "Pong!"
+            }
         };
     }
 
     onText(message, reply) {
         if (message.text !== "ping") return;
         this.log.info("Got a ping");
-        reply({type: 'text', text: 'pong'});
+        reply({type: 'text', text: this.config.message});
     }
 }

@@ -34,30 +34,29 @@ export default class PluginManager {
         this.addPlugin(this.masterPlugin);
     }
 
+    // Instantiates the plugin and runs its health check
+    // Returns a promise resolving to the plugin itself.
     loadPlugin(pluginName) {
-        return new Promise(
-            (resolve, reject) => {
-                // default because of es6 classes
-                let ThisPlugin = require('./plugins/' + pluginName).default;
+        // default because of es6 classes
+        let ThisPlugin = require('./plugins/' + pluginName).default;
 
-                this.log.debug("Required " + pluginName);
+        this.log.debug(`Required ${pluginName}`);
 
-                let loadedPlugin = new ThisPlugin(this.emitter);
-                this.log.debug(`Created ${pluginName}.`);
+        let loadedPlugin = new ThisPlugin(this.emitter);
+        this.log.debug(`Created ${pluginName}.`);
 
-                if (!this.validatePlugin(loadedPlugin))
-                    return reject(`Invalid ${pluginName}.`);
+        if (!this.validatePlugin(loadedPlugin))
+            return Promise.reject(`Invalid ${pluginName}.`);
 
-                this.log.verbose(`Validated ${pluginName}.`);
-                resolve(loadedPlugin);
-            }
-        );
+        this.log.verbose(`Validated ${pluginName}.`);
+        return Promise.resolve(loadedPlugin);
     }
 
+    // Adds the plugin to the list of active plugins
     addPlugin(loadedPlugin) {
         if (loadedPlugin === null)
             // todo: find out plugin name
-            return Promise.reject("Plugin configuration failed. Plugin not activated.");
+            return Promise.reject("Invalid plugin passed.");
 
         this.plugins.push(loadedPlugin);
         this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
@@ -67,17 +66,17 @@ export default class PluginManager {
     loadAndAdd(pluginName) {
         this.log.verbose(`Loading and adding ${pluginName}...`);
 
-        return this.loadPlugin(pluginName)
-        .then(loadedPlugin => this.addPlugin(loadedPlugin));
+        return Promise.resolve(pluginName)
+        .then(name => this.loadPlugin(name))
+        .then(name => this.addPlugin(name));
     }
 
+    // Load and add every plugin in the list.
+    // Returns an array of promises.
     loadPlugins(pluginNames) {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
 
-        for (var pluginName of pluginNames) {
-            this.loadAndAdd(pluginName);
-        }
-        return Promise.resolve();
+        return Promise.all(pluginNames.map(name => this.loadAndAdd(name)));
     }
 
     startPlugins() {
@@ -95,6 +94,4 @@ export default class PluginManager {
     validatePlugin(loadedPlugin) {
         return loadedPlugin.check();
     }
-
 }
-
