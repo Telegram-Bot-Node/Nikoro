@@ -16,14 +16,16 @@ log.verbose("Created.");
 
 let pluginManager = null;
 
+log.verbose("Getting data about myself...")
 bot.getMe()
 .then(initBot)
 .catch(die);
 
 function initBot(/* getMe */) {
+    log.info("Gotten.");
     log.info("Loading plugins...");
 
-    pluginManager = new PluginManager([], bot);
+    pluginManager = new PluginManager(bot);
 
     // Loads and prepares root and base plugins
     pluginManager.loadPlugins(Config.activePlugins)
@@ -35,26 +37,6 @@ function initBot(/* getMe */) {
     })
     .then(() => {
         log.info("Plugins started.");
-        log.info("Setting up events...");
-        const messageProxy = new MessageProxy();
-        const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
-        // Registers a handler for every Telegram event.
-        // It runs the message through the proxy and forwards it to the plugin manager.
-        for (const eventName of events) {
-            bot.on(
-                eventName,
-                message => messageProxy
-                    .sniff(message, eventName)
-                    .then(function(message) {
-                        const chatID = message.chat.id;
-                        log.debug(`Triggered event: ${eventName}`);
-                        pluginManager.emit(eventName, message, reply => handleReply(chatID, reply));
-                    })
-            );
-        }
-        log.info("Events set.");
-    })
-    .then(() => {
         log.info("Configuring permissions...");
         Auth.init();
         log.info("Configured.");

@@ -12,8 +12,12 @@ Config.activePlugins = [
 	"Auth",
 	"Config",
 	"Ignore",
+	"LoggerProxy",
 	"Kick",
-	"Ping"
+	"MediaSet",
+	"Ping",
+	"RateLimiter",
+	"RegexSet"
 ];
 
 Config.admins = [/* Your ID here */];

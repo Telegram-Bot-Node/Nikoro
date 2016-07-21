@@ -37,6 +37,8 @@ export default class MessageProxy {
         // Let events through
         if (messageTypes.indexOf(eventName) === -1) return Promise.resolve(message);
 
+        if (db.ignored && db.ignored.indexOf(message.from.id) !== -1) return Promise.reject();
+
         const now = (new Date()).getTime();
         const author = message.from.id;
         const lastMessage = this.lastMessage[author];

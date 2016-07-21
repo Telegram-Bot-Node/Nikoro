@@ -18,6 +18,10 @@ export default class Ping extends Plugin {
     }
 
     onText(message, reply) {
+        if (message.text === "/list") return reply({
+            type: "text",
+            text: JSON.stringify(db["chat" + message.chat.id])
+        });
         if (message.text === "/banlist") {
             if (!this.db[message.chat.id]) return reply({
                 type: "text",
@@ -31,7 +35,6 @@ export default class Ping extends Plugin {
         }
         if (!Auth.isMod(message.from.id)) return;
         const parts = message.text.split(" ");
-        parts[1] = Number(parts[1]); // Cast the ID to a number
         if (parts[0] !== "/kick" && parts[0] !== "/ban" && parts[0] !== "/pardon") return;
         if (!message.reply_to_message && parts.length !== 2)
             return reply({
@@ -40,7 +43,7 @@ export default class Ping extends Plugin {
             });
 
         let target;
-        if (parts.length === 2) target = parts[1];
+        if (parts.length === 2) target = Number(parts[1]);
         else if (message.reply_to_message.new_chat_participant)
             target = message.reply_to_message.new_chat_participant.id;
         else if (message.reply_to_message.left_chat_participant)

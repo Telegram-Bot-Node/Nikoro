@@ -18,7 +18,7 @@ export default class Ping extends Plugin {
 
     onText(message, reply) {
         if (message.text !== "ping") return;
-        this.log.info("Got a ping");
+        this.log.debug("Got a ping");
         reply({type: 'text', text: this.config.message});
     }
 }
