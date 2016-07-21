@@ -13,23 +13,23 @@ export default class LoggerProxy extends Plugin {
         };
     }
 
-	proxy(eventName, message) {
-		return new Promise(function(resolve, reject) {
-			if (message.from.username) {
-	            if (!db["chat" + message.chat.id])
-	                db["chat" + message.chat.id] = {};
-	            db["chat" + message.chat.id]["ID_" + message.from.username] = message.from.id;
-	        }
-	        // Register people who join or leave, too.
-	        if (message.new_chat_participant || message.left_chat_participant) {
-	            const source = message.new_chat_participant ?
-	                message.new_chat_participant :
-	                message.left_chat_participant;
-	            if (!db["chat" + message.chat.id])
-	                db["chat" + message.chat.id] = {};
-	            db["chat" + message.chat.id]["ID_" + source.username] = source.id;
-	        }
-	        resolve(message);
-		})
-	}
+    proxy(eventName, message) {
+        return new Promise(function(resolve, reject) {
+            if (message.from.username) {
+                if (!db["chat" + message.chat.id])
+                    db["chat" + message.chat.id] = {};
+                db["chat" + message.chat.id]["ID_" + message.from.username] = message.from.id;
+            }
+            // Register people who join or leave, too.
+            if (message.new_chat_participant || message.left_chat_participant) {
+                const source = message.new_chat_participant ?
+                    message.new_chat_participant :
+                    message.left_chat_participant;
+                if (!db["chat" + message.chat.id])
+                    db["chat" + message.chat.id] = {};
+                db["chat" + message.chat.id]["ID_" + source.username] = source.id;
+            }
+            resolve(message);
+        });
+    }
 }

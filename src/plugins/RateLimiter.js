@@ -1,5 +1,4 @@
 import Plugin from "./../Plugin";
-import Logger from "../Logger";
 import Util from "./../Util";
 
 var lastMessages = {};
@@ -15,7 +14,7 @@ export default class RateLimiter extends Plugin {
         };
     }
 
-	proxy(eventName, message) {
+    proxy(eventName, message) {
         const now = (new Date()).getTime();
         const author = message.from.id;
         const lastMessage = lastMessages[author];
@@ -27,5 +26,5 @@ export default class RateLimiter extends Plugin {
         }
         lastMessages[author] = now;
         return Promise.resolve(message);
-	}
+    }
 }

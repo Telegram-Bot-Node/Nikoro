@@ -2,7 +2,6 @@ import TelegramBot from "node-telegram-bot-api";
 import Logger from "./Logger";
 import Config from "./../Config";
 import PluginManager from "./PluginManager";
-import MessageProxy from "./Proxy";
 import Auth from "./Auth";
 
 const log = Logger.get("Bot");
@@ -16,7 +15,7 @@ log.verbose("Created.");
 
 let pluginManager = null;
 
-log.verbose("Getting data about myself...")
+log.verbose("Getting data about myself...");
 bot.getMe()
 .then(initBot)
 .catch(die);
@@ -43,35 +42,6 @@ function initBot(/* getMe */) {
         log.info("The bot is online!");
     })
     .catch(err => log.error(err));
-}
-
-/*
-* TODO: port to es6
-*/
-function handleReply(chatId, reply) {
-    switch (reply.type) {
-    case "text":
-        return bot.sendMessage(chatId, reply.text, reply.options);
-
-    case "audio":
-        return bot.sendAudio(chatId, reply.audio, reply.options);
-    case "document":
-        return bot.sendDocument(chatId, reply.document, reply.options);
-    case "photo":
-        return bot.sendPhoto(chatId, reply.photo, reply.options);
-    case "sticker":
-        return bot.sendSticker(chatId, reply.sticker, reply.options);
-    case "video":
-        return bot.sendVideo(chatId, reply.video, reply.options);
-    case "voice":
-        return bot.sendVoice(chatId, reply.voice, reply.options);
-
-    case "status": case "chatAction":
-        return bot.sendChatAction(chatId, reply.status, reply.options);
-
-    default:
-        log.warn(`Unrecognized reply type ${reply.type}`);
-    }
 }
 
 /*

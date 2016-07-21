@@ -30,30 +30,6 @@ export default class PluginManager {
         this.masterPlugin = new MasterPlugin(this.emitter, this);
         this.addPlugin(this.masterPlugin);
 
-        const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
-        // Registers a handler for every Telegram event.
-        // It runs the message through the proxy and forwards it to the plugin manager.
-        for (let eventName of events) {
-            bot.on(
-                eventName,
-                message => Promise.resolve(message)
-                    .then(
-                        message => Promise.all(
-                            this.plugins
-                                .filter(plugin => plugin.plugin.isProxy)
-                                .map(plugin => plugin.proxy(eventName, message))
-                        )
-                    )
-                    .then(array => {
-                        let message = array[0]
-                        const chatID = message.chat.id;
-                        this.emit(eventName, message, reply => handleReply(chatID, reply));
-                    })
-                    .catch(err => {
-                        if (err) this.log.error("Message rejected with error", err);
-                    })
-            );
-        }
         var handleReply = function(chatId, reply) {
             switch (reply.type) {
             case "text":
@@ -76,10 +52,34 @@ export default class PluginManager {
                 return bot.sendChatAction(chatId, reply.status, reply.options);
 
             default:
-                log.warn(`Unrecognized reply type ${reply.type}`);
+                this.log.error(`Unrecognized reply type ${reply.type}`);
             }
-        }
+        };
 
+        const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
+        // Registers a handler for every Telegram event.
+        // It runs the message through the proxy and forwards it to the plugin manager.
+        for (let eventName of events) {
+            bot.on(
+                eventName,
+                message => Promise.resolve(message)
+                    .then(
+                        message => Promise.all(
+                            this.plugins
+                                .filter(plugin => plugin.plugin.isProxy)
+                                .map(plugin => plugin.proxy(eventName, message))
+                        )
+                    )
+                    .then(array => {
+                        let message = array[0];
+                        const chatID = message.chat.id;
+                        this.emit(eventName, message, reply => handleReply(chatID, reply));
+                    })
+                    .catch(err => {
+                        if (err) this.log.error("Message rejected with error", err);
+                    })
+            );
+        }
     }
 
     // Instantiates the plugin and runs its health check

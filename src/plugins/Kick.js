@@ -1,7 +1,7 @@
 import Plugin from "./../Plugin";
 import Auth from "./../Auth";
 
-export default class Ping extends Plugin {
+export default class Kick extends Plugin {
 
     get plugin() {
         return {
@@ -20,7 +20,7 @@ export default class Ping extends Plugin {
     onText(message, reply) {
         if (message.text === "/list") return reply({
             type: "text",
-            text: JSON.stringify(db["chat" + message.chat.id])
+            text: JSON.stringify(this.db["chat" + message.chat.id])
         });
         if (message.text === "/banlist") {
             if (!this.db[message.chat.id]) return reply({
