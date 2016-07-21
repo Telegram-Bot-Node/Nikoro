@@ -23,7 +23,7 @@ bot.getMe()
 function initBot(/* getMe */) {
     log.info("Loading plugins...");
 
-    pluginManager = new PluginManager();
+    pluginManager = new PluginManager([], bot);
 
     // Loads and prepares root and base plugins
     pluginManager.loadPlugins(Config.activePlugins)

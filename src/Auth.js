@@ -6,7 +6,7 @@ export default class Auth {
     static init() {
         if (!db.mods) {
             db.mods = [];
-            db.admins = [95357956];
+            db.admins = [];
         }
     }
 

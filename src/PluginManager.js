@@ -22,11 +22,13 @@ import {EventEmitter} from "events";
 
 export default class PluginManager {
 
-    constructor(pluginNames) {
+    constructor(pluginNames, bot) {
         this.log = Logger.get("PluginManager");
 
         this.pluginNames = pluginNames;
         this.plugins = [];
+
+        if (bot) this.bot = bot;
 
         this.emitter = new EventEmitter();
 
@@ -42,7 +44,7 @@ export default class PluginManager {
 
         this.log.debug(`Required ${pluginName}`);
 
-        let loadedPlugin = new ThisPlugin(this.emitter);
+        let loadedPlugin = new ThisPlugin(this.emitter, this.bot);
         this.log.debug(`Created ${pluginName}.`);
 
         if (!this.validatePlugin(loadedPlugin))
