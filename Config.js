@@ -11,8 +11,12 @@ Config.TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 Config.activePlugins = [
 	"Auth",
 	"Config",
+	"Ignore",
+	"Kick",
 	"Ping"
 ];
+
+Config.admins = [/* Your ID here */];
 
 // optional api keys
 Config.GOOGLE_API_KEY = process.env.GOOGLE_API_KEY; // google.js and youtube.js

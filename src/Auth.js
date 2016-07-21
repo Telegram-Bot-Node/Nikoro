@@ -1,4 +1,5 @@
 import Rebridge from "rebridge";
+import Config from "../Config";
 
 var db = new Rebridge();
 
@@ -6,7 +7,7 @@ export default class Auth {
     static init() {
         if (!db.mods) {
             db.mods = [];
-            db.admins = [];
+            db.admins = Config.admins;
         }
     }
 
