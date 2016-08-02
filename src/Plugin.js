@@ -34,13 +34,14 @@ export default class Plugin {
         return this.db.config;
     }
 
-    constructor(listener) {
+    constructor(listener, bot) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
         this.log = Logger.get(this.plugin.name);
         this.listener = listener;
+        this.bot = bot;
 
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
@@ -79,6 +80,10 @@ export default class Plugin {
             this.listener.on("contact", (...args) => this.onContact(...args));
         if (typeof this.onLocation === 'function')
             this.listener.on("location", (...args) => this.onLocation(...args));
+        if (typeof this.onNewChatParticipant === 'function')
+            this.listener.on("new_chat_participant", (...args) => this.onNewChatParticipant(...args));
+        if (typeof this.onLeftChatParticipant === 'function')
+            this.listener.on("left_chat_participant", (...args) => this.onLeftChatParticipant(...args));
     }
 
     check() {
