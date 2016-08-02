@@ -1,10 +1,10 @@
 import TelegramBot from "node-telegram-bot-api";
-import Logger from "./Logger";
+import Log from "./Log";
 import Config from "./../Config";
 import PluginManager from "./PluginManager";
-import Auth from "./Auth";
+import Auth from "./helpers/Auth";
 
-const log = Logger.get("Bot");
+const log = Log.get("Bot");
 
 log.info("The bot is starting...");
 

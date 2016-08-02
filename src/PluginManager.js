@@ -1,21 +1,4 @@
-/*
-    PluginManager
-
-    An abstract class used to require an array of external modules
-    or `plugins` specified by an array of module names. Each plugin
-    is safely loaded, configured, initialized and shutdown by this class
-    before being used externally.
-
-    Plugin Lifecycle
-    1. Require plugin module
-    2. Call `check()` method
-    3. Call `start()` method
-    4. Plugin now safely running
-    5. Call `stop()` method
-    6. Plugin now safely stopped
-*/
-
-import Logger from "./Logger";
+import Log from "./Log";
 import MasterPlugin from "./MasterPlugin";
 import {EventEmitter} from "events";
 
@@ -23,7 +6,7 @@ export default class PluginManager {
 
     constructor(bot) {
         this.bot = bot;
-        this.log = Logger.get("PluginManager");
+        this.log = Log.get("PluginManager");
         this.plugins = [];
         this.emitter = new EventEmitter();
 
@@ -66,11 +49,12 @@ export default class PluginManager {
                     .then(
                         message => Promise.all(
                             this.plugins
-                                .filter(plugin => plugin.plugin.isProxy)
+                                .filter(plugin => (plugin.plugin.type & plugin.Type.PROXY) == plugin.Type.PROXY)
                                 .map(plugin => plugin.proxy(eventName, message))
                         )
                     )
                     .then(array => {
+                        console.log(array);
                         let message = array[0];
                         const chatID = message.chat.id;
                         this.emit(eventName, message, reply => handleReply(chatID, reply));

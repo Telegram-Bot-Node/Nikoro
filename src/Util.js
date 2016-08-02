@@ -9,8 +9,8 @@ var Util = {};
 var request = require("request");
 var crypto = require("crypto");
 var fs = require("fs");
-import Logger from "./Logger";
-var log = Logger.get("Util");
+import Log from "./Log";
+var log = Log.get("Util");
 
 /*
     A bit hacked together but it works.
