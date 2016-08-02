@@ -49,7 +49,7 @@ export default class AuthPlugin extends Plugin {
             return;
         }
 
-        var args = Util.parseCommand(message.text, "addadmin");
+        args = Util.parseCommand(message.text, "addadmin");
         if (args) {
             const adminId = Number(args[1]);
 

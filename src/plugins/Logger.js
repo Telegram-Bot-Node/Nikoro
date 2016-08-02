@@ -8,7 +8,7 @@ export default class Logger extends Plugin {
             help: "",
 
             visibility: this.Visibility.HIDDEN,
-            type: this.Type.PROXY
+            type: this.Type.PROXY,
 
             needs: {
                 database: true
@@ -29,9 +29,9 @@ export default class Logger extends Plugin {
                 const source = message.new_chat_participant ?
                     message.new_chat_participant :
                     message.left_chat_participant;
-                if (!db["chat" + message.chat.id])
-                    db["chat" + message.chat.id] = {};
-                db["chat" + message.chat.id][source.username] = source.id;
+                if (!this.db["chat" + message.chat.id])
+                    this.db["chat" + message.chat.id] = {};
+                this.db["chat" + message.chat.id][source.username] = source.id;
             }
             resolve(message);
         });

@@ -49,7 +49,7 @@ export default class PluginManager {
                     .then(
                         message => Promise.all(
                             this.plugins
-                                .filter(plugin => (plugin.plugin.type & plugin.Type.PROXY) == plugin.Type.PROXY)
+                                .filter(plugin => (plugin.plugin.type & plugin.Type.PROXY) === plugin.Type.PROXY)
                                 .map(plugin => plugin.proxy(eventName, message))
                         )
                     )
