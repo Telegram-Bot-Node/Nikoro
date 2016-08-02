@@ -1,40 +1,47 @@
 import Plugin from "./../Plugin";
 import Util from "./../Util";
-import Rebridge from "rebridge";
-import Auth from "./../Auth";
-
-var db = new Rebridge();
+import Auth from "./../helpers/Auth";
 
 export default class AuthPlugin extends Plugin {
+
     get plugin() {
         return {
-            name: "Auth"
+            name: "Auth",
+            description: "Plugin to handle authentication",
+            help: "",
+
+            visibility: this.Visibility.VISIBLE,
+            type: this.Type.SPECIAL
         };
     }
 
     onText(message, reply) {
-        if (message.text === "/modlist")
-            return reply({
-                type: "text",
-                text: JSON.stringify(db.mods)
-            });
-        if (message.text === "/adminlist")
-            return reply({
-                type: "text",
-                text: JSON.stringify(db.admins)
-            });
-
         const author = message.from.id;
+        const chat = message.chat.id;
+
+        if (message.text === "/modlist") {
+            return reply({
+                type: "text",
+                text: JSON.stringify(Auth.getMods(chat))
+            });
+        }
+
+        if (message.text === "/adminlist") {
+            return reply({
+                type: "text",
+                text: JSON.stringify(Auth.getAdmins(chat))
+            });
+        }
 
         // The code from here on is admin-only.
-        if (!Auth.isAdmin(author)) return;
+        if (!Auth.isAdmin(author, chat)) return;
 
-        var parts;
+        var args = Util.parseCommand(message.text, "addmod");
+        if (args) {
+            const modId = Number(args[1]);
 
-        parts = Util.parseCommand(message.text, "addmod");
-        if (parts) {
-            parts[1] = Number(parts[1]);
-            db.mods.push(parts[1]);
+            Auth.addMod(modId, chat);
+
             reply({
                 type: "text",
                 text: "Done."
@@ -42,10 +49,12 @@ export default class AuthPlugin extends Plugin {
             return;
         }
 
-        parts = Util.parseCommand(message.text, "addadmin");
-        if (parts) {
-            parts[1] = Number(parts[1]);
-            db.admins.push(parts[1]);
+        var args = Util.parseCommand(message.text, "addadmin");
+        if (args) {
+            const adminId = Number(args[1]);
+
+            Auth.addAdmin(adminId, chat);
+
             reply({
                 type: "text",
                 text: "Done."
@@ -53,13 +62,12 @@ export default class AuthPlugin extends Plugin {
             return;
         }
 
-        parts = Util.parseCommand(message.text, "delmod");
-        if (parts) {
-            parts[1] = Number(parts[1]);
-            var mods = db.mods.splice(0);
-            const index = mods.indexOf(parts[1]);
-            mods.splice(index, 1);
-            db.mods = mods;
+        args = Util.parseCommand(message.text, "delmod");
+        if (args) {
+            const userId = Number(args[1]);
+
+            Auth.removeMod(userId, chat);
+
             reply({
                 type: "text",
                 text: "Done."
@@ -67,13 +75,12 @@ export default class AuthPlugin extends Plugin {
             return;
         }
 
-        parts = Util.parseCommand(message.text, "deladmin");
-        if (parts) {
-            parts[1] = Number(parts[1]);
-            var admins = db.admins.splice(0);
-            const index = admins.indexOf(parts[1]);
-            admins.splice(index, 1);
-            db.admins = admins;
+        args = Util.parseCommand(message.text, "deladmin");
+        if (args) {
+            const userId = Number(args[1]);
+
+            Auth.removeAdmin(userId, chat);
+
             reply({
                 type: "text",
                 text: "Done."
