@@ -9,9 +9,6 @@ export default class Ping extends Plugin {
             help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
             needs: {
                 database: 1
-            },
-            defaults: {
-                message: "Pong!"
             }
         };
     }
@@ -19,6 +16,6 @@ export default class Ping extends Plugin {
     onText(message, reply) {
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
-        reply({type: 'text', text: this.config.message});
+        reply({type: 'text', text: "pong"});
     }
 }

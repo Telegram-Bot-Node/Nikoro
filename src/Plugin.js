@@ -1,12 +1,13 @@
-import Logger from "./Logger";
+import Log from "./Log";
 import Rebridge from "rebridge";
 
 export default class Plugin {
 
     Type = {
-        NORMAL: 1,
-        INLINE: 2,
-        SPECIAL: 991
+        NORMAL: 0x01,
+        INLINE: 0x02,
+        PROXY: 0x04,
+        SPECIAL: 0x08
     };
 
     Visibility = {
@@ -39,21 +40,18 @@ export default class Plugin {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
-        this.log = Logger.get(this.plugin.name);
+        this.log = Log.get(this.plugin.name);
         this.listener = listener;
         this.bot = bot;
 
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
                 let db = new Rebridge();
-                let firstTime = false;
                 if (!db["plugin_" + this.plugin.name]) {
                     db["plugin_" + this.plugin.name] = {};
-                    firstTime = true;
                 }
 
                 this.db = db["plugin_" + this.plugin.name];
-                if (firstTime) this.db.config = this.plugin.defaults;
             }
         }
 
