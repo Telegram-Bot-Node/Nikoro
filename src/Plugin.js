@@ -3,14 +3,14 @@ import Rebridge from "rebridge";
 
 export default class Plugin {
 
-    Type = {
+    static Type = {
         NORMAL: 0x01,
         INLINE: 0x02,
         PROXY: 0x04,
         SPECIAL: 0x08
     };
 
-    Visibility = {
+    static Visibility = {
         VISIBLE: 0,
         HIDDEN: 1
     };
@@ -25,8 +25,8 @@ export default class Plugin {
                 utils: false
             },
 
-            visibility: this.Visibility.HIDDEN,
-            type: this.Type.SPECIAL
+            visibility: Plugin.Visibility.HIDDEN,
+            type: Plugin.Type.SPECIAL
         };
     }
 
