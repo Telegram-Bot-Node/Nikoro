@@ -70,12 +70,17 @@ export default class PluginManager {
     // Returns a promise resolving to the plugin itself.
     loadPlugin(pluginName) {
         // default because of es6 classes
-        let ThisPlugin = require('./plugins/' + pluginName).default;
+        var loadedPlugin;
+        try {
+            let ThisPlugin = require('./plugins/' + pluginName).default;
 
-        this.log.debug(`Required ${pluginName}`);
+            this.log.debug(`Required ${pluginName}`);
 
-        let loadedPlugin = new ThisPlugin(this.emitter, this.bot);
-        this.log.debug(`Created ${pluginName}.`);
+            loadedPlugin = new ThisPlugin(this.emitter, this.bot);
+            this.log.debug(`Created ${pluginName}.`);
+        } catch (e) {
+            return Promise.reject(e);
+        }
 
         if (!this.validatePlugin(loadedPlugin))
             return Promise.reject(`Invalid ${pluginName}.`);

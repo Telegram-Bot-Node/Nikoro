@@ -3,14 +3,14 @@ import Rebridge from "rebridge";
 
 export default class Plugin {
 
-    Type = {
+    static Type = {
         NORMAL: 0x01,
         INLINE: 0x02,
         PROXY: 0x04,
         SPECIAL: 0x08
     };
 
-    Visibility = {
+    static Visibility = {
         VISIBLE: 0,
         HIDDEN: 1
     };
@@ -25,8 +25,8 @@ export default class Plugin {
                 utils: false
             },
 
-            visibility: this.Visibility.HIDDEN,
-            type: this.Type.SPECIAL
+            visibility: Plugin.Visibility.HIDDEN,
+            type: Plugin.Type.SPECIAL
         };
     }
 
@@ -94,20 +94,5 @@ export default class Plugin {
 
     stop() {
         return Promise.resolve();
-    }
-
-    get self() {
-        /*
-         * This is a hack.
-         * When the Plugin constructor reads `this`, it gets a reference to the
-         * Plugin class, not to the child (eg. PingPlugin), which means that eg.
-         * `this.plugin.name` will contain "Plugin" and not the correct name
-         * ("Ping").
-         *
-         * With this hack, to get the correct plugin name you'll need to read
-         * `this.self.name`. Note that writing to `this.self` doesn't have any
-         * effect.
-         */
-        return this;
     }
 }
