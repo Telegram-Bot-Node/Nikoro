@@ -8,8 +8,8 @@ export default class MasterPlugin extends Plugin {
             description: "",
             help: "This plugin has access to PluginManager and will perform all the 'meta'/'super' actions.",
 
-            type: this.Type.SPECIAL,
-            visibility: this.Visibility.HIDDEN,
+            type: Plugin.Type.SPECIAL,
+            visibility: Plugin.Visibility.HIDDEN,
 
             needs: {
                 database: true,

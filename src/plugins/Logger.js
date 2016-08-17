@@ -7,8 +7,8 @@ export default class Logger extends Plugin {
             description: "Log stuff",
             help: "",
 
-            visibility: this.Visibility.HIDDEN,
-            type: this.Type.PROXY,
+            visibility: Plugin.Visibility.HIDDEN,
+            type: Plugin.Type.PROXY,
 
             needs: {
                 database: true

@@ -1,5 +1,6 @@
 import Log from "./Log";
 import MasterPlugin from "./MasterPlugin";
+import Plugin from "./Plugin";
 import {EventEmitter} from "events";
 
 export default class PluginManager {
@@ -49,7 +50,7 @@ export default class PluginManager {
                     .then(
                         message => Promise.all(
                             this.plugins
-                                .filter(plugin => (plugin.plugin.type & plugin.Type.PROXY) === plugin.Type.PROXY)
+                                .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
                                 .map(plugin => plugin.proxy(eventName, message))
                         )
                     )
