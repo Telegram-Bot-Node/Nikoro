@@ -17,7 +17,7 @@ export default class Logger extends Plugin {
     }
 
     proxy(eventName, message) {
-        return new Promise(function(resolve, reject) {
+        return new Promise(resolve => {
             if (message.from.username) {
                 if (!this.db["chat" + message.chat.id])
                     this.db["chat" + message.chat.id] = {};
