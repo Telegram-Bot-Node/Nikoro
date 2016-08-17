@@ -41,7 +41,7 @@ function initBot(/* getMe */) {
         log.info("Configured.");
         log.info("The bot is online!");
     })
-    .catch(err => log.error(err));
+    .catch(die);
 }
 
 /*
