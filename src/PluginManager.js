@@ -53,9 +53,8 @@ export default class PluginManager {
                                 .map(plugin => plugin.proxy(eventName, message))
                         )
                     )
-                    .then(array => {
-                        console.log(array);
-                        let message = array[0];
+                    .then(array => array.length > 0 ? array[0] : message)
+                    .then(message => {
                         const chatID = message.chat.id;
                         this.emit(eventName, message, reply => handleReply(chatID, reply));
                     })
