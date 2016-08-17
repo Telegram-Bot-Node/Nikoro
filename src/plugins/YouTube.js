@@ -15,7 +15,7 @@ export default class YouTubePlugin extends Plugin {
     }
 
     start() {
-        assert(!!Config.YOUTUBE_API_KEY);
+        assert(Boolean(Config.YOUTUBE_API_KEY));
         YouTube.authenticate({
             type: "key",
             key: Config.YOUTUBE_API_KEY

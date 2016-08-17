@@ -15,7 +15,7 @@ export default class Welcome extends Plugin {
     onNewChatParticipant(item, reply) {
         if (!this.db[item.chat.id]) this.db[item.chat.id] = [];
         const member = item.new_chat_member;
-        if (this.db[item.chat.id].indexOf(member.id) != -1) return;
+        if (this.db[item.chat.id].indexOf(member.id) !== -1) return;
         this.db[item.chat.id].push(member.id);
         reply({
             type: "text",
