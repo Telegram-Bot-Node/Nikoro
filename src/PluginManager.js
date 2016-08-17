@@ -77,22 +77,22 @@ export default class PluginManager {
         let loadedPlugin = new ThisPlugin(this.emitter, this.bot);
         this.log.debug(`Created ${pluginName}.`);
 
-        if (!this.validatePlugin(loadedPlugin))
-            return Promise.reject(`Invalid ${pluginName}.`);
+        try {
+            // The plugin will throw an error if its state is invalid.
+            loadedPlugin.check();
+            this.log.debug(`Health check for plugin ${pluginName} passed.`);
+        } catch (e) {
+            this.log.warn(e);
+            this.log.warn(`Health check for plugin ${pluginName} failed.`);
+        }
 
-        this.log.verbose(`Validated ${pluginName}.`);
-        return Promise.resolve(loadedPlugin);
+        return loadedPlugin;
     }
 
     // Adds the plugin to the list of active plugins
     addPlugin(loadedPlugin) {
-        if (loadedPlugin === null)
-            // todo: find out plugin name
-            return Promise.reject("Invalid plugin passed.");
-
         this.plugins.push(loadedPlugin);
         this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
-        return Promise.resolve();
     }
 
     loadAndAdd(pluginName) {
@@ -122,9 +122,5 @@ export default class PluginManager {
     emit(event, message, callback) {
         this.log.debug(`Triggered event ${event}`);
         this.emitter.emit(event, message, callback);
-    }
-
-    validatePlugin(loadedPlugin) {
-        return loadedPlugin.check();
     }
 }
