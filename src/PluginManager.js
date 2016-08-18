@@ -82,14 +82,8 @@ export default class PluginManager {
             return Promise.reject(e);
         }
 
-        try {
-            // The plugin will throw an error if its state is invalid.
-            loadedPlugin.check();
-            this.log.debug(`Health check for plugin ${pluginName} passed.`);
-        } catch (e) {
-            this.log.warn(e);
-            this.log.warn(`Health check for plugin ${pluginName} failed.`);
-        }
+        loadedPlugin.check();
+        this.log.debug(`Health check for plugin ${pluginName} passed.`);
 
         return loadedPlugin;
     }
@@ -100,24 +94,38 @@ export default class PluginManager {
         this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
     }
 
+    // Returns true if the plugin was added successfully, false otherwise.
     loadAndAdd(pluginName) {
-        this.log.verbose(`Loading and adding ${pluginName}...`);
-
-        return Promise.resolve(pluginName)
-        .then(name => this.loadPlugin(name))
-        .then(name => this.addPlugin(name));
+        try {
+            let plugin = this.loadPlugin(pluginName);
+            this.addPlugin(plugin);
+            return true;
+        } catch (e) {
+            this.log.warn(e);
+            this.log.warn(`Failed to initialize plugin ${pluginName}.`);
+            return false;
+        }
     }
 
     // Load and add every plugin in the list.
-    // Returns an array of promises.
     loadPlugins(pluginNames) {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
 
-        return Promise.all(pluginNames.map(name => this.loadAndAdd(name)));
+        let log = pluginNames.map(name => this.loadAndAdd(name));
+        if (log.some(result => result !== true)) {
+            this.log.warn("Some plugins couldn't be loaded.");
+        }
     }
 
     startPlugins() {
-        return Promise.all(this.plugins.map(pl => pl.start()));
+        return Promise.all(this.plugins.map(pl => {
+            try {
+                pl.start();
+                return Promise.resolve();
+            } catch (e) {
+                return Promise.reject(e);
+            }
+        }));
     }
 
     stopPlugins() {
