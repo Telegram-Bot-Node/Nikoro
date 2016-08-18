@@ -11,8 +11,8 @@ export default class RateLimiter extends Plugin {
             description: "Automatically ignore spamming users",
             help: "",
 
-            visibility: this.Visibility.HIDDEN,
-            type: this.Type.PROXY
+            visibility: Plugin.Visibility.HIDDEN,
+            type: Plugin.Type.PROXY
         };
     }
 
