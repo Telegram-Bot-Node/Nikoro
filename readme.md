@@ -1,8 +1,6 @@
 #Telegram-Bot-Node
 
-[![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=master)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
-
-[![bitHound Overall Score](https://www.bithound.io/github/crisbal/Telegram-Bot-Node/badges/score.svg)](https://www.bithound.io/github/crisbal/Telegram-Bot-Node)
+[![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=es6)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
 An all-in-one, plugin-based, Telegram Bot written in Node.js. 
 
@@ -14,15 +12,12 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ###Table of Contents
 
-- [Features](#features)
-- [Running the Bot](#running-the-bot)
-- [Using the Bot](#using-the-bot)
 - [Plugins](#plugins)
-  - [Writing custom plugins](#writing-custom-plugins)
-- [Contributing](#contributing)
-- [Contributors](#contributors)
-- [Need help?](#need-help)
-- [License](#license)
+  - [Adding a plugin](#adding-a-plugin)
+  - [Writing](#writing)
+    - [Responding to messages](#responding-to-messages)
+    - [Parsing messages](#parsing-messages)
+    - [Permanent storage, configuration](#permanent-storage-configuration)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -68,52 +63,98 @@ Send a message to the bot or add it to a group chat and you are ready to use it!
 
 Use ```/list``` to see a list of the enabled plugins or ```/help <plugin-name>``` to get an explanation for each enabled plugin.
 
-##Plugins
+## Plugins
 
-Plugins can be easly written with a basic understanding of JavaScript.
+Plugins can be easily written with a basic understanding of JavaScript.
 
-Check the ```plugins``` folder to see the available plugins and check each file to see a basic explanation for each plugin.
+>The documentation may not be up to date, or may not cover some special cases yet. If you want to write your own plugin, it is suggested that you look at some existing plugins (`plugins/` folder), like Ping.
 
-###Writing custom plugins
+### Adding a plugin
 
-* Take a look at the provided plugins in the ```plugins``` folder
-* Create a ```.js``` file in the ```plugins``` folder
+* Create a file in `src/plugins`, for example, `src/plugins/MyPlugin.js`.
+>You can use `Ping.js` as a template.
+* Edit `Config.js`. Add `"MyPlugin"` to the list of active plugins:
 
-Basic Class Skeleton
-``` javascript
-var pluginName = function(){
-    
-    this.properties = {
-        shortDescription: "Set a simple and short description for your plugin here.",
-        fullHelp: "Add examples, an in-depth explanation here."
-        //both these fields are required
-    };
-
-    this.on('text', function (msg, reply) {
-        //this will be executed whenever your bot get a text message
-        //you can listen to many events, just take a look at the example plugins.
-        
-        /*
-            1. Check if the msg.text matches the trigger for your plugin
-            2. Do stuff you need
-            3. Produce reply 
-                replyText = {type:"text", text:"Message you want to post"}
-                replyAudio = {type:"audio", audio:"path/to/audio.mp3"}
-                replyPhoto = {type:"photo", photo:"path/to/photo.png"}
-                replyStatus = {type:"status", status:"typing"}
-            4. Post the reply
-                reply(replyText); //for example
-
-
-        */
-        if(msg.text == "hello")
-            reply({type:"text", text:"Hey there!"});
-    });
-
-};
-
-module.exports = pluginName;
+```js
+Config.activePlugins = [
+    "Auth",
+    "Config",
+    "MyPlugin"
+]
 ```
+
+### Writing
+Every plugin is a class that extends Plugin. This is the skeleton:
+```js
+import Plugin from "./../Plugin";
+export default class MyPlugin extends Plugin {
+    get plugin() {
+        name: "MyPlugin",
+        description: "I repeat text.",
+        help: "/echo <text>"
+    }
+}
+```
+
+#### Responding to messages
+
+`onText(message, reply)` is called when a text message is received. (`onPhoto` is called when a photo is received, `onSticker` for stickers, and so on.)
+
+`message` is a [MessageEntity](https://core.telegram.org/bots/api#messageentity) from the Telegram API; `reply` is a function to be called to send a text reply. It looks like this:
+
+```js
+reply({
+    type: "text",
+    text: "Hello world!"
+});
+```
+
+#### Parsing messages
+
+Use the Util module for parsing messages:
+
+```js
+import Util from "../Util";
+export default class MyPlugin extends Plugin {
+    /* ... */
+    onText(message, reply) {
+        let parts = Util.parseCommand(message.text, "echo");
+        if (!parts) {
+            // The message didn't start with /echo.
+            // Let's reject it.
+            return;
+        }
+        /* message.text = "/echo Hello world!"
+         * parts = ["echo", "Hello", "world!"]
+         */
+        reply({type: "text", text: parts.splice(1).join(" ")});
+    }
+}
+```
+
+#### Permanent storage, configuration
+
+If you need permanent storage (for example, to store a list of ignored users), add `needs: {database: true}` to the plugin settings:
+
+```js
+export default class Ping extends Plugin {
+    get plugin() {
+        name: "Ping",
+        description: "Ping - pong!",
+        help: "/ping",
+        needs: {
+            database: true
+        },
+        defaults: {
+            message: "Pong!"
+        }
+    }
+}
+```
+
+You will then have access to the variable `this.db`, which represents an object in the Redis database. For the most part, you can use it as a normal JavaScript object (see the documentation for Rebridge for more information - for example, it can't contain functions, or circular references).
+
+Configuration variables are especially important, in that you can let users change them (`/config set Ping message "Pong!"`). They are stored in `this.config`. You can define default values using `defaults` in the plugin metadata.
 
 ##Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way? Did you fix an issue?
@@ -122,8 +163,10 @@ Submit a pull request!
 
 This project will only grow if *YOU* help!
 
+Guidelines for contributing are outlined in `CONTRIBUTING.md`.
+
 ##Contributors
-In Alphabetical Order
+In alphabetical order
 
 * [Cristian Baldi](https://github.com/crisbal/)
     * Crated the project
