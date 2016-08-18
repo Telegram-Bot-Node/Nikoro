@@ -15,7 +15,6 @@ export default class RateLimiter extends Plugin {
             type: Plugin.Type.PROXY
         };
     }
-
     proxy(eventName, message) {
         const now = (new Date()).getTime();
         const author = message.from.id;

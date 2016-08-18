@@ -28,6 +28,10 @@ function initBot(/* getMe */) {
 
     // Loads and prepares root and base plugins
     pluginManager.loadPlugins(Config.activePlugins)
+    .catch(err => {
+        log.warn("Some plugins couldn't be loaded.");
+        die(err);
+    })
     .then(() => {
         log.info("Plugins loaded.");
         log.info("Starting the plugins...");
