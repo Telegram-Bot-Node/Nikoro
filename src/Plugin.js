@@ -25,8 +25,8 @@ export default class Plugin {
                 utils: false
             },
 
-            visibility: this.Visibility.HIDDEN,
-            type: this.Type.SPECIAL
+            visibility: Plugin.Visibility.HIDDEN,
+            type: Plugin.Type.SPECIAL
         };
     }
 
