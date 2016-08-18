@@ -85,14 +85,14 @@ export default class Plugin {
     }
 
     check() {
-        return true;
+        return;
     }
 
     start() {
-        return Promise.resolve();
+        return;
     }
 
     stop() {
-        return Promise.resolve();
+        return;
     }
 }
