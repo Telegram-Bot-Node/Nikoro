@@ -1,4 +1,5 @@
 import Plugin from "./Plugin";
+import Util from "./Util";
 
 export default class MasterPlugin extends Plugin {
 
@@ -25,17 +26,25 @@ export default class MasterPlugin extends Plugin {
     }
 
     onText(message, reply) {
-        if (message.text === "/help") {
-            // For each plugin, fetch just the metadata.
-            let plugins = this.pluginManager.plugins
-                .map(pl => pl.plugin)
-                .filter(item => item.visibility !== Plugin.Visibility.HIDDEN);
-            console.log(plugins);
-            reply({
-                type: "text",
-                text: plugins.map(item => `${item.name} - ${item.help}`).join('\n')
-            });
-            return;
+        const parts = Util.parseCommand(message.text, "help");
+        if (parts) {
+            let data = this.pluginManager.plugins.map(pl => pl.plugin).filter(pl => pl.visibility !== Plugin.Visibility.HIDDEN);
+            if (parts.length === 1) {
+                reply({
+                    type: "text",
+                    text: data.map(pl => `${pl.name}: ${pl.description}`).join("\n")
+                });
+            } else {
+                const pluginName = parts[1].toLowerCase();
+                let plugin = data.filter(pl => pl.name.toLowerCase() === pluginName)[0];
+                reply({
+                    type: "text",
+                    text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
+                    options: {
+                        parse_mode: "Markdown"
+                    }
+                });
+            }
         }
     }
 }

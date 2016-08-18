@@ -1,5 +1,6 @@
 import Log from "./Log";
 import MasterPlugin from "./MasterPlugin";
+import Plugin from "./Plugin";
 import {EventEmitter} from "events";
 
 export default class PluginManager {
@@ -49,13 +50,12 @@ export default class PluginManager {
                     .then(
                         message => Promise.all(
                             this.plugins
-                                .filter(plugin => (plugin.plugin.type & plugin.Type.PROXY) === plugin.Type.PROXY)
+                                .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
                                 .map(plugin => plugin.proxy(eventName, message))
                         )
                     )
-                    .then(array => {
-                        console.log(array);
-                        let message = array[0];
+                    .then(array => array.length > 0 ? array[0] : message)
+                    .then(message => {
                         const chatID = message.chat.id;
                         this.emit(eventName, message, reply => handleReply(chatID, reply));
                     })
@@ -82,22 +82,22 @@ export default class PluginManager {
             return Promise.reject(e);
         }
 
-        if (!this.validatePlugin(loadedPlugin))
-            return Promise.reject(`Invalid ${pluginName}.`);
+        try {
+            // The plugin will throw an error if its state is invalid.
+            loadedPlugin.check();
+            this.log.debug(`Health check for plugin ${pluginName} passed.`);
+        } catch (e) {
+            this.log.warn(e);
+            this.log.warn(`Health check for plugin ${pluginName} failed.`);
+        }
 
-        this.log.verbose(`Validated ${pluginName}.`);
-        return Promise.resolve(loadedPlugin);
+        return loadedPlugin;
     }
 
     // Adds the plugin to the list of active plugins
     addPlugin(loadedPlugin) {
-        if (loadedPlugin === null)
-            // todo: find out plugin name
-            return Promise.reject("Invalid plugin passed.");
-
         this.plugins.push(loadedPlugin);
         this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
-        return Promise.resolve();
     }
 
     loadAndAdd(pluginName) {
@@ -127,9 +127,5 @@ export default class PluginManager {
     emit(event, message, callback) {
         this.log.debug(`Triggered event ${event}`);
         this.emitter.emit(event, message, callback);
-    }
-
-    validatePlugin(loadedPlugin) {
-        return loadedPlugin.check();
     }
 }
