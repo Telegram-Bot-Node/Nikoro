@@ -10,6 +10,7 @@ export default class PluginManager {
         this.log = Log.get("PluginManager");
         this.plugins = [];
         this.emitter = new EventEmitter();
+        this.emitter.setMaxListeners(Infinity);
 
         this.masterPlugin = new MasterPlugin(this.emitter, this);
         this.addPlugin(this.masterPlugin);
@@ -110,11 +111,14 @@ export default class PluginManager {
     // Load and add every plugin in the list.
     loadPlugins(pluginNames) {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
+        Error.stackTraceLimit = 5; // Avoid printing useless data in stack traces
 
         let log = pluginNames.map(name => this.loadAndAdd(name));
         if (log.some(result => result !== true)) {
             this.log.warn("Some plugins couldn't be loaded.");
         }
+
+        Error.stackTraceLimit = 10; // Reset to default value
     }
 
     stopPlugins() {
