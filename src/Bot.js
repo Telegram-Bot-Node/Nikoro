@@ -10,7 +10,7 @@ const log = Log.get("Bot");
 log.info("The bot is starting...");
 
 assert(typeof Config.TELEGRAM_TOKEN === typeof "", "You must provide a Telegram bot token in Config.js.");
-assert(Config.TELEGRAM_TOKEN !== "", "Please provide a valid Telegram bot token ")
+assert(Config.TELEGRAM_TOKEN !== "", "Please provide a valid Telegram bot token.");
 log.verbose(`Creating a TelegramBot instance...`);
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.verbose("Created.");
@@ -29,22 +29,12 @@ function initBot(/* getMe */) {
     pluginManager = new PluginManager(bot);
 
     // Loads and prepares root and base plugins
-    pluginManager.loadPlugins(Config.activePlugins)
+    pluginManager.loadPlugins(Config.activePlugins);
     log.info("Plugins loaded.");
-    log.info("Starting the plugins...");
-    pluginManager.startPlugins()
-    .catch(err => {
-        log.warn(err);
-        log.warn("Some plugins couldn't be started.");
-    })
-    .then(() => {
-        log.info("Plugins started.");
-        log.info("Configuring permissions...");
-        Auth.init();
-        log.info("Configured.");
-        log.info("The bot is online!");
-    })
-    .catch(die);
+    log.info("Configuring permissions...");
+    Auth.init();
+    log.info("Configured.");
+    log.info("The bot is online!");
 }
 
 /*
