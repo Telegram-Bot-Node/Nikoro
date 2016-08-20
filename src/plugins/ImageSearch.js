@@ -17,14 +17,11 @@ export default class ImageSearch extends Plugin {
     }
 
     start() {
-        client = new GoogleImages(Config.GOOGLE_CX, Config.GOOGLE_API_KEY);
-    }
-
-    check() {
         assert(typeof Config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
         assert(Config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
         assert(typeof Config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
         assert(Config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
+        client = new GoogleImages(Config.GOOGLE_CX, Config.GOOGLE_API_KEY);
     }
 
     onText(message, reply) {

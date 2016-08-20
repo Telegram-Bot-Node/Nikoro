@@ -15,16 +15,12 @@ export default class YouTubePlugin extends Plugin {
     }
 
     start() {
+        assert(typeof Config.YOUTUBE_API_KEY === typeof "", "You must supply a YouTube API key.");
+        assert(Config.YOUTUBE_API_KEY !== "", "Please supply a valid YouTube API key.");
         YouTube.authenticate({
             type: "key",
             key: Config.YOUTUBE_API_KEY
         });
-        return Promise.resolve();
-    }
-
-    check() {
-        assert(typeof Config.YOUTUBE_API_KEY === typeof "", "You must supply a YouTube API key.");
-        assert(Config.YOUTUBE_API_KEY !== "", "Please supply a valid YouTube API key.");
     }
 
     onText(message, reply) {

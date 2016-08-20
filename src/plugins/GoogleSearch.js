@@ -17,18 +17,14 @@ export default class Google extends Plugin {
     }
 
     start() {
-        google = new GoogleSearch({
-            key: Config.GOOGLE_API_KEY,
-            cx: Config.GOOGLE_CX
-        });
-        return Promise.resolve();
-    }
-
-    check() {
         assert(typeof Config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
         assert(Config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
         assert(typeof Config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
         assert(Config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
+        google = new GoogleSearch({
+            key: Config.GOOGLE_API_KEY,
+            cx: Config.GOOGLE_CX
+        });
     }
 
     onText(message, reply) {

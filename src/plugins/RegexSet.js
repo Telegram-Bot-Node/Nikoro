@@ -19,8 +19,6 @@ export default class RegexSet extends Plugin {
     start() {
         if (!this.db.replacements)
             this.db.replacements = [];
-
-        return Promise.resolve();
     }
 
     onText(message, reply) {

@@ -66,8 +66,8 @@ export default class PluginManager {
         }
     }
 
-    // Instantiates the plugin and runs its health check
-    // Returns a promise resolving to the plugin itself.
+    // Instantiates the plugin.
+    // Returns the plugin itself.
     loadPlugin(pluginName) {
         // default because of es6 classes
         var loadedPlugin;
@@ -82,8 +82,7 @@ export default class PluginManager {
             return Promise.reject(e);
         }
 
-        loadedPlugin.check();
-        this.log.debug(`Health check for plugin ${pluginName} passed.`);
+        loadedPlugin.start();
 
         return loadedPlugin;
     }
@@ -98,6 +97,7 @@ export default class PluginManager {
     loadAndAdd(pluginName) {
         try {
             let plugin = this.loadPlugin(pluginName);
+            this.log.debug(pluginName + " loaded correctly.");
             this.addPlugin(plugin);
             return true;
         } catch (e) {
@@ -115,17 +115,6 @@ export default class PluginManager {
         if (log.some(result => result !== true)) {
             this.log.warn("Some plugins couldn't be loaded.");
         }
-    }
-
-    startPlugins() {
-        return Promise.all(this.plugins.map(pl => {
-            try {
-                pl.start();
-                return Promise.resolve();
-            } catch (e) {
-                return Promise.reject(e);
-            }
-        }));
     }
 
     stopPlugins() {
