@@ -17,23 +17,21 @@ export default class Logger extends Plugin {
     }
 
     proxy(eventName, message) {
-        return new Promise(resolve => {
-            if (message.from.username) {
-                if (!this.db["chat" + message.chat.id])
-                    this.db["chat" + message.chat.id] = {};
-                this.db["chat" + message.chat.id][message.from.username] = message.from.id;
-            }
+        if (message.from.username) {
+            if (!this.db["chat" + message.chat.id])
+                this.db["chat" + message.chat.id] = {};
+            this.db["chat" + message.chat.id][message.from.username] = message.from.id;
+        }
 
-            // Register people who join or leave, too.
-            if (message.new_chat_participant || message.left_chat_participant) {
-                const source = message.new_chat_participant ?
-                    message.new_chat_participant :
-                    message.left_chat_participant;
-                if (!this.db["chat" + message.chat.id])
-                    this.db["chat" + message.chat.id] = {};
-                this.db["chat" + message.chat.id][source.username] = source.id;
-            }
-            resolve(message);
-        });
+        // Register people who join or leave, too.
+        if (message.new_chat_participant || message.left_chat_participant) {
+            const source = message.new_chat_participant ?
+                message.new_chat_participant :
+                message.left_chat_participant;
+            if (!this.db["chat" + message.chat.id])
+                this.db["chat" + message.chat.id] = {};
+            this.db["chat" + message.chat.id][source.username] = source.id;
+        }
+        return Promise.resolve(message);
     }
 }
