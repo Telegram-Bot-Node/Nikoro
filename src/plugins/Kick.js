@@ -1,5 +1,5 @@
 import Plugin from "./../Plugin";
-import Auth from "./../Auth";
+import Auth from "./../helpers/Auth";
 
 export default class Kick extends Plugin {
 
@@ -9,10 +9,7 @@ export default class Kick extends Plugin {
             description: "Kicks users",
             help: "Reply with /kick or ban, or send /[kick|ban] ID.",
             needs: {
-                database: 1
-            },
-            defaults: {
-                banned: {}
+                database: true
             }
         };
     }

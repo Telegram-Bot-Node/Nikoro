@@ -1,11 +1,7 @@
 import Plugin from "./../Plugin";
 import Util from "./../Util";
 import Rebridge from "rebridge";
-import Auth from "./../Auth";
-
-var db = new Rebridge();
-if (!db.ignored)
-    db.ignored = [];
+import Auth from "./../helpers/Auth";
 
 export default class Ignore extends Plugin {
 
@@ -14,29 +10,36 @@ export default class Ignore extends Plugin {
             name: "Ignore",
             description: "Ignore users",
             help: "Syntax: /ignore <username>",
-            isProxy: true
+
+            visibility: this.Visibility.VISIBLE,
+            type: this.Type.NORMAL | this.type.PROXY,
+
+            needs: {
+                database: true
+            }
         };
     }
 
     proxy(eventName, message) {
-        if (db.ignored && db.ignored.indexOf(message.from.id) !== -1)
+        if (this.db.ignored && this.db.ignored.indexOf(message.from.id) !== -1)
             return Promise.reject();
+
         return Promise.resolve(message);
     }
 
     onText(message, reply) {
         if (message.text === "/ignorelist") return reply({
             type: "text",
-            text: JSON.stringify(db.ignored)
+            text: JSON.stringify(this.db.ignored)
         });
-        this.ignore(message, reply);
-        this.unignore(message, reply);
+        // this.ignore(message, reply);
+        // this.unignore(message, reply);
     }
 
-    ignore(message, reply) {
+    /* ignore(message, reply) {
         const parts = Util.parseCommand(message.text, "ignore");
         if (!parts) return;
-        if (!Auth.isMod(message.from.id)) return;
+        if (!Auth.isMod(message.from.id, message.chat.id)) return;
 
         let target;
         if (parts.length === 2) target = Number(parts[1]);
@@ -51,14 +54,16 @@ export default class Ignore extends Plugin {
             type: "text",
             text: "Can't ignore mods."
         });
-        db.ignored.push(target);
+
+        this.db.ignored.push(target);
+
         reply({
             type: "text",
             text: "Ignored."
         });
     }
 
-    unignore(message, reply) {
+    /*unignore(message, reply) {
         const parts = Util.parseCommand(message.text, "unignore");
         if (!parts) return;
         if (!Auth.isMod(message.from.id)) return;
@@ -77,5 +82,5 @@ export default class Ignore extends Plugin {
             type: "text",
             text: "Done."
         });
-    }
+    }*/
 }
