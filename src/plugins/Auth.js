@@ -10,8 +10,8 @@ export default class AuthPlugin extends Plugin {
             description: "Plugin to handle authentication",
             help: "",
 
-            visibility: this.Visibility.VISIBLE,
-            type: this.Type.SPECIAL
+            visibility: Plugin.Visibility.VISIBLE,
+            type: Plugin.Type.SPECIAL
         };
     }
 

@@ -114,6 +114,7 @@ Util.escapeRedisKeys = function(str) {
     return str.replace(/[\?\[\]\^\*\-]/g, "\\$&");
 };
 
+// `callback` receives the temporary path (eg. /tmp/notavirus.exe).
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
     log.info(`Downloading and saving resource from ${url}`);
 

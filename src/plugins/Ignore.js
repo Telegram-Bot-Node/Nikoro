@@ -1,7 +1,7 @@
-import Plugin from "./../Plugin";
-import Util from "./../Util";
+import Plugin from "../Plugin";
+import Util from "../Util";
 import Rebridge from "rebridge";
-import Auth from "./../Auth";
+import Auth from "../helpers/Auth";
 
 var db = new Rebridge();
 if (!db.ignored)

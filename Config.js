@@ -17,7 +17,8 @@ Config.activePlugins = [
 	"MediaSet",
 	"Ping",
 	"RateLimiter",
-	"RegexSet"
+	"RegexSet",
+	"YouTube"
 ];
 
 Config.admins = [/* Your ID here */];
@@ -26,6 +27,7 @@ Config.admins = [/* Your ID here */];
 Config.GOOGLE_API_KEY = process.env.GOOGLE_API_KEY; // google.js and youtube.js
 Config.CSE_ID = process.env.CSE_ID; // googleimage
 Config.CSE_API_KEY = process.env.CSE_API_KEY; // googleimage
+Config.YOUTUBE_API_KEY = "";
 
 // logging options
 Config.loggingLevel = "debug"; // error, warn, info, verbose, debug(it should not be used in production, too much spam)

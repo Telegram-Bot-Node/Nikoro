@@ -21,8 +21,6 @@ export default class MediaSet extends Plugin {
 
         if (!this.db.pendingRequests)
             this.db.pendingRequests = {};
-
-        return Promise.resolve();
     }
 
     onText(message, reply) {
