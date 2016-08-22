@@ -30,11 +30,6 @@ export default class Plugin {
         };
     }
 
-    get config() {
-        if (!this.db) throw new Error("Plugins without a database can't access config!");
-        return this.db.config;
-    }
-
     constructor(listener, bot) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
@@ -82,10 +77,6 @@ export default class Plugin {
             this.listener.on("new_chat_participant", (...args) => this.onNewChatParticipant(...args));
         if (typeof this.onLeftChatParticipant === 'function')
             this.listener.on("left_chat_participant", (...args) => this.onLeftChatParticipant(...args));
-    }
-
-    check() {
-        return;
     }
 
     start() {

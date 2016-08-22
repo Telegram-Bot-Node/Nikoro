@@ -9,10 +9,7 @@ export default class Kick extends Plugin {
             description: "Kicks users",
             help: "Reply with /kick or ban, or send /[kick|ban] ID.",
             needs: {
-                database: 1
-            },
-            defaults: {
-                banned: {}
+                database: true
             }
         };
     }
