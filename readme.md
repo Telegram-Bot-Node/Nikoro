@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=es6)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
-An all-in-one, plugin-based, Telegram Bot written in Node.js. 
+An all-in-one, plugin-based, Telegram bot written in Node.js. 
 
-See it in action on `@Factotum_Bot`
+<!-- See it in action on `@Factotum_Bot` -->
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
@@ -22,50 +22,39 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ##Features
-
-* Plugin-based: run many bots in one, have a plugin for everything.
-    * 20+ plugins already available!
-    * Inline plugins available!
-* Completely customizable: see something you don't like? Just change it!
-* Written in Node.js: one of the most powerful and easiest programming language available.
+  
+<!--  * 20+ plugins already available! -->
+<!-- * Inline plugins available! -->
+* **Plugin-based**: run many bots in one, have a plugin for everything.
+* Completely **customizable**: see something you don't like? Just change it!
+* Written in **Node.js**: one of the most powerful and easiest programming language available.
 * Easy to install: just a few simple commands and your bot is up and running!
 * Easy-to-write plugins: with many helper functions write powerful plugins in a few minutes. 
     * Connect to a database, download files, parse commands without writing any code: everything is already here for you   
 * Open Source :D
 
-##Running the Bot
+##Running the bot
 
-* Clone/Download/Fork the repository
-* Install `redis` (and check if it is working)
+* Clone the repository
+* Install a Redis server
 * `npm install`
-* Create a Bot on Telegram 
-    * Get the associated HTTP Api Token (https://core.telegram.org/bots/#botfather)
-* Set the required Environment Variables (two methods)
-    1. Via `setup.sh`
-        * Edit `setup.sh`
-            * Set `TELEGRAM_TOKEN` with the auth token of your bot
-            * Set the other API Keys if you want to enable the relative plugins.
-        * Run `source setup.sh`
-    2. Set them manually in `config.js`
-        * If you are more comfortable this way
-    3. Set them in any other way in your system
-        * If you can't/won't use the `source` command     
-* Edit config.js
-    * Edit `activePlugins` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
-        * You can find all the available plugins in the `plugins` folder.
-* Run the bot
-    * `node bot.js` 
-    * Stop it at any time with CTRL+C
+* Create a Telegram bot and get the bot token (https://core.telegram.org/bots/#botfather)
+* Pass the tokens to the bot, either via `setup.sh` (edit the file and then run `source setup.sh`) or `Config.js`
+* Configure the bot in `Config.js`
+>Hint: you can find the available plugins in the `src/plugins` folder.
 
-##Using the Bot
+* Compile the bot: `node node_modules/.bin/babel src/ -d dist/`
+* Run the bot with `node dist/Bot.js`
+>You can stop the bot at any time with Ctrl+C.
 
-Send a message to the bot or add it to a group chat and you are ready to use it!
+##Using the bot
+You can simply add the bot to a group chat and it will work. You can also message it directly.
 
-Use ```/list``` to see a list of the enabled plugins or ```/help <plugin-name>``` to get an explanation for each enabled plugin.
+To see a list of available plugins, use the command `/help`; if you need help about a specific plugin, do `/help pluginName`.
 
 ## Plugins
 
-Plugins can be easily written with a basic understanding of JavaScript.
+If you know JavaScript (ES6, specifically), you can easily write plugins for your bot.
 
 >The documentation may not be up to date, or may not cover some special cases yet. If you want to write your own plugin, it is suggested that you look at some existing plugins (`plugins/` folder), like Ping.
 
@@ -194,4 +183,4 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.RESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -1,5 +1,6 @@
 import Log from "./Log";
 import MasterPlugin from "./MasterPlugin";
+import Plugin from "./Plugin";
 import {EventEmitter} from "events";
 
 export default class PluginManager {
@@ -9,6 +10,7 @@ export default class PluginManager {
         this.log = Log.get("PluginManager");
         this.plugins = [];
         this.emitter = new EventEmitter();
+        this.emitter.setMaxListeners(Infinity);
 
         this.masterPlugin = new MasterPlugin(this.emitter, this);
         this.addPlugin(this.masterPlugin);
@@ -49,13 +51,12 @@ export default class PluginManager {
                     .then(
                         message => Promise.all(
                             this.plugins
-                                .filter(plugin => (plugin.plugin.type & plugin.Type.PROXY) === plugin.Type.PROXY)
+                                .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
                                 .map(plugin => plugin.proxy(eventName, message))
                         )
                     )
-                    .then(array => {
-                        console.log(array);
-                        let message = array[0];
+                    .then(array => array.length > 0 ? array[0] : message)
+                    .then(message => {
                         const chatID = message.chat.id;
                         this.emit(eventName, message, reply => handleReply(chatID, reply));
                     })
@@ -66,53 +67,58 @@ export default class PluginManager {
         }
     }
 
-    // Instantiates the plugin and runs its health check
-    // Returns a promise resolving to the plugin itself.
+    // Instantiates the plugin.
+    // Returns the plugin itself.
     loadPlugin(pluginName) {
         // default because of es6 classes
-        let ThisPlugin = require('./plugins/' + pluginName).default;
+        var loadedPlugin;
+        try {
+            let ThisPlugin = require('./plugins/' + pluginName).default;
 
-        this.log.debug(`Required ${pluginName}`);
+            this.log.debug(`Required ${pluginName}`);
 
-        let loadedPlugin = new ThisPlugin(this.emitter, this.bot);
-        this.log.debug(`Created ${pluginName}.`);
+            loadedPlugin = new ThisPlugin(this.emitter, this.bot);
+            this.log.debug(`Created ${pluginName}.`);
+        } catch (e) {
+            return Promise.reject(e);
+        }
 
-        if (!this.validatePlugin(loadedPlugin))
-            return Promise.reject(`Invalid ${pluginName}.`);
+        loadedPlugin.start();
 
-        this.log.verbose(`Validated ${pluginName}.`);
-        return Promise.resolve(loadedPlugin);
+        return loadedPlugin;
     }
 
     // Adds the plugin to the list of active plugins
     addPlugin(loadedPlugin) {
-        if (loadedPlugin === null)
-            // todo: find out plugin name
-            return Promise.reject("Invalid plugin passed.");
-
         this.plugins.push(loadedPlugin);
         this.log.verbose(`Added ${loadedPlugin.plugin.name}.`);
-        return Promise.resolve();
     }
 
+    // Returns true if the plugin was added successfully, false otherwise.
     loadAndAdd(pluginName) {
-        this.log.verbose(`Loading and adding ${pluginName}...`);
-
-        return Promise.resolve(pluginName)
-        .then(name => this.loadPlugin(name))
-        .then(name => this.addPlugin(name));
+        try {
+            let plugin = this.loadPlugin(pluginName);
+            this.log.debug(pluginName + " loaded correctly.");
+            this.addPlugin(plugin);
+            return true;
+        } catch (e) {
+            this.log.warn(e);
+            this.log.warn(`Failed to initialize plugin ${pluginName}.`);
+            return false;
+        }
     }
 
     // Load and add every plugin in the list.
-    // Returns an array of promises.
     loadPlugins(pluginNames) {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
+        Error.stackTraceLimit = 5; // Avoid printing useless data in stack traces
 
-        return Promise.all(pluginNames.map(name => this.loadAndAdd(name)));
-    }
+        let log = pluginNames.map(name => this.loadAndAdd(name));
+        if (log.some(result => result !== true)) {
+            this.log.warn("Some plugins couldn't be loaded.");
+        }
 
-    startPlugins() {
-        return Promise.all(this.plugins.map(pl => pl.start()));
+        Error.stackTraceLimit = 10; // Reset to default value
     }
 
     stopPlugins() {
@@ -122,9 +128,5 @@ export default class PluginManager {
     emit(event, message, callback) {
         this.log.debug(`Triggered event ${event}`);
         this.emitter.emit(event, message, callback);
-    }
-
-    validatePlugin(loadedPlugin) {
-        return loadedPlugin.check();
     }
 }

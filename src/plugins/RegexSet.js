@@ -19,8 +19,6 @@ export default class RegexSet extends Plugin {
     start() {
         if (!this.db.replacements)
             this.db.replacements = [];
-
-        return Promise.resolve();
     }
 
     onText(message, reply) {
@@ -30,13 +28,14 @@ export default class RegexSet extends Plugin {
 
             if (chatID !== item.chatID) return;
 
-            const matches = message.text.match(item.regex);
+            const flags = "g" + item.flags;
+            const matches = message.text.match(new RegExp(item.regex, flags));
             if (!matches) return;
 
             let replacement = item.text;
             for (let i = 0; i < matches.length; i++) {
                 replacement = replacement.replace(
-                    new RegExp("\\$" + String(i), "g" + item.flags),
+                    new RegExp("\\$" + String(i), "gi"),
                     matches[i]
                 );
             }

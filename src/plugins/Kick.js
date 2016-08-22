@@ -1,5 +1,5 @@
 import Plugin from "./../Plugin";
-import Auth from "./../helpers/Auth";
+import Auth from "../helpers/Auth";
 
 export default class Kick extends Plugin {
 

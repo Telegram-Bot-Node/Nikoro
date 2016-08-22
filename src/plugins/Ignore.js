@@ -1,7 +1,7 @@
-import Plugin from "./../Plugin";
-import Util from "./../Util";
+import Plugin from "../Plugin";
+import Util from "../Util";
 import Rebridge from "rebridge";
-import Auth from "./../helpers/Auth";
+import Auth from "../helpers/Auth";
 
 export default class Ignore extends Plugin {
 
@@ -11,8 +11,8 @@ export default class Ignore extends Plugin {
             description: "Ignore users",
             help: "Syntax: /ignore <username>",
 
-            visibility: this.Visibility.VISIBLE,
-            type: this.Type.NORMAL | this.type.PROXY,
+            visibility: Plugin.Visibility.VISIBLE,
+            type: Plugin.Type.NORMAL | Plugin.type.PROXY,
 
             needs: {
                 database: true
