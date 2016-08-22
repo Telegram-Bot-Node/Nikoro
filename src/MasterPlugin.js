@@ -3,7 +3,7 @@ import Util from "./Util";
 
 export default class MasterPlugin extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "MasterPlugin",
             description: "",

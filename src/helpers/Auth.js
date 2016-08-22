@@ -1,5 +1,5 @@
 import Rebridge from "rebridge";
-import Config from "../../Config";
+let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 
 var db = new Rebridge();
 /*

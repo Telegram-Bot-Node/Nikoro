@@ -2,7 +2,7 @@ import Plugin from "./../Plugin";
 
 export default class Ping extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Ping",
             description: "Ping - Pong",

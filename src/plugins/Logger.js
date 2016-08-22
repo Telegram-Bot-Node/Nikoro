@@ -1,7 +1,7 @@
 import Plugin from "./../Plugin";
 
 export default class Logger extends Plugin {
-    get plugin() {
+    static get plugin() {
         return {
             name: "Logger",
             description: "Log stuff",

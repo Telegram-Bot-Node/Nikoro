@@ -3,7 +3,7 @@ import Util from "./../Util";
 
 export default class MediaSet extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "MediaSet",
             description: "Media-capable set command",

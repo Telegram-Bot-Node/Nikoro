@@ -6,7 +6,7 @@ const spamInterval = 1000;
 const old_threshold = 60; // Reject messages older than this many seconds
 
 export default class RateLimiter extends Plugin {
-    get plugin() {
+    static get plugin() {
         return {
             name: "RateLimiter",
             description: "Automatically ignore spamming users",

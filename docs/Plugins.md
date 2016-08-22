@@ -10,7 +10,7 @@ import Util from "../Util";
 import foo from "bar";
 
 export default class MyPlugin extends Plugin {
-	get plugin() {
+	static get plugin() {
 		return {
 			name: "MyPlugin",
 			description: "...",
