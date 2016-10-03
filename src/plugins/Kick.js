@@ -3,7 +3,7 @@ import Auth from "../helpers/Auth";
 
 export default class Kick extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Kick",
             description: "Kicks users",

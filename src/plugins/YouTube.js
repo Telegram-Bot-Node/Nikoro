@@ -1,16 +1,21 @@
 import Plugin from "../Plugin";
-import Config from "../../Config";
+let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import Util from "../Util";
 import YouTube from "youtube-api";
 import assert from "assert";
 
 export default class YouTubePlugin extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "YouTube",
             description: "Search for videos on YouTube.",
-            help: "/yt query"
+            help: "/yt query",
+            needs: {
+                config: {
+                    YOUTUBE_API_KEY: "API key for Youtube."
+                }
+            }
         };
     }
 

@@ -1,5 +1,5 @@
 import Plugin from "../Plugin";
-import Config from "../../Config";
+let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import Util from "../Util";
 import GoogleImages from "google-images";
 import assert from "assert";
@@ -8,15 +8,22 @@ var client;
 
 export default class ImageSearch extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Google Images search",
             description: "Search for images on Google.",
-            help: "/images query"
+            help: "/images query",
+            needs: {
+                config: {
+                    GOOGLE_API_KEY: "Google API key",
+                    GOOGLE_CX: "Google CX key"
+                }
+            }
         };
     }
 
     start() {
+        console.log(Config);
         assert(typeof Config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
         assert(Config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
         assert(typeof Config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");

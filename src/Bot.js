@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import Log from "./Log";
-import Config from "./../Config";
+let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import PluginManager from "./PluginManager";
 import Auth from "./helpers/Auth";
 import assert from "assert";

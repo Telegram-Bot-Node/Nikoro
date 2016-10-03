@@ -4,7 +4,7 @@ const safe = require("safe-regex");
 
 export default class RegexSet extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",

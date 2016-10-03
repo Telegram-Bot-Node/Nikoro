@@ -5,7 +5,7 @@ import Auth from "../helpers/Auth";
 
 export default class Ignore extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Ignore",
             description: "Ignore users",

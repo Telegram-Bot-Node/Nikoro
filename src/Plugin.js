@@ -15,7 +15,7 @@ export default class Plugin {
         HIDDEN: 1
     };
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Plugin",
             description: "Base Plugin",
@@ -28,6 +28,10 @@ export default class Plugin {
             visibility: Plugin.Visibility.HIDDEN,
             type: Plugin.Type.SPECIAL
         };
+    }
+
+    get plugin() {
+        return this.constructor.plugin;
     }
 
     constructor(listener, bot) {

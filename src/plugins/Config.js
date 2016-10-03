@@ -6,7 +6,7 @@ var db = new Rebridge();
 
 export default class Config extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Config",
             description: "Configuration manager",

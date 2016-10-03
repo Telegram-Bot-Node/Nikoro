@@ -71,17 +71,12 @@ export default class PluginManager {
     // Returns the plugin itself.
     loadPlugin(pluginName) {
         // default because of es6 classes
-        var loadedPlugin;
-        try {
-            let ThisPlugin = require('./plugins/' + pluginName).default;
+        let ThisPlugin = require('./plugins/' + pluginName).default;
 
-            this.log.debug(`Required ${pluginName}`);
+        this.log.debug(`Required ${pluginName}`);
 
-            loadedPlugin = new ThisPlugin(this.emitter, this.bot);
-            this.log.debug(`Created ${pluginName}.`);
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        let loadedPlugin = new ThisPlugin(this.emitter, this.bot);
+        this.log.debug(`Created ${pluginName}.`);
 
         loadedPlugin.start();
 

@@ -2,7 +2,7 @@ import Plugin from "./../Plugin";
 
 export default class Welcome extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Welcome",
             description: "Welcomes users.",

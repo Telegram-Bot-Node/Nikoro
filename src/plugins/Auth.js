@@ -4,7 +4,7 @@ import Auth from "./../helpers/Auth";
 
 export default class AuthPlugin extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Auth",
             description: "Plugin to handle authentication",

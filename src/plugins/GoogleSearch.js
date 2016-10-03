@@ -1,5 +1,5 @@
 import Plugin from "../Plugin";
-import Config from "../../Config";
+let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import Util from "../Util";
 import GoogleSearch from "google-search";
 import assert from "assert";
@@ -8,11 +8,17 @@ var google;
 
 export default class Google extends Plugin {
 
-    get plugin() {
+    static get plugin() {
         return {
             name: "Google",
             description: "Search on Google.",
-            help: "/google query"
+            help: "/google query",
+            needs: {
+                config: {
+                    GOOGLE_API_KEY: "Google API key",
+                    GOOGLE_CX: "Google CX key"
+                }
+            }
         };
     }
 

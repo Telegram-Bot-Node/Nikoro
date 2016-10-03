@@ -39,8 +39,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 * Install a Redis server
 * `npm install`
 * Create a Telegram bot and get the bot token (https://core.telegram.org/bots/#botfather)
-* Pass the tokens to the bot, either via `setup.sh` (edit the file and then run `source setup.sh`) or `Config.js`
-* Configure the bot in `Config.js`
+* Configure the bot with `npm run configure`
 >Hint: you can find the available plugins in the `src/plugins` folder.
 
 * Compile the bot: `node node_modules/.bin/babel src/ -d dist/`
@@ -62,88 +61,19 @@ If you know JavaScript (ES6, specifically), you can easily write plugins for you
 
 * Create a file in `src/plugins`, for example, `src/plugins/MyPlugin.js`.
 >You can use `Ping.js` as a template.
-* Edit `Config.js`. Add `"MyPlugin"` to the list of active plugins:
+* Edit `config.json`. Add `"MyPlugin"` to the list of active plugins:
 
-```js
-Config.activePlugins = [
+```json
+activePlugins: {
     "Auth",
     "Config",
     "MyPlugin"
-]
+}
 ```
 
 ### Writing
-Every plugin is a class that extends Plugin. This is the skeleton:
-```js
-import Plugin from "./../Plugin";
-export default class MyPlugin extends Plugin {
-    get plugin() {
-        name: "MyPlugin",
-        description: "I repeat text.",
-        help: "/echo <text>"
-    }
-}
-```
 
-#### Responding to messages
-
-`onText(message, reply)` is called when a text message is received. (`onPhoto` is called when a photo is received, `onSticker` for stickers, and so on.)
-
-`message` is a [MessageEntity](https://core.telegram.org/bots/api#messageentity) from the Telegram API; `reply` is a function to be called to send a text reply. It looks like this:
-
-```js
-reply({
-    type: "text",
-    text: "Hello world!"
-});
-```
-
-#### Parsing messages
-
-Use the Util module for parsing messages:
-
-```js
-import Util from "../Util";
-export default class MyPlugin extends Plugin {
-    /* ... */
-    onText(message, reply) {
-        let parts = Util.parseCommand(message.text, "echo");
-        if (!parts) {
-            // The message didn't start with /echo.
-            // Let's reject it.
-            return;
-        }
-        /* message.text = "/echo Hello world!"
-         * parts = ["echo", "Hello", "world!"]
-         */
-        reply({type: "text", text: parts.splice(1).join(" ")});
-    }
-}
-```
-
-#### Permanent storage, configuration
-
-If you need permanent storage (for example, to store a list of ignored users), add `needs: {database: true}` to the plugin settings:
-
-```js
-export default class Ping extends Plugin {
-    get plugin() {
-        name: "Ping",
-        description: "Ping - pong!",
-        help: "/ping",
-        needs: {
-            database: true
-        },
-        defaults: {
-            message: "Pong!"
-        }
-    }
-}
-```
-
-You will then have access to the variable `this.db`, which represents an object in the Redis database. For the most part, you can use it as a normal JavaScript object (see the documentation for Rebridge for more information - for example, it can't contain functions, or circular references).
-
-Configuration variables are especially important, in that you can let users change them (`/config set Ping message "Pong!"`). They are stored in `this.config`. You can define default values using `defaults` in the plugin metadata.
+See `docs/Plugin.md`, `docs/Util.md`.
 
 ##Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way? Did you fix an issue?
