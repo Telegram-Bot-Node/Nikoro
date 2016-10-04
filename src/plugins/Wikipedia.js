@@ -3,22 +3,38 @@ import Util from "../Util";
 import Bluebird from "bluebird";
 import request from "request-promise";
 
-class Wikifetch {
-  constructor(articleName) {
+export default class Wikipedia extends Plugin {
+    static get plugin() {
+        return {
+            name: "Wiki Plugin",
+            description: "Plugin for fetching Wikipedia articles",
+            help: "/wiki",
+            needs: {
+                config: {
+                    TELEGRAM_CHANNEL: "Telegram channel",
+                    TELEGRAM_BOT_API: "Telegram bot API"
+                }
+            }
+        };
+    }
+                  
+
+    class Wikifetch {
+    constructor(articleName) {
     this.wikiPrefix = 'http://en.wikipedia.org/wiki/';
     this.articleName = 'https://en.wikipedia.org/wiki/Telegram';
     this.fetchedArticle = {};
-  }
+    }
 
-  fetch(){
-    let { parseTitle, parseLinks, parseSections, fetchedArticle, articleName, wikiPrefix } = this,
+    fetch(){
+      let { parseTitle, parseLinks, parseSections, fetchedArticle, articleName, wikiPrefix } = this,
       articleURI = wikiPrefix + articleName,
       options = {
         uri: articleURI,
         transform: body => {
           return Plugin.load(body);
         }
-      };
+    };
 
     return new Bluebird(function (resolve, reject) {
       request(options)
@@ -36,13 +52,13 @@ class Wikifetch {
     });
   }
 
-  parseTitle(ch, fe) {
-    let title = ch('#firstHeading').text();
-    fe.title = title;
-  }
+    parseTitle(ch, fe) {
+      let title = ch('#firstHeading').text();
+      fe.title = title;
+    }
 
-  parseLinks(ch, fe) {
-    fe.links = {};
+    parseLinks(ch, fe) {
+      fe.links = {};
 
     ch('#bodyContent p a').each((idx, el) => {
       let element = new Plugin(el),
@@ -68,12 +84,12 @@ class Wikifetch {
     });
   }
 
-  parseSections(ch, fe){
-    let currentHeadline = fe.title;
-    fe.sections = {};
-
-    ch('#bodyContent p,h2,h3,img').each((idx, el) => {
-      let element = new Plugin(el);
+      parseSections(ch, fe){
+         let currentHeadline = fe.title;
+         fe.sections = {};
+         
+        ch('#bodyContent p,h2,h3,img').each((idx, el) => {
+        let element = new Plugin(el);
 
       // Load new headlines as we observe them.
       if (element.is('h2') || element.is('h3')) {
