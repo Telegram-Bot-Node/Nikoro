@@ -31,11 +31,11 @@ export default class Wikipedia extends Plugin {
     }
     
     class Wikifetch {
-    constructor(articleName) {
-    this.wikiPrefix = 'http://en.wikipedia.org/wiki/';
-    this.articleName = 'https://en.wikipedia.org/wiki/Telegram';
-    this.fetchedArticle = {};
-    }
+        constructor(articleName) {
+            this.wikiPrefix = 'http://en.wikipedia.org/wiki/';
+            this.articleName = 'https://en.wikipedia.org/wiki/Telegram';
+            this.fetchedArticle = {};
+        }
 
     fetch(){
       let { parseTitle, parseLinks, parseSections, fetchedArticle, articleName, wikiPrefix } = this,
