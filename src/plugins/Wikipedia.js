@@ -113,5 +113,4 @@ export default class Wikipedia extends Plugin {
       fe.sections[currentHeadline].text += element.text();
     });
     }
-    }
 }
