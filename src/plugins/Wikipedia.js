@@ -30,7 +30,6 @@ export default class Wikipedia extends Plugin {
         });
     }
     
-    class Wikipedia {
         constructor(articleName) {
             this.wikiPrefix = 'http://en.wikipedia.org/wiki/';
             this.articleName = 'https://en.wikipedia.org/wiki/Telegram';
