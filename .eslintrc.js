@@ -1,24 +1,15 @@
 module.exports = {
+    "parser": "babel-eslint",
+    "extends": "google",
     "rules": {
-        "indent": [
-            2,
-            4
-        ],
-        "quotes": [
-            2,
-            "double"
-        ],
-        "linebreak-style": [
-            2,
-            "unix"
-        ],
-        "semi": [
-            2,
-            "always"
-        ]
-    },
-    "env": {
-        "node": true
-    },
-    "extends": "eslint:recommended"
+        "camelcase": 1,
+        "curly": 0,
+        "eol-last": 0,
+        "indent": ["error", 4],
+        "new-cap": 1,
+        "no-extend-native": 0,
+        "no-loop-func": 0,
+        "no-unused-vars": 1,
+        "require-jsdoc": 0
+    }
 };

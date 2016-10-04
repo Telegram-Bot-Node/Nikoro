@@ -1,12 +1,10 @@
-#Telegram-Bot-Node
+#Node-Telegram-Bot 
 
 [![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=master)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
-[![bitHound Overall Score](https://www.bithound.io/github/crisbal/Telegram-Bot-Node/badges/score.svg)](https://www.bithound.io/github/crisbal/Telegram-Bot-Node)
+A Telegram Bot which supports user-made plugins
 
-An all-in-one, plugin-based, Telegram Bot written in Node.js. 
-
-See it in action on `@Factotum_Bot`
+Written in Node.js
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
@@ -14,52 +12,38 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ###Table of Contents
 
-- [Features](#features)
 - [Running the Bot](#running-the-bot)
 - [Using the Bot](#using-the-bot)
 - [Plugins](#plugins)
   - [Writing custom plugins](#writing-custom-plugins)
+- [TODO](#todo)
 - [Contributing](#contributing)
-- [Contributors](#contributors)
+- [Constributors](#constributors)
 - [Need help?](#need-help)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-##Features
-
-* Plugin-based: run many bots in one, have a plugin for everything.
-    * 20+ plugins already available!
-    * Inline plugins available!
-* Completely customizable: see something you don't like? Just change it!
-* Written in Node.js: one of the most powerful and easiest programming language available.
-* Easy to install: just a few simple commands and your bot is up and running!
-* Easy-to-write plugins: with many helper functions write powerful plugins in a few minutes. 
-    * Connect to a database, download files, parse commands without writing any code: everything is already here for you   
-* Open Source :D
 
 ##Running the Bot
 
 * Clone/Download/Fork the repository
 * Install `redis` (and check if it is working)
 * `npm install`
-* Create a Bot on Telegram 
-    * Get the associated HTTP Api Token (https://core.telegram.org/bots/#botfather)
+* Create a Bot Account 
+    * Get the associated token (https://core.telegram.org/bots/#botfather)
 * Set the required Environment Variables (two methods)
     1. Via `setup.sh`
         * Edit `setup.sh`
             * Set `TELEGRAM_TOKEN` with the auth token of your bot
             * Set the other API Keys if you want to enable the relative plugins.
         * Run `source setup.sh`
-    2. Set them manually in `config.js`
-        * If you are more comfortable this way
-    3. Set them in any other way in your system
-        * If you can't/won't use the `source` command     
-* Edit config.js
+    2. Set them manually
+        * Check setup.sh to see the required Environment Variables.
+* Edit Config.js
     * Edit `activePlugins` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
-        * You can find all the available plugins in the `plugins` folder.
+        * You can find the plugins in the `plugins` folder.
 * Run the bot
-    * `node bot.js` 
+    * `node Bot.js` 
     * Stop it at any time with CTRL+C
 
 ##Using the Bot
@@ -83,7 +67,7 @@ Basic Class Skeleton
 ``` javascript
 var pluginName = function(){
     
-    this.properties = {
+    this.help = {
         shortDescription: "Set a simple and short description for your plugin here.",
         fullHelp: "Add examples, an in-depth explanation here."
         //both these fields are required
@@ -92,7 +76,7 @@ var pluginName = function(){
     this.on('text', function (msg, reply) {
         //this will be executed whenever your bot get a text message
         //you can listen to many events, just take a look at the example plugins.
-        
+
         /*
             1. Check if the msg.text matches the trigger for your plugin
             2. Do stuff you need
@@ -104,25 +88,30 @@ var pluginName = function(){
             4. Post the reply
                 reply(replyText); //for example
 
-
         */
-        if(msg.text == "hello")
-            reply({type:"text", text:"Hey there!"});
     });
 
 };
 
 module.exports = pluginName;
 ```
+##TODO
+* Tests!
+* Improve utilities module (downloading files , common database, generate markdown links)
+* More Plugins
+* Documentation
+* Website
+* Promotion
+
 
 ##Contributing
-Did you made a plugin you want to share with everyone? Did you improve the code in any way? Did you fix an issue?
+Did you made a plugin you want to share with everyone? Did you improve the code in any way?
 
 Submit a pull request! 
 
 This project will only grow if *YOU* help!
 
-##Contributors
+##Constributors
 In Alphabetical Order
 
 * [Cristian Baldi](https://github.com/crisbal/)
@@ -140,6 +129,7 @@ In Alphabetical Order
     
 ##Need help?
 Send me a mail or create an issue, I will answer ASAP. :+1:
+
 
 ##License
 
