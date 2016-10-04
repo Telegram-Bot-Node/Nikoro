@@ -116,3 +116,4 @@ export default function wikifetch(articleName) {
 
   return newWikiFetch.fetch();
 }
+}
