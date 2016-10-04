@@ -30,7 +30,7 @@ export default class Wikipedia extends Plugin {
         });
     }
     
-    class Wikifetch {
+    class Wikipedia {
         constructor(articleName) {
             this.wikiPrefix = 'http://en.wikipedia.org/wiki/';
             this.articleName = 'https://en.wikipedia.org/wiki/Telegram';
@@ -123,7 +123,7 @@ export default class Wikipedia extends Plugin {
 
        // this must return a promise
         export default function wikifetch(articleName) {
-        let newWikiFetch = new Wikifetch(articleName);
+        let newWikiFetch = new Wikipedia(articleName);
 
         return newWikiFetch.fetch();
         }
