@@ -8,17 +8,27 @@ export default class Wikipedia extends Plugin {
         return {
             name: "Wiki Plugin",
             description: "Plugin for fetching Wikipedia articles",
-            help: "/wiki",
+            help: "/inline queries",
             needs: {
                 config: {
-                    TELEGRAM_CHANNEL: "Telegram channel",
+                    TELEGRAM_BOT_USERNAME: "Telegram channel",
                     TELEGRAM_BOT_API: "Telegram bot API"
                 }
             }
         };
     }
                   
-
+    start() {
+        assert(typeof Config.TELEGRAM_BOT_USERNAME === typeof "", "You must supply the telegram bot username.");
+        assert(Config.TELEGRAM_BOT_USERNAME !== "", "Please supply a valid Username.");
+        assert(typeof Config.TELEGRAM_BOT_API === typeof "", "You must supply the Telegram Bot API.");
+        assert(Config.TELEGRAM_BOT_API !== "", "Please supply a valid API.");
+        google = new Wikipedia({
+            key: Config.TELEGRAM_BOT_USERNAME,
+            cx: Config.TELEGRAM_BOT_API
+        });
+    }
+    
     class Wikifetch {
     constructor(articleName) {
     this.wikiPrefix = 'http://en.wikipedia.org/wiki/';
@@ -110,10 +120,10 @@ export default class Wikipedia extends Plugin {
   }
 }
 
-// this must return a promise
-export default function wikifetch(articleName) {
-  let newWikiFetch = new Wikifetch(articleName);
+       // this must return a promise
+        export default function wikifetch(articleName) {
+        let newWikiFetch = new Wikifetch(articleName);
 
-  return newWikiFetch.fetch();
-}
+        return newWikiFetch.fetch();
+        }
 }
