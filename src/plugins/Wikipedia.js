@@ -1,4 +1,5 @@
 import Plugin from "../Plugin";
+let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import Util from "../Util";
 import Bluebird from "bluebird";
 import request from "request-promise";
@@ -117,8 +118,8 @@ export default class Wikipedia extends Plugin {
 
       fe.sections[currentHeadline].text += element.text();
     });
-  }
-}
+    }
+    }
 
        // this must return a promise
         export default function wikifetch(articleName) {
