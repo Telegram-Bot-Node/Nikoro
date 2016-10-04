@@ -4,6 +4,8 @@ Plugins are classes that listen to specific events from the Telegram API.
 
 ## General structure
 
+>See the architecture diagrams in this folder for an overview of how plugins communicate with the other components.
+
 ```js
 import Plugin from "../Plugin";
 import Util from "../Util";
