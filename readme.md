@@ -43,7 +43,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 * Clone/Download/Fork the repository
 * Example: `git clone https://github.com/crisbal/Telegram-Bot-Node`
 * Install `redis` (and check if it is working)
-* `npm install`
+    * `npm install`
 * Create a Bot on Telegram 
     * Get the associated HTTP Api Token (https://core.telegram.org/bots/#botfather)
 * Set the required Environment Variables (two methods)
