@@ -37,13 +37,9 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 
 * Clone the repository
 * Install a Redis server
-* `npm install`
 * Create a Telegram bot and get the bot token (https://core.telegram.org/bots/#botfather)
-* Configure the bot with `npm run configure`
->Hint: you can find the available plugins in the `src/plugins` folder.
-
-* Compile the bot: `node node_modules/.bin/babel src/ -d dist/`
-* Run the bot with `node dist/Bot.js`
+* Run `npm run firstrun`
+* Run the bot with `npm run bot`
 >You can stop the bot at any time with Ctrl+C.
 
 ##Using the bot

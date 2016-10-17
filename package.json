@@ -28,10 +28,11 @@
     "eslint-config-google": "^0.5.0"
   },
   "scripts": {
-    "build": "babel src/ -d dist/ --source-maps",
-    "watch": "babel src/ -d dist/ --watch --source-maps",
+    "firstrun": "bash install.sh",
     "configure": "node dist/Installer.js",
-    "run": "node dist/Bot.js"
+    "bot": "node dist/Bot.js",
+    "build": "babel src/ -d dist/ --source-maps",
+    "watch": "babel src/ -d dist/ --source-maps --watch"
   },
   "author": "Cristian Baldi",
   "license": "MIT"
