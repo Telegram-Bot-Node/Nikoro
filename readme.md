@@ -1,4 +1,4 @@
-#Node-Telegram-Bot 
+#Node-Telegram-Bot
 
 [![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=master)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
@@ -6,7 +6,7 @@ A Telegram Bot which supports user-made plugins
 
 Written in Node.js
 
-Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
+Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -29,7 +29,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 * Clone/Download/Fork the repository
 * Install `redis` (and check if it is working)
 * `npm install`
-* Create a Bot Account 
+* Create a Bot Account
     * Get the associated token (https://core.telegram.org/bots/#botfather)
 * Set the required Environment Variables (two methods)
     1. Via `setup.sh`
@@ -39,11 +39,13 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
         * Run `source setup.sh`
     2. Set them manually
         * Check setup.sh to see the required Environment Variables.
-* Edit Config.js
-    * Edit `activePlugins` if you want to edit the active plugins. It is an array of the filenames of the active plugins. 
-        * You can find the plugins in the `plugins` folder.
+* Transpile code to es6.
+    * Run `npm run-script build`
+* Create the config file
+    * Run `npm run-script configure`
+    * Follow the instructions to create the config file.
 * Run the bot
-    * `node Bot.js` 
+    * Run `npm run-script run`
     * Stop it at any time with CTRL+C
 
 ##Using the Bot
@@ -66,7 +68,7 @@ Check the ```plugins``` folder to see the available plugins and check each file 
 Basic Class Skeleton
 ``` javascript
 var pluginName = function(){
-    
+
     this.help = {
         shortDescription: "Set a simple and short description for your plugin here.",
         fullHelp: "Add examples, an in-depth explanation here."
@@ -80,7 +82,7 @@ var pluginName = function(){
         /*
             1. Check if the msg.text matches the trigger for your plugin
             2. Do stuff you need
-            3. Produce reply 
+            3. Produce reply
                 replyText = {type:"text", text:"Message you want to post"}
                 replyAudio = {type:"audio", audio:"path/to/audio.mp3"}
                 replyPhoto = {type:"photo", photo:"path/to/photo.png"}
@@ -107,7 +109,7 @@ module.exports = pluginName;
 ##Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way?
 
-Submit a pull request! 
+Submit a pull request!
 
 This project will only grow if *YOU* help!
 
@@ -120,13 +122,13 @@ In Alphabetical Order
     * Added redis support
     * Improved the plugin system
     * Messed up the code
-    
+
 * [Phill Farrugia](https://github.com/phillfarrugia/)
     * Improved & documented the code
     * Added Heroku Integration
     * Created Unit Tests
-    * Added automatic testing via Travis CI 
-    
+    * Added automatic testing via Travis CI
+
 ##Need help?
 Send me a mail or create an issue, I will answer ASAP. :+1:
 
