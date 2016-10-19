@@ -23,19 +23,19 @@ export default class RegexSet extends Plugin {
 
     onText(message, reply) {
         const chatID = message.chat.id;
-        Object.keys(this.db.replacements).forEach(key => {
-            let item = this.db.replacements[key];
 
-            if (chatID !== item.chatID) return;
-
+        for (const item of this.db.replacements) {
+            if (chatID !== item.chatID) continue;
             const flags = "g" + item.flags;
             const matches = message.text.match(new RegExp(item.regex, flags));
-            if (!matches) return;
+            if (!matches) continue;
 
             let replacement = item.text;
+            replacement = replacement.replace(/$0/g, replacement);
             for (let i = 0; i < matches.length; i++) {
+                console.log(i, matches[i]);
                 replacement = replacement.replace(
-                    new RegExp("\\$" + String(i), "gi"),
+                    new RegExp("\\$" + String(i + 1), "g"),
                     matches[i]
                 );
             }
@@ -44,7 +44,7 @@ export default class RegexSet extends Plugin {
             replacement = replacement.replace(/\$username/g, message.from.username);
             /* eslint-enable max-len */
             reply({type: "text", text: replacement});
-        });
+        }
 
         this.regexset(message.text, reply, chatID);
         this.regexlist(message.text, reply, chatID);
@@ -90,7 +90,7 @@ export default class RegexSet extends Plugin {
         reply({type: "text", text: "Done."});
     }
 
-    regexlist(text, reply) {
+    regexlist(text, reply, chatID) {
         const parts = Util.parseCommand(text, "regexlist", {splitBy: '-'});
         if (!parts) return;
         if (this.db.replacements.length === 0) {
@@ -98,17 +98,18 @@ export default class RegexSet extends Plugin {
             return;
         }
 
-        var string = "";
-        for (let ID in this.db.replacements) {
-            // Rejects "internal" properties
-            if (!this.db.replacements.hasOwnProperty(ID)) continue;
-            let item = this.db.replacements[ID];
-            string += `${ID}: regex ${item.regex}, text ${item.text}`;
-        }
-        reply({type: "text", text: string});
+        let string = "";
+        this.db.replacements.forEach((item, ID) => {
+            if (chatID !== item.chatID) return;
+            string += `${ID}: "${item.regex}" -> "${item.text}"\n`;
+        });
+        if (string === "")
+            reply({type: "text", text: "No items set for this chat."});
+        else
+            reply({type: "text", text: string});
     }
 
-    regexdelete(text, reply) {
+    regexdelete(text, reply, chatID) {
         const parts = Util.parseCommand(text, "regexdelete", {splitBy: '-'});
         if (!parts) return;
         if (parts.length !== 2) {
@@ -116,9 +117,13 @@ export default class RegexSet extends Plugin {
             return;
         }
 
-        const ID = Number(parts[1]);
-        if (!this.db.replacements[ID]) {
+        const ID = parts[1];
+        if (!(ID in this.db.replacements)) {
             reply({type: "text", text: "No such expression."});
+            return;
+        }
+        if (this.db.replacements[ID].chatID !== chatID) {
+            reply({type: "text", text: "No such item in this chat."});
             return;
         }
 
