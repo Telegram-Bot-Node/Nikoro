@@ -124,6 +124,8 @@ export default class MediaSet extends Plugin {
             // delete pending request
             delete this.db.pendingRequests[message.chat.id][request];
 
+            this.synchronize();
+
             reply({type: "text", text: "Done! Enjoy!"});
             return;
         }

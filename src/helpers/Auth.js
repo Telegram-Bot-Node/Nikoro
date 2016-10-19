@@ -1,30 +1,32 @@
-import Rebridge from "rebridge";
+const fs = require("fs");
 let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 
-var db = new Rebridge();
-/*
-db.auth = {
-    _globalAdmins: []
-    chatId1: {
-        mods: []
-        admins []
-    }
-    chatId2: {
-        mods: []
-        admins: []
-    }
+let db;
+
+function synchronize() {
+    fs.writeFile(
+        "./helper_Auth.json",
+        JSON.stringify(db),
+        err => {
+            if (err) throw err;
+        }
+    );
 }
-*/
+
 export default class Auth {
 
     static init() {
-        if (!db.auth) {
-            db.auth = {};
-        }
-
-        if (!db.auth._globalAdmins) {
-            db.auth._globalAdmins = Config.globalAdmins;
-        }
+        fs.readFile("./helper_Auth.json", (err, data) => {
+            if (err) {
+                db = {
+                    auth: {
+                        _globalAdmins: Config.globalAdmins
+                    }
+                };
+            } else {
+                db = JSON.parse(data);
+            }
+        });
     }
 
     static isMod(userId, chatId) {
@@ -53,6 +55,7 @@ export default class Auth {
             db.auth[chatId].admins = [];
 
         db.auth[chatId].admins.push(userId);
+        synchronize();
     }
 
     static removeAdmin(userId, chatId) {
@@ -63,6 +66,7 @@ export default class Auth {
             db.auth[chatId].admins = [];
 
         db.auth[chatId].admins = db.auth[chatId].admins.filter(admin => admin !== userId);
+        synchronize();
     }
 
     static addMod(userId, chatId) {
@@ -73,6 +77,7 @@ export default class Auth {
             db.auth[chatId].mods = [];
 
         db.auth[chatId].mods.push(userId);
+        synchronize();
     }
 
     static removeMod(userId, chatId) {
@@ -83,6 +88,7 @@ export default class Auth {
             db.auth[chatId].mods = [];
 
         db.auth[chatId].mods = db.auth[chatId].mods.filter(mod => mod !== userId);
+        synchronize();
     }
 
     static addGlobalAdmin(userId) {
@@ -90,28 +96,26 @@ export default class Auth {
             db.auth._globalAdmins = [];
 
         db.auth._globalAdmins.push(userId);
+        synchronize();
     }
 
     static getMods(chatId) {
-        // Return a clone, because Rebridge doesn't support everything
         if (db.auth[chatId] && db.auth[chatId].mods) {
-            return db.auth[chatId].mods.slice(0);
+            return db.auth[chatId].mods;
         }
         return [];
     }
 
     static getAdmins(chatId) {
-        // Return a clone, because Rebridge doesn't support everything
         if (db.auth[chatId] && db.auth[chatId].admins) {
-            return db.auth[chatId].admins.slice(0);
+            return db.auth[chatId].admins;
         }
         return [];
     }
 
     static getGlobalAdmins() {
-        // Return a clone, because Rebridge doesn't support everything
         if (db.auth._globalAdmins) {
-            return db.auth._globalAdmins.slice(0);
+            return db.auth._globalAdmins;
         }
         return [];
     }
