@@ -68,7 +68,7 @@ export default class Plugin {
 
         this.syncInterval = 5000;
 
-        setInterval(() => this.synchronize(), 5000);
+        setInterval(() => this.synchronize(), this.syncInterval);
 
         // text
         if (typeof this.onText === 'function')
