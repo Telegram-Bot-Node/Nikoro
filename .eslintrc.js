@@ -6,6 +6,7 @@ module.exports = {
         "curly": 0,
         "eol-last": 0,
         "indent": ["error", 4],
+        "max-len": 0,
         "new-cap": 1,
         "no-extend-native": 0,
         "no-loop-func": 0,
