@@ -6,11 +6,12 @@
 
 var Util = {};
 
-var request = require("request");
-var crypto = require("crypto");
-var fs = require("fs");
+const request = require("request");
+const crypto = require("crypto");
+const fs = require("fs");
 import Log from "./Log";
-var log = Log.get("Util");
+const log = Log.get("Util");
+const assert = require("assert");
 
 /*
     A bit hacked together but it works.
@@ -22,15 +23,15 @@ var log = Log.get("Util");
         * which is followed by a series of arguments
             * separeted by space or by what is passed as the splitBy variable
 
-    @param message - The message which you want to extract args from
+    @param string - The message which you want to extract args from
 
     @param commandName - The command (string) or commands (array) that will trigger the match.
-            message =  "/yahoo text"
-            parseCommand(message) ->  ["yahoo","text"]
-            parseCommand(message,{commandName: "yahoo"}) ->  ["yahoo","text"]
-            parseCommand(message,{commandName: ["yahoo","y"]}) ->  ["y","text"]
-            parseCommand(message,{commandName: "google"}) ->  null
-                since the message command does not match the command passed as parameter
+            string =  "/yahoo text"
+            parseCommand(string) ->  ["yahoo","text"]
+            parseCommand(string,{commandName: "yahoo"}) ->  ["yahoo","text"]
+            parseCommand(string,{commandName: ["yahoo","y"]}) ->  ["y","text"]
+            parseCommand(string,{commandName: "google"}) ->  null
+                since the string command does not match the command passed as parameter
 
     @param options - An object that can have different properties specified.
 
@@ -46,7 +47,9 @@ var log = Log.get("Util");
         Returns null if the message is not a valid command (does not match the specified commands)
 */
 
-Util.parseCommand = function(message, commandName, options = {}) {
+Util.parseCommand = function(string, commandName, options = {}) {
+    assert.deepEqual(typeof string, "string");
+
     var splitBy = options.splitBy || " ";
     var joinParams = options.joinParams || false;
     var noRequireTrigger = options.noRequireTrigger || false;
