@@ -77,7 +77,7 @@ Util.parseCommand = function(string, commandName, options = {}) {
 
     // We have to add this space because we specified "\s+" in the regex,
     // to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"]
-    var match = re.exec(message + " ");
+    var match = re.exec(string + " ");
     if (!match) return null;
 
     var args = [];
