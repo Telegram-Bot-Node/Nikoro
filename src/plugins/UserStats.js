@@ -34,10 +34,10 @@ export default class UserStats extends Plugin {
         return Promise.resolve(message);
     }
 
-    onText(message, reply) {
-        const parts = Util.parseCommand(message.text, "userstats");
-        if (!parts) return;
-        let text = `Total Messages:\n\n`;
+    onCommand({message, command, args}, reply) {
+        if (command !== "userstats") return;
+
+        let text = `Total messages:\n\n`;
         const statsObject = this.db["stat" + message.chat.id];
         const totalCount = statsObject.totalMessageCount;
         const userList = Object.keys(statsObject)
@@ -45,7 +45,7 @@ export default class UserStats extends Plugin {
             .filter(item => typeof item === "object")
             .sort((a, b) => b.messageCount - a.messageCount);
 
-        for (let user of userList) {
+        for (const user of userList) {
             const percentage = (user.messageCount / totalCount * 100).toFixed(4);
             text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%)\n`;
         }

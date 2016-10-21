@@ -1,3 +1,4 @@
+/* @flow */
 import Log from "./Log";
 import Rebridge from "rebridge";
 
@@ -57,6 +58,9 @@ export default class Plugin {
         // text
         if (typeof this.onText === 'function')
             this.listener.on("text", (...args) => this.onText(...args));
+        // commands
+        if (typeof this.onCommand === 'function')
+            this.listener.on("_command", (...args) => this.onCommand(...args));
 
         // media
         if (typeof this.onAudio === 'function')

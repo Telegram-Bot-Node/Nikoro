@@ -170,6 +170,17 @@ export default class PluginManager {
 
     emit(event, message, callback) {
         this.log.debug(`Triggered event ${event}`);
+
+        // Command emitter
+        const regex = /^[\/!]([a-z0-9_]+)(?:@[a-z0-9_]+)?(?: (.*))?/i;
+        if (regex.test(message.text)) {
+            const parts = message.text.match(regex);
+            const command = parts[1].toLowerCase();
+            const args = parts[2] ? parts[2].split(" ") : [];
+            console.log(parts, command, args);
+            this.emitter.emit("_command", {message, command, args}, callback);
+        }
+
         this.emitter.emit(event, message, callback);
     }
 }
