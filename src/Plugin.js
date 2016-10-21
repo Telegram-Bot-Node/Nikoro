@@ -1,4 +1,3 @@
-/* @flow */
 import Log from "./Log";
 import Rebridge from "rebridge";
 

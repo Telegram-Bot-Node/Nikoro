@@ -73,7 +73,7 @@ let questions = [
             } catch (e) {
                 console.log(e);
             }
-            return "Please insert an array of user IDs."
+            return "Please insert an array of user IDs.";
         }
     },
     ...pluginQuestions,

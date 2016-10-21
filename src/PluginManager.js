@@ -66,7 +66,7 @@ export default class PluginManager {
                         const command = parts[0];
                         const pluginName = parts[1];
                         switch (command) {
-                        case "enableplugin":
+                        case "enableplugin": {
                             this.log.info(`Enabling ${pluginName} from message interface`);
                             const status = this.loadAndAdd(pluginName);
                             handleReply(message.chat.id, {
@@ -74,6 +74,7 @@ export default class PluginManager {
                                 text: `Status: ${status}`
                             });
                             break;
+                        }
                         case "disableplugin":
                             this.removePlugin(pluginName);
                             handleReply(message.chat.id, {
