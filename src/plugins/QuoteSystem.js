@@ -51,23 +51,16 @@ export default class QuoteSystem extends Plugin {
                     this.log.error(err);
                     return;
                 }
-                if (message.reply_to_message === undefined) {
-                    if (message.reply_to_message.text === undefined) {
-                        reply({type: 'text', text: 'Please reply to a text message first'});
-                        return;
-                    }
+                if (message.reply_to_message === undefined ||
+                        message.reply_to_message.text === undefined) {
+                    reply({type: 'text', text: 'Please reply to a text message first'});
+                    return;
                 }
 
-                console.log(message);
                 let count = obj;
-                let author = message.reply_to_message.from.username;
+                let author = this.getAuthor(message.reply_to_message);
                 let quote = message.reply_to_message.text;
 
-                if (author === undefined) {
-                    author = message.reply_to_message.from.first_name;
-                } else {
-                    author = "@"+author
-                }
                 this.client.hmset(this.KEY, [count + 'by', author, count + 'quote', quote]);
                 reply({type: 'text', text: 'Quote added, ID is ' + count});
                 return;
@@ -108,5 +101,23 @@ export default class QuoteSystem extends Plugin {
             let id = Math.floor(Math.random() * obj) + 1;
             this.findQuote(id, reply);
         });
+    }
+
+    getAuthor(obj) {
+        let author = obj.from.username;
+        let forward = obj.forward_from;
+        if (author === undefined) {
+            author = obj.from.first_name;
+        } else {
+            author = "@" + author;
+        }
+
+        if (forward !== undefined) {
+            if (forward.username === undefined)
+                author = forward.first_name;
+            author = "@" + forward.username;
+        }
+
+        return author;
     }
 }
