@@ -41,18 +41,13 @@ export default class UserStats extends Plugin {
         const statsObject = this.db["stat" + message.chat.id];
         const totalCount = statsObject.totalMessageCount;
         const userList = Object.keys(statsObject)
-            .map(item => {
-                return statsObject[item];
-            }).filter(item => {
-                return typeof item === "object";
-            }).sort((a, b) => {
-                return b.messageCount - a.messageCount;
-            });
+            .map(item => statsObject[item])
+            .filter(item => typeof item === "object")
+            .sort((a, b) => b.messageCount - a.messageCount);
+
         for (let user of userList) {
-            if (user) {
-                const percentage = (user.messageCount / totalCount * 100).toFixed(4);
-                text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%)\n`;
-            }
+            const percentage = (user.messageCount / totalCount * 100).toFixed(4);
+            text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%)\n`;
         }
         reply({type: 'text', text});
     }
