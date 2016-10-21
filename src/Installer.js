@@ -30,7 +30,7 @@ let questions = [
                 } catch (e) {
                     return {
                         name: ` ${path}.js`,
-                        disabled: "needs additional packages"
+                        disabled: e.message
                     };
                 }
 
