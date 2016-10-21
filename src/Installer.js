@@ -61,6 +61,21 @@ let questions = [
                 return {name: string};
             })
     },
+    {
+        type: "input",
+        name: "globalAdmins",
+        message: "Enter the list of global admins as an array of user IDs (eg. [1111, 1234])",
+        filter: JSON.parse,
+        validate: array => {
+            try {
+                if (array.every(ID => /\d+/.test(ID)))
+                    return true;
+            } catch (e) {
+                console.log(e);
+            }
+            return "Please insert an array of user IDs."
+        }
+    },
     ...pluginQuestions,
     {
         type: "list",
