@@ -1,7 +1,10 @@
 import Log from "./Log";
 import MasterPlugin from "./MasterPlugin";
 import Plugin from "./Plugin";
+import Util from "./Util";
+import Auth from "./helpers/Auth";
 import {EventEmitter} from "events";
+import assert from "assert";
 
 export default class PluginManager {
 
@@ -44,22 +47,62 @@ export default class PluginManager {
         const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
         // Registers a handler for every Telegram event.
         // It runs the message through the proxy and forwards it to the plugin manager.
-        for (let eventName of events) {
+        for (const eventName of events) {
             bot.on(
                 eventName,
                 message => Promise.resolve(message)
-                    .then(
-                        message => Promise.all(
-                            this.plugins
-                                .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
-                                .map(plugin => plugin.proxy(eventName, message))
-                        )
-                    )
-                    .then(array => array.length > 0 ? array[0] : message)
                     .then(message => {
-                        const chatID = message.chat.id;
-                        this.emit(eventName, message, reply => handleReply(chatID, reply));
+                        // Hardcoded hot-swap plugin
+                        if (!message.text) return message;
+                        const parts = Util.parseCommand(
+                            message.text,
+                            [
+                                "enableplugin",
+                                "disableplugin"
+                            ]
+                        );
+                        if (!parts) return message;
+                        if (!Auth.isAdmin(message.from.id)) return message;
+                        const command = parts[0];
+                        const pluginName = parts[1];
+                        switch (command) {
+                        case "enableplugin":
+                            this.log.info(`Enabling ${pluginName} from message interface`);
+                            const status = this.loadAndAdd(pluginName);
+                            handleReply(message.chat.id, {
+                                type: "text",
+                                text: `Status: ${status}`
+                            });
+                            break;
+                        case "disableplugin":
+                            this.removePlugin(pluginName);
+                            handleReply(message.chat.id, {
+                                type: "text",
+                                text: "Done."
+                            });
+                            break;
+                        default:
+                            throw new Error("Unexpected case");
+                        }
+                        return message;
                     })
+                    .then(message => Promise.all(
+                        this.plugins
+                            .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
+                            .map(plugin => plugin.proxy(eventName, message))
+                    ))
+                    // Convert the array of messages to a single message
+                    .then(array => {
+                        if (array.length === 0) return message;
+                        const msg = array[0];
+                        assert(array.every(item => item === msg));
+                        return msg;
+                    })
+                    .then(message => this.emit(
+                        eventName,
+                        message,
+                        reply => handleReply(message.chat.id, reply)
+                    ))
                     .catch(err => {
                         if (err) this.log.error("Message rejected with error", err);
                     })
@@ -114,6 +157,11 @@ export default class PluginManager {
         }
 
         Error.stackTraceLimit = 10; // Reset to default value
+    }
+
+    removePlugin(pluginName) {
+        this.log.verbose(`Removing plugin ${pluginName}`);
+        this.plugins = this.plugins.filter(pl => pl.plugin.name.toLowerCase() !== pluginName.toLowerCase());
     }
 
     stopPlugins() {
