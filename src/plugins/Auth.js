@@ -1,5 +1,4 @@
 import Plugin from "./../Plugin";
-import Util from "./../Util";
 import Auth from "./../helpers/Auth";
 
 export default class AuthPlugin extends Plugin {

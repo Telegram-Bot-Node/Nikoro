@@ -1,8 +1,4 @@
 import Plugin from "./../Plugin";
-import Util from "./../Util";
-import Rebridge from "rebridge";
-
-var db = new Rebridge();
 
 export default class Config extends Plugin {
 
@@ -14,21 +10,28 @@ export default class Config extends Plugin {
         };
     }
 
-    onText(message, reply) {
-        var parts = Util.parseCommand(message.text, "config");
-        if (!parts) return;
-        if (!parts[2]) return reply({
+    onText({message, command, args}, reply) {
+        if (command !== "config") return;
+
+        let type;
+        let pluginName;
+        let property;
+        let jsonValue;
+        [type, pluginName, property, ...jsonValue] = args;
+        if (jsonValue) jsonValue = jsonValue.join(" ");
+
+        if (!type) return reply({
             type: "text",
             text: "Syntax: /config (get|set) Plugin foo.bar [JSON value]"
         });
-        const pluginName = parts[2];
+
         let config;
         /* eslint-disable no-case-declarations */
-        switch (parts[1]) {
+        switch (type) {
         case "get":
-            config = JSON.parse(JSON.stringify(db["plugin_" + pluginName].config));
-            if (parts[3])
-                config = parts[3].split('.').reduce((x, d) => x[d], config);
+            config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
+            if (jsonValue)
+                config = property.split('.').reduce((x, d) => x[d], config);
             reply({
                 type: 'text',
                 text: JSON.stringify(config)
@@ -37,16 +40,16 @@ export default class Config extends Plugin {
         case "set":
             let value;
             try {
-                value = JSON.parse(parts.splice(4).join(' '));
+                value = JSON.parse(jsonValue);
             } catch (e) {
                 return reply({
                     type: "text",
-                    text: "Unable to parse the JSON value."
+                    text: "Couldn't parse the JSON value."
                 });
             }
-            config = JSON.parse(JSON.stringify(db["plugin_" + pluginName].config));
-            editTree(config, parts[3].split('.'), value);
-            db["plugin_" + pluginName].config = config;
+            config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
+            editTree(config, property.split('.'), value);
+            this.db["plugin_" + pluginName].config = config;
             return reply({type: "text", text: "Done."});
         default:
             reply({type: 'text', text: "Unknown command"});
