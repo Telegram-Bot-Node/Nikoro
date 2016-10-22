@@ -42,15 +42,17 @@ export default class UserStats extends Plugin {
         }
         this.db["stat" + chatId][userId].messageCount++;
         this.db["stat" + chatId].totalMessageCount++;
-        const wc = this.wordCount(message.text);
-        if (!this.db["stat" + chatId].totalWordCount) {
-            this.db["stat" + chatId].totalWordCount = 0;
+        if (message.text) {
+            const wc = this.wordCount(message.text);
+            if (!this.db["stat" + chatId].totalWordCount) {
+                this.db["stat" + chatId].totalWordCount = 0;
+            }
+            this.db["stat" + chatId].totalWordCount += wc;
+            if (!this.db["stat" + chatId][userId].wordCount) {
+                this.db["stat" + chatId][userId].wordCount = 0;
+            }
+            this.db["stat" + chatId][userId].wordCount += wc;
         }
-        this.db["stat" + chatId].totalWordCount += wc;
-        if (!this.db["stat" + chatId][userId].wordCount) {
-            this.db["stat" + chatId][userId].wordCount = 0;
-        }
-        this.db["stat" + chatId][userId].wordCount += wc;
         return Promise.resolve(message);
     }
 
