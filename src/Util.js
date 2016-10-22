@@ -113,11 +113,6 @@ Util.escapeRegExp = function(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 };
 
-Util.escapeRedisKeys = function(str) {
-    log.debug(`Escaping Redis Keys: ${str}`);
-    return str.replace(/[\?\[\]\^\*\-]/g, "\\$&");
-};
-
 // `callback` receives the temporary path (eg. /tmp/notavirus.exe).
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
     log.info(`Downloading and saving resource from ${url}`);
