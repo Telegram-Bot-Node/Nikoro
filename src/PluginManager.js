@@ -178,7 +178,6 @@ export default class PluginManager {
             const parts = message.text.match(regex);
             const command = parts[1].toLowerCase();
             const args = parts[2] ? parts[2].split(" ") : [];
-            console.log(parts, command, args);
             this.emitter.emit("_command", {message, command, args}, callback);
         }
 
