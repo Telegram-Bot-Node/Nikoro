@@ -14,8 +14,10 @@ export default class Ping extends Plugin {
     }
 
     onText(message, reply) {
+        if (!this.db.text) this.db.text = "Pong!";
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
-        reply({type: 'text', text: "pong"});
+        reply({type: 'text', text: this.db.text});
+        this.synchronize();
     }
 }

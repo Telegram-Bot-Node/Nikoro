@@ -1,5 +1,5 @@
 import Log from "./Log";
-import Rebridge from "rebridge";
+import fs from "fs";
 
 export default class Plugin {
 
@@ -34,6 +34,16 @@ export default class Plugin {
         return this.constructor.plugin;
     }
 
+    synchronize(cb = err => {
+        if (err) throw err;
+    }) {
+        fs.writeFile(
+            `./plugin_${this.plugin.name}.json`,
+            JSON.stringify(this.db, null, 4),
+            cb
+        );
+    }
+
     constructor(listener, bot) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
@@ -45,14 +55,19 @@ export default class Plugin {
 
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
-                let db = new Rebridge();
-                if (!db["plugin_" + this.plugin.name]) {
-                    db["plugin_" + this.plugin.name] = {};
+                let serialized;
+                try {
+                    serialized = fs.readFileSync(`./plugin_${this.plugin.name}.json`, "utf8");
+                } catch (e) {
+                    serialized = "{}";
                 }
-
-                this.db = db["plugin_" + this.plugin.name];
+                this.db = JSON.parse(serialized);
             }
         }
+
+        this.syncInterval = 5000;
+
+        setInterval(() => this.synchronize(), this.syncInterval);
 
         // text
         if (typeof this.onText === 'function')
