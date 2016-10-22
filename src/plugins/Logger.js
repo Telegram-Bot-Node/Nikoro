@@ -17,6 +17,9 @@ export default class Logger extends Plugin {
     }
 
     proxy(eventName, message) {
+        // Discard inline messages
+        if (!message.chat) return;
+
         if (message.from.username) {
             if (!this.db["chat" + message.chat.id])
                 this.db["chat" + message.chat.id] = {};

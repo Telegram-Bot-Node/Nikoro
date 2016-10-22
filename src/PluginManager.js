@@ -23,6 +23,9 @@ export default class PluginManager {
             case "text":
                 return bot.sendMessage(chatId, reply.text, reply.options);
 
+            case "inline":
+                return bot.answerInlineQuery(chatId, reply.results, reply.options);
+
             case "audio":
                 return bot.sendAudio(chatId, reply.audio, reply.options);
             case "document":
@@ -44,7 +47,12 @@ export default class PluginManager {
             }
         };
 
-        const events = ["text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location", "new_chat_participant", "left_chat_participant", "new_chat_title", "new_chat_photo", "delete_chat_photo", "group_chat_created"];
+        const events = [
+            "text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location",
+            "inline_query", "chosen_inline_request",
+            "new_chat_participant", "left_chat_participant", "group_chat_created",
+            "new_chat_title", "new_chat_photo", "delete_chat_photo"
+        ];
         // Registers a handler for every Telegram event.
         // It runs the message through the proxy and forwards it to the plugin manager.
         for (const eventName of events) {
@@ -101,7 +109,9 @@ export default class PluginManager {
                     .then(message => this.emit(
                         eventName,
                         message,
-                        reply => handleReply(message.chat.id, reply)
+                        eventName === "inline_query" ?
+                            reply => handleReply(message.id, reply) :
+                            reply => handleReply(message.chat.id, reply)
                     ))
                     .catch(err => {
                         if (err) this.log.error("Message rejected with error", err);

@@ -14,7 +14,11 @@ export default class UserStats extends Plugin {
     }
 
     proxy(eventName, message) {
+        // Reject inline messages
+        if (!message.chat) return;
+
         if (!message.from.username) return;
+
         const chatId = message.chat.id;
         const userId = message.from.id;
         if (!this.db["stat" + chatId]) {

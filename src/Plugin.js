@@ -60,6 +60,9 @@ export default class Plugin {
         // commands
         if (typeof this.onCommand === 'function')
             this.listener.on("_command", (...args) => this.onCommand(...args));
+        // commands
+        if (typeof this.onInline === 'function')
+            this.listener.on("inline_query", (...args) => this.onInline(...args));
 
         // media
         if (typeof this.onAudio === 'function')
