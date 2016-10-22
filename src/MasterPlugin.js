@@ -1,5 +1,4 @@
 import Plugin from "./Plugin";
-import Util from "./Util";
 
 export default class MasterPlugin extends Plugin {
 

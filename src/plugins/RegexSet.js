@@ -1,5 +1,4 @@
 import Plugin from "./../Plugin";
-import Util from "./../Util";
 const safe = require("safe-regex");
 
 export default class RegexSet extends Plugin {
@@ -52,10 +51,10 @@ export default class RegexSet extends Plugin {
             this.regexset(args, reply, chatID);
             return;
         case "regexlist":
-            this.regexlist(args, reply);
+            this.regexlist(args, reply, chatID);
             return;
         case "regexdelete":
-            this.regexdelete(args, reply);
+            this.regexdelete(args, reply, chatID);
             return;
         default:
             return;
@@ -99,7 +98,7 @@ export default class RegexSet extends Plugin {
         reply({type: "text", text: "Done."});
     }
 
-    regexlist(args, reply) {
+    regexlist(args, reply, chatID) {
         if (this.db.replacements.length === 0) {
             reply({type: "text", text: "List empty."});
             return;
@@ -116,7 +115,7 @@ export default class RegexSet extends Plugin {
             reply({type: "text", text: string});
     }
 
-    regexdelete(args, reply) {
+    regexdelete(args, reply, chatID) {
         if (args.length !== 1) {
             reply({type: "text", text: "Syntax: /regexdelete ID"});
             return;

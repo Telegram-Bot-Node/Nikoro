@@ -4,7 +4,6 @@ import Plugin from "./Plugin";
 import Util from "./Util";
 import Auth from "./helpers/Auth";
 import {EventEmitter} from "events";
-import assert from "assert";
 
 export default class PluginManager {
 

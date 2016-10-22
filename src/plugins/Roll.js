@@ -17,15 +17,13 @@ export default class Roll extends Plugin {
 
     onCommand({message, command, args}, reply) {
         if (command !== "roll") return;
-        this.log.debug("rolling..")
-        if (!args[0]) {
-            reply({type: 'text', text: 'you can\'t roll the air, give me something! (example: /roll 1d6)'});
-            return;
-        }
-        
+
+        if (!args[0])
+            return reply({type: 'text', text: 'You can\'t roll the air, give me something! (example: /roll 1d6)'});
+
         let n = Number(args[0].split('d')[0]);
         let m = Number(args[0].split('d')[1]);
-        if(isNaN(n)|| isNaN(m)) {
+        if (isNaN(n) || isNaN(m)) {
             reply({type: 'text', text: 'I need some numbers (example: /roll 1d6)'});
             return;
         }
@@ -33,11 +31,10 @@ export default class Roll extends Plugin {
         let result = 0;
         for (var i = 0; i < n; i++) {
             let dice = Math.floor(Math.random() * m) + 1;
-            this.log.debug(`dice number ${i+1} is ${dice}`)
-            result += dice
-
+            // this.log.debug(`dice number ${i+1} is ${dice}`);
+            result += dice;
         }
-        
+
         reply({type: 'text', text: result});
     }
 }
