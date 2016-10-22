@@ -27,7 +27,7 @@ export default class RateLimiter extends Plugin {
 
         // The difference is in milliseconds.
         if (lastMessage && ((now - lastMessage) < spamInterval)) {
-            this.log.info("Rejecting message from " + Util.buildPrettyUserName(message.from));
+            this.log.verbose("Rejecting message from " + Util.buildPrettyUserName(message.from));
             return Promise.reject();
         }
         lastMessages[author] = now;
