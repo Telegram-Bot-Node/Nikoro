@@ -37,6 +37,7 @@ export default class Plugin {
     synchronize(cb = err => {
         if (err) throw err;
     }) {
+        if (!this.db) return;
         fs.writeFile(
             `./plugin_${this.plugin.name}.json`,
             JSON.stringify(this.db, null, 4),
