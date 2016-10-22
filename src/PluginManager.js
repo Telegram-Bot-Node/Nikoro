@@ -90,18 +90,14 @@ export default class PluginManager {
                         }
                         return message;
                     })
-                    .then(message => Promise.all(
-                        this.plugins
-                            .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
-                            .map(plugin => plugin.proxy(eventName, message))
-                    ))
-                    // Convert the array of messages to a single message
-                    .then(array => {
-                        if (array.length === 0) return message;
-                        const msg = array[0];
-                        assert(array.every(item => item === msg));
-                        return msg;
-                    })
+                    .then(
+                        message => Promise.all(
+                            this.plugins
+                                .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
+                                .map(plugin => plugin.proxy(eventName, message))
+                        )
+                        .then(() => message)
+                    )
                     .then(message => this.emit(
                         eventName,
                         message,
