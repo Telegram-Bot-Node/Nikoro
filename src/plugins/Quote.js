@@ -76,7 +76,7 @@ export default class Quote extends Plugin {
 
     getAuthor(obj) {
         let author = obj.from.username;
-        let forward = obj.forward_from;
+        const forward = obj.forward_from;
         if (author)
             author = "@" + author;
         else

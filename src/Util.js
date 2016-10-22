@@ -4,10 +4,9 @@
     which could be used when developing plugins
 */
 
-var Util = {};
+const Util = {};
 
 const request = require("request");
-const crypto = require("crypto");
 const fs = require("fs");
 import Log from "./Log";
 const log = Log.get("Util");
@@ -47,52 +46,43 @@ const assert = require("assert");
         Returns null if the message is not a valid command (does not match the specified commands)
 */
 
-Util.parseCommand = function(string, commandName, options = {}) {
-    if (!options.overrideDeprecation) log.warn("Warning: using deprecated utility parseCommand");
+Util.parseCommand = function(string, commandName, {
+    overrideDeprecation = false,
+    splitBy = " ",
+    joinParams = false,
+    noRequireTrigger = false
+    }) {
+    if (!overrideDeprecation) log.warn("Warning: using deprecated utility parseCommand");
     assert.deepEqual(typeof string, "string");
 
-    var splitBy = options.splitBy || " ";
-    var joinParams = options.joinParams || false;
-    var noRequireTrigger = options.noRequireTrigger || false;
-
-    if (!splitBy)
-        splitBy = " ";
-
-    var regexParam = "";
     if (typeof commandName === "string")
         commandName = [commandName];
 
     // let's build a valid regex that matches any of the passed commands
     // ["g","google","ggl"] -> g|google|ggl
-    regexParam = "";
-    for (var i = 0; i < commandName.length; i++) {
-        regexParam += commandName[i];
+    const regexParam = commandName.join("|");
 
-        if (i !== commandName.length - 1) regexParam += "|";
-    }
-
-    var trigger = "";
+    let trigger = "";
     if (!noRequireTrigger) trigger = "(?:\\/)";
 
-    var re = new RegExp("^" + trigger + "(" + regexParam + ")\\s+(.*)");
+    const re = new RegExp("^" + trigger + "(" + regexParam + ")\\s+(.*)");
 
     // We have to add this space because we specified "\s+" in the regex,
     // to separate command from params, if we use "\s*" "!google test" -> ["g","oogle","test"]
-    var match = re.exec(string + " ");
+    const match = re.exec(string + " ");
     if (!match) return null;
 
-    var args = [];
-    var command = match[1].trim();
-    args = [command];
+    const command = match[1].trim();
+    const args = [command];
 
-    var params = match[2].split(splitBy);
+    let params = match[2].split(splitBy);
 
     if (joinParams)
         params = [params.join(" ")];
 
-    for (var j = 0; j < params.length; j++) {
-        var param = params[j].trim();
-        if (param.length > 0) args.push(param);
+    for (const param of params) {
+        if (param.length === 0) continue;
+        args.push(param);
     }
 
     return args;
@@ -113,31 +103,34 @@ Util.escapeRegExp = function(str) {
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 };
 
+// http://stackoverflow.com/a/2117523
+Util.makeUUID = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+    /[xy]/g,
+    c => {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    }
+);
+
 // `callback` receives the temporary path (eg. /tmp/notavirus.exe).
 Util.downloadAndSaveTempResource = function(url, extension, callback) {
     log.info(`Downloading and saving resource from ${url}`);
 
-    var currentDate = (new Date()).valueOf().toString();
-    var random = Math.random().toString();
-    var fn =
-        "/tmp/ntb-tempres" +
-        crypto.createHash("sha1").update(currentDate + random).digest("hex") +
-        "." + extension;
+    const fn = `/tmp/${Util.makeUUID()}.${extension}`;
 
-    var options = {
-        url: url,
+    request({
+        url,
         headers: {
             "User-Agent": "stagefright/1.2 (Linux;Android 5.0)"
         }
-    };
-
-    request(options).pipe(fs.createWriteStream(fn)).on("close", function() {
-        callback(fn);
-    });
+    })
+    .pipe(fs.createWriteStream(fn))
+    .on("close", () => callback(fn));
 };
 
 Util.buildPrettyUserName = function(user) {
-    var name = "";
+    let name = "";
 
     if (user.first_name) name += user.first_name + " ";
 
@@ -151,7 +144,7 @@ Util.buildPrettyUserName = function(user) {
 };
 
 Util.buildPrettyChatName = function(chat) {
-    var name = "";
+    let name = "";
 
     if (chat.title) name += chat.title + " ";
 

@@ -2,10 +2,10 @@ import fs from "fs";
 import walk from "walk-sync";
 import inquirer from "inquirer";
 
-let descriptionsToPathsMap = {};
-let pluginQuestions = [];
+const descriptionsToPathsMap = {};
+const pluginQuestions = [];
 
-let questions = [
+const questions = [
     {
         type: "input",
         name: "TELEGRAM_TOKEN",
@@ -34,7 +34,7 @@ let questions = [
                     };
                 }
 
-                let string = " " + plugin.name + (plugin.description ? ` - ${plugin.description}` : "");
+                const string = " " + plugin.name + (plugin.description ? ` - ${plugin.description}` : "");
                 descriptionsToPathsMap[string] = path;
 
                 if (plugin.needs && plugin.needs.config) {

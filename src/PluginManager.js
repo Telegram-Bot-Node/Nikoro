@@ -17,7 +17,7 @@ export default class PluginManager {
         this.masterPlugin = new MasterPlugin(this.emitter, this);
         this.addPlugin(this.masterPlugin);
 
-        var handleReply = function(chatId, reply) {
+        const handleReply = (chatId, reply) => {
             switch (reply.type) {
             case "text":
                 return bot.sendMessage(chatId, reply.text, reply.options);
@@ -113,11 +113,11 @@ export default class PluginManager {
     // Returns the plugin itself.
     loadPlugin(pluginName) {
         // default because of es6 classes
-        let ThisPlugin = require('./plugins/' + pluginName).default;
+        const ThisPlugin = require('./plugins/' + pluginName).default;
 
         this.log.debug(`Required ${pluginName}`);
 
-        let loadedPlugin = new ThisPlugin(this.emitter, this.bot);
+        const loadedPlugin = new ThisPlugin(this.emitter, this.bot);
         this.log.debug(`Created ${pluginName}.`);
 
         loadedPlugin.start();
@@ -134,7 +134,7 @@ export default class PluginManager {
     // Returns true if the plugin was added successfully, false otherwise.
     loadAndAdd(pluginName) {
         try {
-            let plugin = this.loadPlugin(pluginName);
+            const plugin = this.loadPlugin(pluginName);
             this.log.debug(pluginName + " loaded correctly.");
             this.addPlugin(plugin);
             return true;
@@ -150,7 +150,7 @@ export default class PluginManager {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
         Error.stackTraceLimit = 5; // Avoid printing useless data in stack traces
 
-        let log = pluginNames.map(name => this.loadAndAdd(name));
+        const log = pluginNames.map(name => this.loadAndAdd(name));
         if (log.some(result => result !== true)) {
             this.log.warn("Some plugins couldn't be loaded.");
         }

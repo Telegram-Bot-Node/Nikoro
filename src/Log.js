@@ -1,5 +1,5 @@
 import winston from "winston";
-let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
+const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 
 function get(loggername, level = Config.loggingLevel || "info") {
     if (loggername in winston.loggers)

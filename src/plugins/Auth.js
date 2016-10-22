@@ -17,7 +17,7 @@ export default class AuthPlugin extends Plugin {
     onCommand({message, command, args}, reply) {
         const author = message.from.id;
         const chat = message.chat.id;
-        let targetId = args[0];
+        const targetId = args[0];
 
         switch (command) {
         case "modlist":

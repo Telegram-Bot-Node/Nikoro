@@ -26,7 +26,7 @@ export default class Kick extends Plugin {
         else
             target = null;
 
-        let banned = this.db[message.chat.id];
+        const banned = this.db[message.chat.id];
 
         switch (command) {
         case "list":

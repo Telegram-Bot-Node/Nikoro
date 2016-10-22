@@ -1,5 +1,5 @@
 import Plugin from "../Plugin";
-let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
+const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import YouTube from "youtube-api";
 import assert from "assert";
 
@@ -34,14 +34,13 @@ export default class YouTubePlugin extends Plugin {
             part: "snippet", // required by YT API
             q: query
         }, function(err, data) {
-            if (err) {
-                reply({
+            if (err)
+                return reply({
                     type: "text",
                     text: "An error happened."
                 });
-                return;
-            }
-            let result = data.items[0];
+
+            const result = data.items[0];
             reply({
                 type: "text",
                 text: `[${result.snippet.title}](https://youtube.com/watch?v=${result.id.videoId})\n\n${result.snippet.description}`,

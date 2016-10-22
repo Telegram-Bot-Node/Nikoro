@@ -59,7 +59,7 @@ export default class Config extends Plugin {
 
 function editTree(tree, path, newValue) {
     if (path.length === 0) return newValue;
-    let key = path.shift();
+    const key = path.shift();
     if (tree[key])
         tree[key] = editTree(tree[key], path, newValue);
     else

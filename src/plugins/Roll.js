@@ -19,21 +19,22 @@ export default class Roll extends Plugin {
         if (command !== "roll") return;
 
         if (!args[0])
-            return reply({type: 'text', text: 'You can\'t roll the air, give me something! (example: /roll 1d6)'});
+            return reply({
+                type: 'text',
+                text: 'You can\'t roll the air, give me something! (example: /roll 1d6)'
+            });
 
-        let n = Number(args[0].split('d')[0]);
-        let m = Number(args[0].split('d')[1]);
-        if (isNaN(n) || isNaN(m)) {
-            reply({type: 'text', text: 'I need some numbers (example: /roll 1d6)'});
-            return;
-        }
+        const n = Number(args[0].split('d')[0]);
+        const m = Number(args[0].split('d')[1]);
+        if (isNaN(n) || isNaN(m))
+            return reply({
+                type: 'text',
+                text: 'I need some numbers (example: /roll 1d6)'
+            });
 
         let result = 0;
-        for (var i = 0; i < n; i++) {
-            let dice = Math.floor(Math.random() * m) + 1;
-            // this.log.debug(`dice number ${i+1} is ${dice}`);
-            result += dice;
-        }
+        for (let i = 0; i < n; i++)
+            result += Math.floor(Math.random() * m) + 1;
 
         reply({type: 'text', text: result});
     }

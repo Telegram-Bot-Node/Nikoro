@@ -1,5 +1,5 @@
 import Plugin from "../Plugin";
-let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
+const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import GoogleSearch from "this.google-search";
 import assert from "assert";
 

@@ -1,5 +1,5 @@
 const fs = require("fs");
-let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
+const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 
 let db;
 

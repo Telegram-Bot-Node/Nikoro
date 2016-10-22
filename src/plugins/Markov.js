@@ -13,6 +13,10 @@ export default class Markov extends Plugin {
         };
     }
 
+    start() {
+        
+    }
+
     onText(message, reply) {
         if (message.text !== "/m")
             m.addFragment(message.text);

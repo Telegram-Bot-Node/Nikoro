@@ -62,9 +62,9 @@ export default class RegexSet extends Plugin {
     }
 
     regexset(args, reply, chatID) {
-        var literalRegex = args[0];
-        var flags;
-        var text;
+        const literalRegex = args[0];
+        let flags;
+        let text;
         switch (args.length) {
         case 2:
             flags = "";
@@ -81,19 +81,20 @@ export default class RegexSet extends Plugin {
             });
             return;
         }
+
         try {
             RegExp(literalRegex, "g" + flags);
         } catch (e) {
             reply({type: "text", text: "Cannot compile regular expression."});
             return;
         }
-        if (!safe(literalRegex)) {
-            reply({
+
+        if (!safe(literalRegex))
+            return reply({
                 type: "text",
                 text: "That regular expression seems to be inefficient."
             });
-            return;
-        }
+
         this.db.replacements.push({regex: literalRegex, text, flags, chatID});
         reply({type: "text", text: "Done."});
     }

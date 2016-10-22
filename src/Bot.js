@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 import Log from "./Log";
-let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
+const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 import PluginManager from "./PluginManager";
 import Auth from "./helpers/Auth";
 import assert from "assert";
@@ -15,7 +15,9 @@ log.verbose(`Creating a TelegramBot instance...`);
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.verbose("Created.");
 
-let pluginManager = null;
+let pluginManager = {
+    stopPlugins: () => Promise.resolve()
+};
 
 log.verbose("Getting data about myself...");
 bot.getMe()

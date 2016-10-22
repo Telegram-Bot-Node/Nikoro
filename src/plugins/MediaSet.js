@@ -27,7 +27,7 @@ export default class MediaSet extends Plugin {
         const text = message.text;
 
         const triggers = this.db.triggers[message.chat.id] || {};
-        for (let trigger in triggers) {
+        for (const trigger in triggers) {
             if (text.indexOf(trigger) === -1) continue;
             const re = new RegExp("(?:\\b|^)(" + Util.escapeRegExp(trigger) + ")(?:\\b|$)", "g");
             const match = re.exec(text);
@@ -88,7 +88,7 @@ export default class MediaSet extends Plugin {
         if (!this.db.pendingRequests[message.chat.id]) return;
 
         // foreach request (identified by the "now send media" message id)
-        for (let request in this.db.pendingRequests[message.chat.id]) {
+        for (const request in this.db.pendingRequests[message.chat.id]) {
             // if the message is not replying just continue
             if (message.reply_to_message.message_id !== request) continue;
 
@@ -99,7 +99,7 @@ export default class MediaSet extends Plugin {
                 this.db.triggers[message.chat.id] = {};
 
             // build the trigger
-            var fileId = null;
+            let fileId;
             if (mediaType === "photo")
                 fileId = message.photo[0].file_id;
             else
