@@ -81,6 +81,8 @@ export default class MediaSet extends Plugin {
         if (!this.db.pendingRequests[message.chat.id])
             this.db.pendingRequests[message.chat.id] = {};
 
+        this.db.pendingRequests[message.chat.id][message.message_id] = args[1];
+
         reply({
             type: "text",
             text: "Perfect! Now send me the media as a reply to this message!"
