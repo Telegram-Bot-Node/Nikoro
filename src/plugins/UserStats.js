@@ -13,6 +13,13 @@ export default class UserStats extends Plugin {
         };
     }
 
+    wordCount(text) {
+        let words = text.trim().replace(/\s+/gi, ' ').split(' ');
+        if (words[0])
+            return words.length;
+        return 0;
+    }
+
     proxy(eventName, message) {
         if (!message.from.username) return;
         const chatId = message.chat.id;
@@ -20,16 +27,27 @@ export default class UserStats extends Plugin {
         if (!this.db["stat" + chatId]) {
             this.db["stat" + chatId] = {};
             this.db["stat" + chatId].totalMessageCount = 0;
+            this.db["stat" + chatId].totalWordCount = 0;
         }
         if (!this.db["stat" + chatId][userId]) {
             this.db["stat" + chatId][userId] = {
                 userId,
                 username: message.from.username,
-                messageCount: 0
+                messageCount: 0,
+                wordCount: 0
             };
         }
         this.db["stat" + chatId][userId].messageCount++;
         this.db["stat" + chatId].totalMessageCount++;
+        const wc = this.wordCount(message.text);
+        if (!this.db["stat" + chatId].totalWordCount) {
+            this.db["stat" + chatId].totalWordCount = 0;
+        }
+        this.db["stat" + chatId].totalWordCount += wc;
+        if (!this.db["stat" + chatId][userId].wordCount) {
+            this.db["stat" + chatId][userId].wordCount = 0;
+        }
+        this.db["stat" + chatId][userId].wordCount += wc;
         return Promise.resolve(message);
     }
 
@@ -46,7 +64,8 @@ export default class UserStats extends Plugin {
 
         for (const user of userList) {
             const percentage = (user.messageCount / totalCount * 100).toFixed(4);
-            text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%)\n`;
+            const averageWords = user.wordCount / user.messageCount.toFixed(4);
+            text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%) - ${user.wordCount} words (${averageWords} words/message)\n`;
         }
         reply({type: 'text', text});
     }
