@@ -59,7 +59,10 @@ export default class PluginManager {
                             [
                                 "enableplugin",
                                 "disableplugin"
-                            ]
+                            ],
+                            {
+                                overrideDeprecation: true
+                            }
                         );
                         if (!parts) return message;
                         if (!Auth.isAdmin(message.from.id)) return message;
