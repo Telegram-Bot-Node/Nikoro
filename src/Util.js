@@ -48,6 +48,7 @@ const assert = require("assert");
 */
 
 Util.parseCommand = function(string, commandName, options = {}) {
+    log.warn("Warning: using deprecated utility parseCommand");
     assert.deepEqual(typeof string, "string");
 
     var splitBy = options.splitBy || " ";
