@@ -1,7 +1,5 @@
 import Plugin from "../Plugin";
-import Util from "../Util";
-import Rebridge from "rebridge";
-import Auth from "../helpers/Auth";
+// import Auth from "../helpers/Auth";
 
 export default class Ignore extends Plugin {
 
@@ -27,11 +25,16 @@ export default class Ignore extends Plugin {
         return Promise.resolve(message);
     }
 
-    onText(message, reply) {
-        if (message.text === "/ignorelist") return reply({
-            type: "text",
-            text: JSON.stringify(this.db.ignored)
-        });
+    onCommand({message, command, args}, reply) {
+        switch (command) {
+        case "ignorelist":
+            return reply({
+                type: "text",
+                text: JSON.stringify(this.db.ignored)
+            });
+        default:
+            return;
+        }
         // this.ignore(message, reply);
         // this.unignore(message, reply);
     }

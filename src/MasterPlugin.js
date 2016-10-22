@@ -25,26 +25,24 @@ export default class MasterPlugin extends Plugin {
         this.pluginManager = pluginManager;
     }
 
-    onText(message, reply) {
-        const parts = Util.parseCommand(message.text, "help");
-        if (parts) {
-            let data = this.pluginManager.plugins.map(pl => pl.plugin).filter(pl => pl.visibility !== Plugin.Visibility.HIDDEN);
-            if (parts.length === 1) {
-                reply({
-                    type: "text",
-                    text: data.map(pl => `${pl.name}: ${pl.description}`).join("\n")
-                });
-            } else {
-                const pluginName = parts[1].toLowerCase();
-                let plugin = data.filter(pl => pl.name.toLowerCase() === pluginName)[0];
-                reply({
-                    type: "text",
-                    text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
-                    options: {
-                        parse_mode: "Markdown"
-                    }
-                });
-            }
+    onCommand({message, command, args}, reply) {
+        if (command !== "help") return;
+        let data = this.pluginManager.plugins.map(pl => pl.plugin).filter(pl => pl.visibility !== Plugin.Visibility.HIDDEN);
+        if (args.length === 0) {
+            reply({
+                type: "text",
+                text: data.map(pl => `${pl.name}: ${pl.description}`).join("\n")
+            });
+        } else {
+            const pluginName = args[0].toLowerCase();
+            let plugin = data.filter(pl => pl.name.toLowerCase() === pluginName)[0];
+            reply({
+                type: "text",
+                text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
+                options: {
+                    parse_mode: "Markdown"
+                }
+            });
         }
     }
 }

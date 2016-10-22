@@ -23,14 +23,12 @@ export default class RegexSet extends Plugin {
 
     onText(message, reply) {
         const chatID = message.chat.id;
-        Object.keys(this.db.replacements).forEach(key => {
-            let item = this.db.replacements[key];
-
-            if (chatID !== item.chatID) return;
+        for (const item of this.db.replacements) {
+            if (chatID !== item.chatID) continue;
 
             const flags = "g" + item.flags;
             const matches = message.text.match(new RegExp(item.regex, flags));
-            if (!matches) return;
+            if (!matches) continue;
 
             let replacement = item.text;
             for (let i = 0; i < matches.length; i++) {
@@ -39,32 +37,41 @@ export default class RegexSet extends Plugin {
                     matches[i]
                 );
             }
-            /* eslint-disable max-len */
             replacement = replacement.replace(/\$name/g, message.from.first_name);
             replacement = replacement.replace(/\$username/g, message.from.username);
-            /* eslint-enable max-len */
             reply({type: "text", text: replacement});
-        });
-
-        this.regexset(message.text, reply, chatID);
-        this.regexlist(message.text, reply, chatID);
-        this.regexdelete(message.text, reply, chatID);
+        }
     }
 
-    regexset(body, reply, chatID) {
-        var parts = Util.parseCommand(body, "regexset", {splitBy: '-'});
-        if (!parts) return;
-        var literalRegex = parts[1];
+    onCommand({message, command, args}, reply) {
+        const chatID = message.chat.id;
+        switch (command) {
+        case "regexset":
+            this.regexset(args, reply, chatID);
+            return;
+        case "regexlist":
+            this.regexlist(args, reply);
+            return;
+        case "regexdelete":
+            this.regexdelete(args, reply);
+            return;
+        default:
+            return;
+        }
+    }
+
+    regexset(args, reply, chatID) {
+        var literalRegex = args[0];
         var flags;
         var text;
-        switch (parts.length) {
-        case 3:
+        switch (args.length) {
+        case 2:
             flags = "";
-            text = parts[2];
+            text = args[1];
             break;
-        case 4:
-            flags = parts[2];
-            text = parts[3];
+        case 3:
+            flags = args[1];
+            text = args[2];
             break;
         default:
             reply({
@@ -90,9 +97,7 @@ export default class RegexSet extends Plugin {
         reply({type: "text", text: "Done."});
     }
 
-    regexlist(text, reply) {
-        const parts = Util.parseCommand(text, "regexlist", {splitBy: '-'});
-        if (!parts) return;
+    regexlist(args, reply) {
         if (this.db.replacements.length === 0) {
             reply({type: "text", text: "List empty."});
             return;
@@ -108,15 +113,13 @@ export default class RegexSet extends Plugin {
         reply({type: "text", text: string});
     }
 
-    regexdelete(text, reply) {
-        const parts = Util.parseCommand(text, "regexdelete", {splitBy: '-'});
-        if (!parts) return;
-        if (parts.length !== 2) {
+    regexdelete(args, reply) {
+        if (args.length !== 1) {
             reply({type: "text", text: "Syntax: /regexdelete ID"});
             return;
         }
 
-        const ID = Number(parts[1]);
+        const ID = Number(args[0]);
         if (!this.db.replacements[ID]) {
             reply({type: "text", text: "No such expression."});
             return;

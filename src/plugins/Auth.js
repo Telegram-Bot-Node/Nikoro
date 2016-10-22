@@ -14,7 +14,7 @@ export default class AuthPlugin extends Plugin {
         };
     }
 
-    onText({message, command, args}, reply) {
+    onCommand({message, command, args}, reply) {
         const author = message.from.id;
         const chat = message.chat.id;
         let targetId = args[0];

@@ -1,5 +1,4 @@
 import Plugin from "./../Plugin";
-import Util from "./../Util";
 
 export default class Karma extends Plugin {
 
@@ -14,14 +13,8 @@ export default class Karma extends Plugin {
         };
     }
 
-    onText(message, reply) {
-        this.testKarmachart(message, reply);
-        this.testKarmaupdate(message, reply);
-    }
-
-    testKarmachart(message, reply) {
-        const parts = Util.parseCommand(message.text, "karmachart");
-        if (!parts) return;
+    onCommand({message, command, args}, reply) {
+        if (command !== "karmachart") return;
         let text = "";
         for (const username in this.db[message.chat.id]) {
             if (!this.db[message.chat.id].hasOwnProperty(username)) continue;
@@ -38,7 +31,7 @@ export default class Karma extends Plugin {
         });
     }
 
-    testKarmaupdate(message, reply) {
+    onText(message, reply) {
         // Telegram usernames are 5 or more characters long
         // and contain [A-Z], [a-z], [0-9].
         // Match that, plus either "++" or "--"

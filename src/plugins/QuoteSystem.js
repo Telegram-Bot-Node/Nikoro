@@ -2,7 +2,6 @@
 // Date: 19-10-2016
 
 import Plugin from '../Plugin';
-import Util from '../Util';
 import redis from 'redis';
 
 export default class QuoteSystem extends Plugin {
@@ -25,18 +24,19 @@ export default class QuoteSystem extends Plugin {
         this.client = redis.createClient();
     }
 
-    onText(message, reply) {
-        let parts = Util.parseCommand(message.text, ['addquote', 'quote']);
-        if (parts === null)
-            return;
-        if (parts[0] === 'addquote') {
+    onCommand({message, command, args}, reply) {
+        switch (command) {
+        case "addquote":
             this.addQuote(message, reply);
-        } else if (parts[0] === 'quote') {
-            if (parts[1] === undefined) {
+            return;
+        case "quote":
+            if (args[0])
+                this.findQuote(args[0], reply);
+            else
                 this.randomQuote(reply);
-            } else {
-                this.findQuote(parts[1], reply);
-            }
+            return;
+        default:
+            return;
         }
     }
 

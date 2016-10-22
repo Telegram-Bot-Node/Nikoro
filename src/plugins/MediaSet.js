@@ -37,10 +37,6 @@ export default class MediaSet extends Plugin {
             this.log.verbose("Match on " + Util.buildPrettyChatName(message.chat));
             reply({type: media.type, [media.type]: media.fileId});
         }
-
-        this.setStepOne(message, reply);
-
-        // this.unset(message, reply);
     }
 
     onAudio(message, reply) {
@@ -62,31 +58,26 @@ export default class MediaSet extends Plugin {
         this.setStepTwo(message, reply, "voice");
     }
 
-    setStepOne(message, reply) {
-        const args = Util.parseCommand(message.text, "mset");
-        if (!args) return;
-        if (args.length !== 2) {
-            reply({
-                type: "text",
-                text: "Syntax: /mset `trigger`",
-                options: {
-                    parse_mode: "Markdown"
-                }
-            });
-            return;
-        }
+    onCommand({message, command, args}, reply) {
+        if (command !== "mset") return;
+        if (args.length !== 1) return reply({
+            type: "text",
+            text: "Syntax: /mset `trigger`",
+            options: {
+                parse_mode: "Markdown"
+            }
+        });
 
         this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
 
         if (!this.db.pendingRequests[message.chat.id])
             this.db.pendingRequests[message.chat.id] = {};
 
+        this.db.pendingRequests[message.chat.id][message.message_id] = args[1];
+
         reply({
             type: "text",
             text: "Perfect! Now send me the media as a reply to this message!"
-        })
-        .then(message => {
-            this.db.pendingRequests[message.chat.id][message.message_id] = args[1];
         });
     }
 

@@ -3,7 +3,7 @@ import Util from "./../Util";
 
 var lastMessages = {};
 const spamInterval = 1000;
-const old_threshold = 60; // Reject messages older than this many seconds
+const oldThreshold = 60; // Reject messages older than this many seconds
 
 export default class RateLimiter extends Plugin {
     static get plugin() {
@@ -16,12 +16,13 @@ export default class RateLimiter extends Plugin {
             type: Plugin.Type.PROXY
         };
     }
+
     proxy(eventName, message) {
         const now = (new Date()).getTime();
         const author = message.from.id;
         const lastMessage = lastMessages[author];
 
-        if ((Math.round(now / 1000) - message.date) > old_threshold)
+        if ((Math.round(now / 1000) - message.date) > oldThreshold)
             return Promise.reject();
 
         // The difference is in milliseconds.

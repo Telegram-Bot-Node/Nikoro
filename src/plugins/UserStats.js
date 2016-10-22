@@ -1,5 +1,4 @@
 import Plugin from "./../Plugin";
-import Util from "../Util";
 
 export default class UserStats extends Plugin {
     static get plugin() {

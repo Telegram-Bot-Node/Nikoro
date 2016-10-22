@@ -1,6 +1,5 @@
 import Plugin from "../Plugin";
 let Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
-import Util from "../Util";
 import YouTube from "youtube-api";
 import assert from "assert";
 
@@ -28,10 +27,9 @@ export default class YouTubePlugin extends Plugin {
         });
     }
 
-    onText(message, reply) {
-        const parts = Util.parseCommand(message.text, "yt");
-        if (!parts) return;
-        const query = parts.slice(1).join(" ");
+    onCommand({message, command, args}, reply) {
+        if (command !== "yt") return;
+        const query = args.join(" ");
         YouTube.search.list({
             part: "snippet", // required by YT API
             q: query

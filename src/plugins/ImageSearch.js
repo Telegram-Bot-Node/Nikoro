@@ -31,10 +31,9 @@ export default class ImageSearch extends Plugin {
         client = new GoogleImages(Config.GOOGLE_CX, Config.GOOGLE_API_KEY);
     }
 
-    onText(message, reply) {
-        const parts = Util.parseCommand(message.text, "images");
-        if (!parts) return;
-        const query = parts.slice(1).join(" ");
+    onCommand({message, command, args}, reply) {
+        if (command !== "images") return;
+        const query = args.join(" ");
         client.search(query).then(images => {
             const url = images[0].url;
             Util.downloadAndSaveTempResource(

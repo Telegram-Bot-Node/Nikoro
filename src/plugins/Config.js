@@ -10,7 +10,7 @@ export default class Config extends Plugin {
         };
     }
 
-    onText({message, command, args}, reply) {
+    onCommand({message, command, args}, reply) {
         if (command !== "config") return;
 
         let type;
