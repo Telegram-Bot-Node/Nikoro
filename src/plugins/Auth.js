@@ -15,76 +15,60 @@ export default class AuthPlugin extends Plugin {
         };
     }
 
-    onText(message, reply) {
+    onText({message, command, args}, reply) {
         const author = message.from.id;
         const chat = message.chat.id;
+        let targetId = args[0];
 
-        if (message.text === "/modlist") {
+        switch (command) {
+        case "modlist":
             return reply({
                 type: "text",
                 text: JSON.stringify(Auth.getMods(chat))
             });
-        }
-
-        if (message.text === "/adminlist") {
+        case "adminlist":
             return reply({
                 type: "text",
                 text: JSON.stringify(Auth.getAdmins(chat))
             });
-        }
-
         // The code from here on is admin-only.
-        if (!Auth.isAdmin(author, chat)) return;
+        case "addmod":
+            if (!Auth.isAdmin(author, chat)) return;
 
-        var args = Util.parseCommand(message.text, "addmod");
-        if (args) {
-            const modId = Number(args[1]);
+            Auth.addMod(targetId, chat);
 
-            Auth.addMod(modId, chat);
-
-            reply({
+            return reply({
                 type: "text",
                 text: "Done."
             });
-            return;
-        }
+        case "addadmin":
+            if (!Auth.isAdmin(author, chat)) return;
 
-        args = Util.parseCommand(message.text, "addadmin");
-        if (args) {
-            const adminId = Number(args[1]);
+            Auth.addAdmin(targetId, chat);
 
-            Auth.addAdmin(adminId, chat);
-
-            reply({
+            return reply({
                 type: "text",
                 text: "Done."
             });
-            return;
-        }
+        case "delmod":
+            if (!Auth.isAdmin(author, chat)) return;
 
-        args = Util.parseCommand(message.text, "delmod");
-        if (args) {
-            const userId = Number(args[1]);
+            Auth.removeMod(targetId, chat);
 
-            Auth.removeMod(userId, chat);
-
-            reply({
+            return reply({
                 type: "text",
                 text: "Done."
             });
-            return;
-        }
+        case "deladmin":
+            if (!Auth.isAdmin(author, chat)) return;
 
-        args = Util.parseCommand(message.text, "deladmin");
-        if (args) {
-            const userId = Number(args[1]);
+            Auth.removeAdmin(targetId, chat);
 
-            Auth.removeAdmin(userId, chat);
-
-            reply({
+            return reply({
                 type: "text",
                 text: "Done."
             });
+        default:
             return;
         }
     }
