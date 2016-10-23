@@ -17,12 +17,14 @@ export default class Kick extends Plugin {
     onCommand({message, command, args}, reply) {
         let target;
         if (args.length === 1) target = Number(args[0]);
-        else if (message.reply_to_message.new_chat_participant)
-            target = message.reply_to_message.new_chat_participant.id;
-        else if (message.reply_to_message.left_chat_participant)
-            target = message.reply_to_message.left_chat_participant.id;
-        else if (message.reply_to_message)
-            target = message.reply_to_message.from.id;
+        else if (message.reply_to_message) {
+            if (message.reply_to_message.new_chat_participant)
+                target = message.reply_to_message.new_chat_participant.id;
+            else if (message.reply_to_message.left_chat_participant)
+                target = message.reply_to_message.left_chat_participant.id;
+            else
+                target = message.reply_to_message.from.id;
+        }
         else
             target = null;
 

@@ -10,7 +10,7 @@ export default class Ignore extends Plugin {
             help: "Syntax: /ignore <username>",
 
             visibility: Plugin.Visibility.VISIBLE,
-            type: Plugin.Type.NORMAL | Plugin.type.PROXY,
+            type: Plugin.Type.NORMAL | Plugin.Type.PROXY,
 
             needs: {
                 database: true
@@ -22,7 +22,7 @@ export default class Ignore extends Plugin {
         if (this.db.ignored && this.db.ignored.indexOf(message.from.id) !== -1)
             return Promise.reject();
 
-        return Promise.resolve(message);
+        return Promise.resolve();
     }
 
     onCommand({message, command, args}, reply) {

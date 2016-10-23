@@ -24,7 +24,7 @@ export default class UserStats extends Plugin {
     }
 
     proxy(eventName, message) {
-        if (!message.from.username) return;
+        if (!message.from.username) return Promise.resolve();
         const chatId = message.chat.id;
         const userId = message.from.id;
         if (!this.db["stat" + chatId]) {
@@ -42,6 +42,7 @@ export default class UserStats extends Plugin {
         }
         this.db["stat" + chatId][userId].messageCount++;
         this.db["stat" + chatId].totalMessageCount++;
+
         if (message.text) {
             const wc = this.wordCount(message.text);
             if (!this.db["stat" + chatId].totalWordCount) {
@@ -53,7 +54,7 @@ export default class UserStats extends Plugin {
             }
             this.db["stat" + chatId][userId].wordCount += wc;
         }
-        return Promise.resolve(message);
+        return Promise.resolve();
     }
 
     onCommand({message, command, args}, reply) {

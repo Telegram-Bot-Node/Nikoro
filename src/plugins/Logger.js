@@ -32,6 +32,6 @@ export default class Logger extends Plugin {
                 this.db["chat" + message.chat.id] = {};
             this.db["chat" + message.chat.id][source.username] = source.id;
         }
-        return Promise.resolve(message);
+        return Promise.resolve();
     }
 }

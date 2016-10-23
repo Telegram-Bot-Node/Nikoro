@@ -34,6 +34,6 @@ export default class RateLimiter extends Plugin {
         }
 
         this.lastMessages[author] = now;
-        return Promise.resolve(message);
+        return Promise.resolve();
     }
 }
