@@ -73,11 +73,11 @@ export default class MediaSet extends Plugin {
         if (!this.db.pendingRequests[message.chat.id])
             this.db.pendingRequests[message.chat.id] = {};
 
-        this.db.pendingRequests[message.chat.id][message.message_id] = args[1];
-
         reply({
             type: "text",
             text: "Perfect! Now send me the media as a reply to this message!"
+        }).then(({message_id}) => {
+            this.db.pendingRequests[message.chat.id][message_id] = args[0];
         });
     }
 
@@ -87,10 +87,13 @@ export default class MediaSet extends Plugin {
         // are there pending requests for this chat?
         if (!this.db.pendingRequests[message.chat.id]) return;
 
+        // This is because keys are stored as strings, but message.message_id is a number.
+        const message_id = String(message.reply_to_message.message_id);
+
         // foreach request (identified by the "now send media" message id)
         for (const request in this.db.pendingRequests[message.chat.id]) {
             // if the message is not replying just continue
-            if (message.reply_to_message.message_id !== request) continue;
+            if (message_id !== request) continue;
 
             const trigger = this.db.pendingRequests[message.chat.id][request];
 
