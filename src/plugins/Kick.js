@@ -24,8 +24,7 @@ export default class Kick extends Plugin {
                 target = message.reply_to_message.left_chat_participant.id;
             else
                 target = message.reply_to_message.from.id;
-        }
-        else
+        } else
             target = null;
 
         const banned = this.db[message.chat.id];
