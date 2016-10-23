@@ -69,8 +69,12 @@ export default class UserStats extends Plugin {
 
         for (const user of userList) {
             const percentage = (user.messageCount / totalCount * 100).toFixed(4);
-            const averageWords = (user.wordCount / user.messageCount).toFixed(4);
-            text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%) - ${user.wordCount} words (${averageWords} words/message)\n`;
+            text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%)`
+            if (user.wordCount) {
+                const averageWords = (user.wordCount / user.messageCount).toFixed(4);
+                text += ` - ${user.wordCount} words (${averageWords} words/message)`;
+            }
+            text += `\n`;
         }
         reply({type: 'text', text});
     }
