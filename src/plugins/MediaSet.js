@@ -26,7 +26,9 @@ export default class MediaSet extends Plugin {
     onText(message, reply) {
         const text = message.text;
 
-        const triggers = this.db.triggers[message.chat.id] || {};
+        if (!this.db.triggers[message.chat.id]) return;
+        const triggers = this.db.triggers[message.chat.id];
+
         for (const trigger in triggers) {
             if (text.indexOf(trigger) === -1) continue;
             const re = new RegExp("(?:\\b|^)(" + Util.escapeRegExp(trigger) + ")(?:\\b|$)", "g");
