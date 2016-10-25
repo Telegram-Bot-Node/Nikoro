@@ -7,54 +7,28 @@ import assert from "assert";
 
 const log = Log.get("Bot");
 
-log.info("The bot is starting...");
-
 assert(typeof Config.TELEGRAM_TOKEN === typeof "", "You must provide a Telegram bot token in Config.js.");
 assert(Config.TELEGRAM_TOKEN !== "", "Please provide a valid Telegram bot token.");
+
 log.verbose(`Creating a TelegramBot instance...`);
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
-log.verbose("Created.");
+log.info("Instance created.");
 
-let pluginManager = {
-    stopPlugins: () => Promise.resolve()
-};
+log.verbose("Loading plugins...");
+const pluginManager = new PluginManager(bot);
+pluginManager.loadPlugins(Config.activePlugins);
+log.info("Plugins loaded.");
 
-log.verbose("Getting data about myself...");
-bot.getMe()
-.then(initBot)
-.catch(die);
-
-function initBot(/* getMe */) {
-    log.info("Gotten.");
-    log.info("Loading plugins...");
-
-    pluginManager = new PluginManager(bot);
-
-    // Loads and prepares root and base plugins
-    pluginManager.loadPlugins(Config.activePlugins);
-    log.info("Plugins loaded.");
-    log.info("Configuring permissions...");
-    Auth.init();
-    log.info("Configured.");
-    log.info("The bot is online!");
-}
-
-/*
-function logReplyTo(msg){
-  var text = "Reply to chat " + msg.chat.id;
-  if(! (msg.type == "private")){
-    text += " '" + msg.chat.title + "'";
-  }
-  text += " from " + ( "@" + (msg.from.username || "nousername")) + " " + (msg.from.first_name || "")+ " " + (msg.from.last_name || "");
-  log.verbose(text);
-}
-*/
+log.verbose("Configuring permissions...");
+Auth.init();
+log.info("Permissions configured.");
+log.info("The bot is online!");
 
 // If `CTRL+C` is pressed we stop the bot safely.
 process.on("SIGINT", handleShutdown);
 
 // Stop safely in case of `uncaughtException`.
-// process.on("uncaughtException", shutDown);
+process.on("uncaughtException", handleShutdown);
 
 function handleShutdown() {
     log.info("The bot is shutting down, stopping safely all the plugins...");
@@ -62,11 +36,6 @@ function handleShutdown() {
         log.info("All plugins stopped correctly.");
         process.exit();
     });
-}
-
-function die(err) {
-    log.error(err);
-    process.exit(-1);
 }
 
 process.on('unhandledRejection', (reason, p) => {
