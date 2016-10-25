@@ -71,7 +71,6 @@ const questions = [
                 if (array.every(ID => /\d+/.test(ID)))
                     return true;
             } catch (e) {
-                console.log(e);
             }
             return "Please insert an array of user IDs.";
         }
