@@ -11,6 +11,8 @@ module.exports = {
         "no-extend-native": 0,
         "no-loop-func": 0,
         "no-unused-vars": 1,
+        "no-var": 1,
+        "prefer-const": 1,
         "require-jsdoc": 0
     }
 };

@@ -13,12 +13,12 @@ export default class Config extends Plugin {
     onCommand({message, command, args}, reply) {
         if (command !== "config") return;
 
-        let type;
-        let pluginName;
-        let property;
-        let jsonValue;
-        [type, pluginName, property, ...jsonValue] = args;
-        if (jsonValue) jsonValue = jsonValue.join(" ");
+        const [type, pluginName, property, ...jsonValue] = args;
+
+        let jsonValueString;
+        if (jsonValue) {
+            jsonValueString = jsonValue.join(" ");
+        }
 
         if (!type) return reply({
             type: "text",
@@ -30,7 +30,7 @@ export default class Config extends Plugin {
         switch (type) {
         case "get":
             config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
-            if (jsonValue)
+            if (jsonValueString)
                 config = property.split('.').reduce((x, d) => x[d], config);
             reply({
                 type: 'text',
@@ -40,7 +40,7 @@ export default class Config extends Plugin {
         case "set":
             let value;
             try {
-                value = JSON.parse(jsonValue);
+                value = JSON.parse(jsonValueString);
             } catch (e) {
                 return reply({
                     type: "text",
