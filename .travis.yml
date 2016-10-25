@@ -1,6 +1,5 @@
 language: node_js
 node_js:
-  - '0.10' # Version of nodejs in the Ubuntu repository
   - 'node' # Latest stable version
   - '6'    # Latest "current" version
 script:
