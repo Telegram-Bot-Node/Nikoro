@@ -4,5 +4,6 @@ node_js:
   - 'node' # Latest stable version
   - '6'    # Latest "current" version
 script:
-  - node node_modules/.bin/eslint src/
-  - node node_modules/.bin/babel src/ -d dist/
+  - npm run lint
+  - npm run build
+  - npm test

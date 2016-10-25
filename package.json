@@ -21,14 +21,17 @@
     "babel-preset-stage-0": "^6.5.0",
     "babel-watch": "^2.0.2",
     "eslint": "^2.9.0",
-    "eslint-config-google": "^0.5.0"
+    "eslint-config-google": "^0.5.0",
+    "mocha": "^3.1.2"
   },
   "scripts": {
     "firstrun": "bash install.sh",
     "configure": "node dist/Installer.js",
     "bot": "node dist/Bot.js",
     "build": "babel src/ -d dist/ --source-maps",
-    "watch": "babel src/ -d dist/ --source-maps --watch"
+    "watch": "babel src/ -d dist/ --source-maps --watch",
+    "lint": "eslint src/",
+    "test": "npm run build && mocha dist/test/"
   },
   "author": "Cristian Baldi",
   "license": "MIT"
