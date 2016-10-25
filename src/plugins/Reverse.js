@@ -9,8 +9,9 @@ export default class Reverse extends Plugin {
         };
     }
 
-    onInline(message, reply) {
-        const text = message.query.split("").reverse().join("");
+    onInlineCommand({message, command, args}, reply) {
+        if (command !== "reverse") return;
+        const text = args.join(" ").split("").reverse().join("");
         reply({
             type: "inline",
             results: [

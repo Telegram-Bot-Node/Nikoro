@@ -6,7 +6,6 @@ export default class UserStats extends Plugin {
             name: "UserStats",
             description: "Get user stats on message count.",
             help: "Enter /userstats to get statistics.",
-            type: Plugin.Type.PROXY,
             needs: {
                 database: true
             }
