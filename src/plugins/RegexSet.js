@@ -1,5 +1,6 @@
 import Plugin from "./../Plugin";
-const safe = require("safe-regex");
+import Auth from "./../helpers/Auth";
+import safe from "safe-regex";
 
 export default class RegexSet extends Plugin {
 
@@ -46,14 +47,25 @@ export default class RegexSet extends Plugin {
 
     onCommand({message, command, args}, reply) {
         const chatID = message.chat.id;
+        const author = message.from.id;
         switch (command) {
         case "regexset":
+            if (!Auth.isMod(author, chatID))
+                return reply({
+                    type: "text",
+                    text: "RegexSet is restricted to mods."
+                });
             this.regexset(args, reply, chatID);
             return;
         case "regexlist":
             this.regexlist(args, reply, chatID);
             return;
         case "regexdelete":
+            if (!Auth.isMod(author, chatID))
+                return reply({
+                    type: "text",
+                    text: "RegexSet is restricted to mods."
+                });
             this.regexdelete(args, reply, chatID);
             return;
         default:
