@@ -56,13 +56,12 @@ export default class Plugin {
 
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
-                let serialized;
                 try {
-                    serialized = fs.readFileSync(`./plugin_${this.plugin.name}.json`, "utf8");
+                    const serialized = fs.readFileSync(`./plugin_${this.plugin.name}.json`, "utf8");
+                    this.db = JSON.parse(serialized);
                 } catch (e) {
-                    serialized = "{}";
+                    this.db = {};
                 }
-                this.db = JSON.parse(serialized);
             }
         }
 

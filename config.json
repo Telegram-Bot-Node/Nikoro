@@ -1,0 +1,10 @@
+{
+	"comment": [
+		"This is a default file required for running tests.",
+		"Change this with `npm run configure`."
+	],
+
+    "activePlugins": ["Ping"],
+    "globalAdmins": [1],
+    "loggingLevel": "info"
+}
