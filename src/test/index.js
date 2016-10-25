@@ -80,4 +80,27 @@ describe("Bot", function() {
             done();
         });
     });
+    it("should not reply to spam messages", function(done) {
+        this.timeout(6000);
+        this.slow(6000);
+        pluginManager.loadPlugins(["RateLimiter"]);
+        const limit = 2 << 10;
+        let replies = 0;
+        for (let i = 0; i < limit; i++)
+            bot.pushMessage({text: "ping"}, "text");
+
+        const callback = function() {
+            replies++;
+            if (replies > 1)
+                done(new Error("The bot replied to spam more than once"));
+        };
+        bot.on("_debug_message", callback);
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
+            if (replies === 1)
+                done();
+            else
+                done(new Error(`The bot replied ${replies} times.`));
+        }, 5000);
+    });
 });
