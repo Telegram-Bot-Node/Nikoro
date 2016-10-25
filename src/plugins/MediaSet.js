@@ -90,12 +90,12 @@ export default class MediaSet extends Plugin {
         if (!this.db.pendingRequests[message.chat.id]) return;
 
         // This is because keys are stored as strings, but message.message_id is a number.
-        const message_id = String(message.reply_to_message.message_id);
+        const messageId = String(message.reply_to_message.message_id);
 
         // foreach request (identified by the "now send media" message id)
         for (const request in this.db.pendingRequests[message.chat.id]) {
             // if the message is not replying just continue
-            if (message_id !== request) continue;
+            if (messageId !== request) continue;
 
             const trigger = this.db.pendingRequests[message.chat.id][request];
 

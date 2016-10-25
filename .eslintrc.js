@@ -2,7 +2,9 @@ module.exports = {
     "parser": "babel-eslint",
     "extends": "google",
     "rules": {
-        "camelcase": 1,
+        "camelcase": [1, {
+            "properties": "never"
+        }],
         "curly": 0,
         "eol-last": 0,
         "indent": ["error", 4],
