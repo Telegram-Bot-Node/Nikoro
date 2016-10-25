@@ -23,8 +23,12 @@ export default class UserStats extends Plugin {
         return 0;
     }
 
-    proxy(eventName, message) {
-        if (!message.from.username) return Promise.resolve();
+    onText(eventName, message) {
+        // Reject inline messages
+        if (!message.chat) return;
+
+        if (!message.from.username) return;
+
         const chatId = message.chat.id;
         const userId = message.from.id;
         if (!this.db["stat" + chatId]) {
@@ -54,7 +58,6 @@ export default class UserStats extends Plugin {
             }
             this.db["stat" + chatId][userId].wordCount += wc;
         }
-        return Promise.resolve();
     }
 
     onCommand({message, command, args}, reply) {
