@@ -60,7 +60,7 @@ export default class UserStats extends Plugin {
     }
 
     onCommand({message, command, args}, reply) {
-        if (command !== "userstats") return;
+        if (command !== "userstats" && command !== "wordstats") return;
 
         let text = `Total messages:\n\n`;
         const statsObject = this.db["stat" + message.chat.id];
@@ -70,14 +70,22 @@ export default class UserStats extends Plugin {
             .filter(item => typeof item === "object")
             .sort((a, b) => b.messageCount - a.messageCount);
 
-        for (const user of userList) {
-            const percentage = (user.messageCount / totalCount * 100).toFixed(4);
-            text += `${user.username} [${user.userId}]: ${user.messageCount} (${percentage}%)`;
-            if (user.wordCount) {
-                const averageWords = (user.wordCount / user.messageCount).toFixed(4);
-                text += ` - ${user.wordCount} words (${averageWords} words/message)`;
+        switch (command) {
+        case "userstats":
+            for (const user of userList) {
+                const percentage = (user.messageCount / totalCount * 100).toFixed(4);
+                text += `${user.username}: ${user.messageCount} (${percentage}%)\n`;
             }
-            text += `\n`;
+            break;
+        case "wordstats":
+            for (const user of userList) {
+                if (!user.wordCount) continue;
+                const averageWords = (user.wordCount / user.messageCount).toFixed(4);
+                text += `${user.username}: ${user.wordCount} words (${averageWords} words/message)\n`;
+            }
+            break;
+        default:
+            return;
         }
         reply({type: 'text', text});
     }
