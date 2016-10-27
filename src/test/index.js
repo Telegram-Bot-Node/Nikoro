@@ -83,6 +83,9 @@ describe("Bot", function() {
     it("should not reply to spam messages", function(done) {
         this.timeout(6000);
         this.slow(6000);
+        const limit = 50;
+        let replies = 0;
+
         pluginManager.loadPlugins(["RateLimiter"]);
 
         const callback = function() {
@@ -92,8 +95,6 @@ describe("Bot", function() {
         };
         bot.on("_debug_message", callback);
 
-        const limit = 50;
-        let replies = 0;
         for (let i = 0; i < limit; i++)
             bot.pushMessage({text: "ping"}, "text");
 
@@ -109,7 +110,7 @@ describe("Bot", function() {
     it("should support multiline inputs", function(done) {
         pluginManager.loadPlugins(["Echo"]);
         const string = "foo\nbar";
-        bot.once("_debug_message", function({chatId, text, options}) {
+        bot.once("_debug_message", function({text}) {
             if (text !== string) {
                 done(new Error(`Expected ${JSON.stringify(string)}, got ${JSON.stringify(text)}`));
                 return;

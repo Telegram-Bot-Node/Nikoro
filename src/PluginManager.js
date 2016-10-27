@@ -59,6 +59,7 @@ export default class PluginManager {
                 eventName,
                 message => Promise.resolve(message)
                     .then(message => {
+                        console.time(message.message_id);
                         // Hardcoded hot-swap plugin
                         if (!message.text) return message;
                         const parts = Util.parseCommand(
@@ -112,6 +113,7 @@ export default class PluginManager {
                             reply => handleReply(message.id, reply) :
                             reply => handleReply(message.chat.id, reply)
                     ))
+                    .then(() => console.timeEnd(message.message_id))
                     .catch(err => {
                         if (err) this.log.error("Message rejected with error", err);
                     })
@@ -187,7 +189,6 @@ export default class PluginManager {
             const parts = message.text.match(regex);
             const command = parts[1] ? parts[1].toLowerCase() : "";
             const args = parts[2] ? parts[2].split(" ") : [];
-            console.log(parts);
             this.emitter.emit("_command", {message, command, args}, callback);
         } else if (message.query !== undefined && inlineRegex.test(message.query)) {
             const parts = message.query.match(inlineRegex);
