@@ -84,10 +84,6 @@ describe("Bot", function() {
         this.timeout(6000);
         this.slow(6000);
         pluginManager.loadPlugins(["RateLimiter"]);
-        const limit = 2 << 10;
-        let replies = 0;
-        for (let i = 0; i < limit; i++)
-            bot.pushMessage({text: "ping"}, "text");
 
         const callback = function() {
             replies++;
@@ -95,12 +91,31 @@ describe("Bot", function() {
                 done(new Error("The bot replied to spam more than once"));
         };
         bot.on("_debug_message", callback);
+
+        const limit = 50;
+        let replies = 0;
+        for (let i = 0; i < limit; i++)
+            bot.pushMessage({text: "ping"}, "text");
+
         setTimeout(function() {
             bot.removeListener("_debug_message", callback);
+            pluginManager.removePlugin("RateLimiter");
             if (replies === 1)
                 done();
             else
                 done(new Error(`The bot replied ${replies} times.`));
-        }, 5000);
+        }, 2 * limit); // The bot shouldn't take longer than 2 ms avg per message
+    });
+    it("should support multiline inputs", function(done) {
+        pluginManager.loadPlugins(["Echo"]);
+        const string = "foo\nbar";
+        bot.once("_debug_message", function({chatId, text, options}) {
+            if (text !== string) {
+                done(new Error(`Expected ${JSON.stringify(string)}, got ${JSON.stringify(text)}`));
+                return;
+            }
+            done();
+        });
+        bot.pushMessage({text: `/echo ${string}`}, "text");
     });
 });
