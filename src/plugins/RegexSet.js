@@ -32,13 +32,11 @@ export default class RegexSet extends Plugin {
 
             let replacement = item.text;
             replacement = replacement.replace(/$0/g, replacement);
-            for (let i = 0; i < matches.length; i++) {
-                console.log(i, matches[i]);
+            for (let i = 0; i < matches.length; i++)
                 replacement = replacement.replace(
                     new RegExp("\\$" + String(i + 1), "g"),
                     matches[i]
                 );
-            }
             replacement = replacement.replace(/\$name/g, message.from.first_name);
             replacement = replacement.replace(/\$username/g, message.from.username);
             reply({type: "text", text: replacement});

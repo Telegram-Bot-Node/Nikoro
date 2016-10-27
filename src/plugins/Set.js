@@ -31,7 +31,6 @@ export default class Set extends Plugin {
     }
 
     onCommand({message, command, args}, reply) {
-        console.log(message);
         const chatID = message.chat.id;
         let trigger;
         let replacement;
