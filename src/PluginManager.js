@@ -181,16 +181,17 @@ export default class PluginManager {
         this.log.debug(`Triggered event ${event}`);
 
         // Command emitter
-        const regex = /^\/([a-z0-9_]+)(?:@[a-z0-9_]+)?(?: (.*))?/i;
-        const inlineRegex = /^([a-z0-9_]+)(?: (.*))?/i;
+        const regex = /^\/([a-z0-9_]+)(?:@[a-z0-9_]+)?(?: ([\s\S]*))?/mi;
+        const inlineRegex = /^([a-z0-9_]+)(?: (.*))?/mi;
         if (message.text !== undefined && regex.test(message.text)) {
             const parts = message.text.match(regex);
-            const command = parts[1].toLowerCase();
+            const command = parts[1] ? parts[1].toLowerCase() : "";
             const args = parts[2] ? parts[2].split(" ") : [];
+            console.log(parts);
             this.emitter.emit("_command", {message, command, args}, callback);
         } else if (message.query !== undefined && inlineRegex.test(message.query)) {
             const parts = message.query.match(inlineRegex);
-            const command = parts[1].toLowerCase();
+            const command = parts[1] ? parts[1].toLowerCase() : "";
             const args = parts[2] ? parts[2].split(" ") : [];
             this.emitter.emit("_inline_command", {message, command, args}, callback);
         }
