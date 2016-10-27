@@ -59,6 +59,19 @@ export default class Set extends Plugin {
                 text: "Done."
             });
             return;
+        case "get": {
+            let text = "";
+            for (const item of this.db.replacements) {
+                if (item.chatID !== chatID) continue;
+                text += `${item.trigger} => ${item.replacement}\n`;
+            }
+            if (text === "")
+                text = "No triggers set."
+            reply({
+                type: "text",
+                text
+            });
+        }
         default:
             return;
         }
