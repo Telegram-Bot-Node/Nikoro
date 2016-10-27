@@ -181,7 +181,7 @@ export default class PluginManager {
         this.log.debug(`Triggered event ${event}`);
 
         // Command emitter
-        const regex = /^[\/!]([a-z0-9_]+)(?:@[a-z0-9_]+)?(?: (.*))?/i;
+        const regex = /^\/([a-z0-9_]+)(?:@[a-z0-9_]+)?(?: (.*))?/i;
         const inlineRegex = /^([a-z0-9_]+)(?: (.*))?/i;
         if (message.text !== undefined && regex.test(message.text)) {
             const parts = message.text.match(regex);
