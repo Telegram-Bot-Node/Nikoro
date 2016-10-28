@@ -65,19 +65,20 @@ export default class UserStats extends Plugin {
         let text = `Total messages:\n\n`;
         const statsObject = this.db["stat" + message.chat.id];
         const totalCount = statsObject.totalMessageCount;
-        const userList = Object.keys(statsObject)
+        let userList = Object.keys(statsObject)
             .map(item => statsObject[item])
-            .filter(item => typeof item === "object")
-            .sort((a, b) => b.messageCount - a.messageCount);
+            .filter(item => typeof item === "object");
 
         switch (command) {
         case "userstats":
+            userList = userList.sort((a, b) => b.messageCount - a.messageCount);
             for (const user of userList) {
                 const percentage = (user.messageCount / totalCount * 100).toFixed(4);
                 text += `${user.username}: ${user.messageCount} (${percentage}%)\n`;
             }
             break;
         case "wordstats":
+            userList = userList.sort((a, b) => b.wordCount - a.wordCount);
             for (const user of userList) {
                 if (!user.wordCount) continue;
                 const averageWords = (user.wordCount / user.messageCount).toFixed(4);
