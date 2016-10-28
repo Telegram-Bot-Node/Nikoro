@@ -66,11 +66,12 @@ export default class Set extends Plugin {
                 text += `${item.trigger} => ${item.replacement}\n`;
             }
             if (text === "")
-                text = "No triggers set."
+                text = "No triggers set.";
             reply({
                 type: "text",
                 text
             });
+            return;
         }
         default:
             return;
