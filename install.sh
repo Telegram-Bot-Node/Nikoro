@@ -15,20 +15,6 @@ if ! command -v npm > /dev/null ; then
 fi
 echo "npm found."
 
-echo "Checking for Redis..."
-if ! command -v redis-server > /dev/null ; then
-	echo "\"redis-server\" not found."
-	echo "Please install the Redis server."
-	exit 1
-fi
-if [ "`redis-cli PING`" != "PONG" ]
-then
-	echo "Couldn't connect to Redis."
-	echo "Please start it."
-	exit 1
-fi
-echo "Redis found."
-
 echo "Installing dependencies..."
 npm install
 if [ $? -ne 0 ] ; then
