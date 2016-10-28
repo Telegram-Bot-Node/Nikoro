@@ -31,7 +31,8 @@
     "build": "babel src/ -d dist/ --source-maps",
     "watch": "babel src/ -d dist/ --source-maps --watch",
     "lint": "eslint src/",
-    "test": "npm run build && mocha dist/test/"
+    "test": "npm run build && mocha dist/test/",
+    "install-hooks": "cp hooks/* .git/hooks/"
   },
   "author": "Cristian Baldi",
   "license": "MIT"
