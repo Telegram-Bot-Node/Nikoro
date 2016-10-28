@@ -22,7 +22,7 @@ export default class UserStats extends Plugin {
         return 0;
     }
 
-    onText(message, reply) {
+    onText(message) {
         // Reject inline messages
         if (!message.chat) return;
 
