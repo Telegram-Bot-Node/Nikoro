@@ -24,10 +24,7 @@ Check out math.js website for examples of supported stuff.`
 
         reply({
             type: "text",
-            text: result,
-            options: {
-                parse_mode: "markdown"
-            }
+            text: result
         });
     }
 }
