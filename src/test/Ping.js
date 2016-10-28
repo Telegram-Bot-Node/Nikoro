@@ -60,7 +60,7 @@ describe("Ping", function() {
     Auth.init();
     it("should reply to /ping", function(done) {
         bot.pushMessage({text: "ping"}, "text");
-        bot.once("_debug_message", function(){
+        bot.once("_debug_message", function() {
             done();
         });
     });

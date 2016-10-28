@@ -73,7 +73,7 @@ describe("Ignore", function() {
             }
         }, "text");
 
-        const callback = function({chatId, text, options}) {
+        const callback = function({text}) {
             if (text === "Pong!") return;
             done(new Error("The bot replied to a ping"));
         };

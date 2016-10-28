@@ -44,7 +44,7 @@ export default class Ignore extends Plugin {
                     return reply({
                         type: "text",
                         text: "Syntax: `/ignore <ID>`"
-                    })
+                    });
             } else if (message.reply_to_message) {
                 if (message.reply_to_message.new_chat_participant)
                     target = message.reply_to_message.new_chat_participant.id;
@@ -69,19 +69,31 @@ export default class Ignore extends Plugin {
                 type: "text",
                 text: "Ignored."
             });
-            return;            
+            return;
         }
         case "unignore": {
             let target;
-            if (parts.length === 2) target = Number(parts[1]);
-            else if (message.reply_to_message.new_chat_participant)
-                target = message.reply_to_message.new_chat_participant.id;
-            else if (message.reply_to_message.left_chat_participant)
-                target = message.reply_to_message.left_chat_participant.id;
-            else
-                target = message.reply_to_message.from.id;
+            if (args.length === 1) {
+                target = args[0];
+                if (/[@a-z_]/i.test(target))
+                    return reply({
+                        type: "text",
+                        text: "Syntax: `/ignore <ID>`"
+                    });
+            } else if (message.reply_to_message) {
+                if (message.reply_to_message.new_chat_participant)
+                    target = message.reply_to_message.new_chat_participant.id;
+                else if (message.reply_to_message.left_chat_participant)
+                    target = message.reply_to_message.left_chat_participant.id;
+                else
+                    target = message.reply_to_message.from.id;
+            } else
+                return reply({
+                    type: "text",
+                    text: "No target found."
+                });
 
-            db.ignored = db.ignored.filter(id => id !== target);
+            this.db.ignored = this.db.ignored.filter(id => id !== target);
             reply({
                 type: "text",
                 text: "Done."
