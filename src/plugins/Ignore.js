@@ -1,5 +1,5 @@
 import Plugin from "../Plugin";
-// import Auth from "../helpers/Auth";
+import Auth from "../helpers/Auth";
 
 export default class Ignore extends Plugin {
 
@@ -7,7 +7,7 @@ export default class Ignore extends Plugin {
         return {
             name: "Ignore",
             description: "Ignore users",
-            help: "Syntax: /ignore <username>",
+            help: "Syntax: /ignore <ID>",
 
             visibility: Plugin.Visibility.VISIBLE,
             type: Plugin.Type.NORMAL | Plugin.Type.PROXY,
@@ -18,10 +18,14 @@ export default class Ignore extends Plugin {
         };
     }
 
-    proxy(eventName, message) {
-        if (this.db.ignored && this.db.ignored.indexOf(message.from.id) !== -1)
-            return Promise.reject();
+    start() {
+        if (!this.db.ignored)
+            this.db.ignored = [];
+    }
 
+    proxy(eventName, message) {
+        if (this.db.ignored.indexOf(message.from.id) !== -1)
+            return Promise.reject();
         return Promise.resolve();
     }
 
@@ -32,58 +36,60 @@ export default class Ignore extends Plugin {
                 type: "text",
                 text: JSON.stringify(this.db.ignored)
             });
+        case "ignore": {
+            let target;
+            if (args.length === 1) {
+                target = args[0];
+                if (/[@a-z_]/i.test(target))
+                    return reply({
+                        type: "text",
+                        text: "Syntax: `/ignore <ID>`"
+                    })
+            } else if (message.reply_to_message) {
+                if (message.reply_to_message.new_chat_participant)
+                    target = message.reply_to_message.new_chat_participant.id;
+                else if (message.reply_to_message.left_chat_participant)
+                    target = message.reply_to_message.left_chat_participant.id;
+                else
+                    target = message.reply_to_message.from.id;
+            } else
+                return reply({
+                    type: "text",
+                    text: "No target found."
+                });
+
+            if (Auth.isMod(target)) return reply({
+                type: "text",
+                text: "Can't ignore mods."
+            });
+
+            this.db.ignored.push(target);
+
+            reply({
+                type: "text",
+                text: "Ignored."
+            });
+            return;            
+        }
+        case "unignore": {
+            let target;
+            if (parts.length === 2) target = Number(parts[1]);
+            else if (message.reply_to_message.new_chat_participant)
+                target = message.reply_to_message.new_chat_participant.id;
+            else if (message.reply_to_message.left_chat_participant)
+                target = message.reply_to_message.left_chat_participant.id;
+            else
+                target = message.reply_to_message.from.id;
+
+            db.ignored = db.ignored.filter(id => id !== target);
+            reply({
+                type: "text",
+                text: "Done."
+            });
+            return;
+        }
         default:
             return;
         }
-        // this.ignore(message, reply);
-        // this.unignore(message, reply);
     }
-
-    /* ignore(message, reply) {
-        const parts = Util.parseCommand(message.text, "ignore");
-        if (!parts) return;
-        if (!Auth.isMod(message.from.id, message.chat.id)) return;
-
-        let target;
-        if (parts.length === 2) target = Number(parts[1]);
-        else if (message.reply_to_message.new_chat_participant)
-            target = message.reply_to_message.new_chat_participant.id;
-        else if (message.reply_to_message.left_chat_participant)
-            target = message.reply_to_message.left_chat_participant.id;
-        else
-            target = message.reply_to_message.from.id;
-
-        if (Auth.isMod(target)) return reply({
-            type: "text",
-            text: "Can't ignore mods."
-        });
-
-        this.db.ignored.push(target);
-
-        reply({
-            type: "text",
-            text: "Ignored."
-        });
-    }
-
-    /*unignore(message, reply) {
-        const parts = Util.parseCommand(message.text, "unignore");
-        if (!parts) return;
-        if (!Auth.isMod(message.from.id)) return;
-
-        let target;
-        if (parts.length === 2) target = Number(parts[1]);
-        else if (message.reply_to_message.new_chat_participant)
-            target = message.reply_to_message.new_chat_participant.id;
-        else if (message.reply_to_message.left_chat_participant)
-            target = message.reply_to_message.left_chat_participant.id;
-        else
-            target = message.reply_to_message.from.id;
-
-        db.ignored = db.ignored.filter(id => id !== target);
-        reply({
-            type: "text",
-            text: "Done."
-        });
-    }*/
 }
