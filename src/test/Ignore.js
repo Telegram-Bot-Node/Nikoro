@@ -57,37 +57,30 @@ class TelegramBot extends EventEmitter {
     }
 }
 
-describe("Bot", function() {
-    let bot;
-    let pluginManager;
-    it("should start correctly with the Ping plugin", function() {
-        bot = new TelegramBot();
-        pluginManager = new PluginManager(bot);
-        pluginManager.loadPlugins(["Ping"]); // [] = Active plugins
-        Auth.init();
-    });
-    it("should reply to /help", function(done) {
-        bot.pushMessage({text: "/help"}, "text");
-        bot.once("_debug_message", function() {
-            done();
-        });
-    });
-    it("should reply to /help Ping", function(done) {
-        bot.pushMessage({text: "/help Ping"}, "text");
-        bot.once("_debug_message", function() {
-            done();
-        });
-    });
-    it("should support multiline inputs", function(done) {
-        pluginManager.loadPlugins(["Echo"]);
-        const string = "foo\nbar";
-        bot.once("_debug_message", function({text}) {
-            if (text !== string) {
-                done(new Error(`Expected ${JSON.stringify(string)}, got ${JSON.stringify(text)}`));
-                return;
+describe("Ignore", function() {
+    const bot = new TelegramBot();
+    const pluginManager = new PluginManager(bot);
+    pluginManager.loadPlugins(["Auth", "Ping"]);
+    Auth.init();
+    it("should ignore", function(done) {
+        Auth.addAdmin(1, -123456789);
+        bot.pushMessage({
+            text: "/ignore 123",
+            from: {
+                id: 1,
+                first_name: 'Root',
+                username: 'root'
             }
+        }, "text");
+
+        const callback = function({chatId, text, options}) {
+            if (text === "Pong!") return;
+            done(new Error("The bot replied to a ping"));
+        };
+        bot.on("_debug_message", callback);
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
             done();
-        });
-        bot.pushMessage({text: `/echo ${string}`}, "text");
+        }, 100);
     });
 });
