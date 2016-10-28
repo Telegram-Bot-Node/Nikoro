@@ -48,7 +48,7 @@ export default class Kick extends Plugin {
             if (!Auth.isMod(message.from.id)) return;
             if (!target) return reply({
                 type: "text",
-                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get from /list."
+                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
             });
             if (Auth.isMod(target)) return reply({
                 type: "text",
@@ -63,7 +63,7 @@ export default class Kick extends Plugin {
             if (!Auth.isMod(message.from.id)) return;
             if (!target) return reply({
                 type: "text",
-                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get from /list."
+                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
             });
             if (Auth.isMod(target)) return reply({
                 type: "text",
@@ -81,7 +81,7 @@ export default class Kick extends Plugin {
             if (!Auth.isMod(message.from.id)) return;
             if (!target) return reply({
                 type: "text",
-                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get from /list."
+                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
             });
             if (!banned) return;
             this.db[message.chat.id] = banned.filter(id => id !== target);
