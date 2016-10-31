@@ -33,7 +33,7 @@ export default class MasterPlugin extends Plugin {
             reply({
                 type: "text",
                 text: data
-                    .map(pl => `${pl.name}: ${pl.description}`)
+                    .map(pl => `*${pl.name}*: ${pl.description}`)
                     .join("\n"),
                 options: {
                     parse_mode: "markdown",
