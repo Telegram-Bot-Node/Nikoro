@@ -187,17 +187,22 @@ export default class PluginManager {
         this.log.debug(`Triggered event ${event}`);
 
         // Command emitter
-        const regex = /^\/([a-z0-9_]+)(?:@[a-z0-9_]+)?(?: ([\s\S]*))?/mi;
-        const inlineRegex = /^([a-z0-9_]+)(?: (.*))?/mi;
-        if (message.text !== undefined && regex.test(message.text)) {
-            const parts = message.text.match(regex);
-            const command = parts[1] ? parts[1].toLowerCase() : "";
-            const args = parts[2] ? parts[2].split(" ") : [];
+        if (message.text !== undefined && message.entities && message.entities[0].type === "bot_command") {
+            const entity = message.entities[0];
+
+            const rawCommand = message.text.slice(entity.offset + 1, entity.offset + entity.length);
+            const [command, _] = rawCommand.replace(/\//, "").split("@");
+
+            let args = [];
+            if (entity.offset + entity.length < message.text.length) {
+                args = message.text.slice(entity.offset + entity.length + 1).split(" ");
+            }
+
             this.emitter.emit("_command", {message, command, args}, ...callbacks);
-        } else if (message.query !== undefined && inlineRegex.test(message.query)) {
-            const parts = message.query.match(inlineRegex);
-            const command = parts[1] ? parts[1].toLowerCase() : "";
-            const args = parts[2] ? parts[2].split(" ") : [];
+        } else if (message.query !== undefined) {
+            const parts = message.query.split(" ");
+            const command = parts[0].toLowerCase();
+            const args = parts.length > 1 ? parts.slice(1) : [];
             this.emitter.emit("_inline_command", {message, command, args}, ...callbacks);
         }
 
