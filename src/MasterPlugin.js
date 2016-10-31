@@ -34,7 +34,11 @@ export default class MasterPlugin extends Plugin {
                 type: "text",
                 text: data
                     .map(pl => `${pl.name}: ${pl.description}`)
-                    .join("\n")
+                    .join("\n"),
+                options: {
+                    parse_mode: "markdown",
+                    disable_web_page_preview: true
+                }
             });
         } else {
             const pluginName = args[0].toLowerCase();
@@ -44,7 +48,8 @@ export default class MasterPlugin extends Plugin {
                 type: "text",
                 text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
                 options: {
-                    parse_mode: "Markdown"
+                    parse_mode: "markdown",
+                    disable_web_page_preview: true
                 }
             });
         }
