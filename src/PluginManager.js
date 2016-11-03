@@ -191,7 +191,7 @@ export default class PluginManager {
             const entity = message.entities[0];
 
             const rawCommand = message.text.slice(entity.offset + 1, entity.offset + entity.length);
-            const [command, _] = rawCommand.replace(/\//, "").split("@");
+            const [command] = rawCommand.replace(/\//, "").split("@");
 
             let args = [];
             if (entity.offset + entity.length < message.text.length) {
