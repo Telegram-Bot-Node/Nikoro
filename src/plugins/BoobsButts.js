@@ -23,8 +23,8 @@ export default class BoobsButts extends Plugin {
 
                 const item = JSON.parse(data)[0];
                 reply({
-                    type: "text",
-                    text: `http://media.o${command}.ru/${item.preview}`
+                    type: "photo",
+                    photo: `http://media.o${command}.ru/${item.preview}`
                 });
             });
             return;

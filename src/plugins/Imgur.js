@@ -38,8 +38,8 @@ export default class Imgur extends Plugin {
                 return Imgur.findValidPic(s + 1, reply);
 
             reply({
-                type: 'text',
-                text: `https://i.imgur.com/${url}.png`
+                type: 'photo',
+                photo: `https://i.imgur.com/${url}.png`
             });
         });
     }

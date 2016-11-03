@@ -18,7 +18,7 @@ export default class Reddit extends Plugin {
         }
 
         const sub = args[0];
-        const url = "https://reddit.com" + (sub ? `/r/${sub}` : "") + "/.json";
+        const url = "https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json";
         request(url, (error, response, body) => {
             if (error || response.statusCode !== 200) {
                 return reply({
@@ -62,13 +62,16 @@ export default class Reddit extends Plugin {
     redimg(body, reply) {
         const data = JSON.parse(body);
         const results = data.data.children
-            .filter(c => c.data.post_hint === "image")
-            .map(r => r.data.url);
+            .map(c => c.data)
+            .filter(c => c.post_hint === "image");
         const item = results[Math.floor(Math.random() * results.length)];
 
         reply({
-            type: "text",
-            text: item
+            type: "photo",
+            photo: item.url,
+            options: {
+                caption: `${item.title}\n\n${item.url}`
+            }
         });
     }}
 
