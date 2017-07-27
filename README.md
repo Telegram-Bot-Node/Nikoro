@@ -1,4 +1,4 @@
-#Telegram-Bot-Node
+# Telegram-Bot-Node
 
 [![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=es6)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
 
@@ -21,7 +21,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-##Features
+## Features
   
 <!--  * 20+ plugins already available! -->
 <!-- * Inline plugins available! -->
@@ -33,7 +33,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
     * Connect to a database, download files, parse commands without writing any code: everything is already here for you   
 * Open Source :D
 
-##Running the bot
+## Running the bot
 
 * Clone the repository
 * Install a Redis server
@@ -42,7 +42,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 * Run the bot with `npm run bot`
 >You can stop the bot at any time with Ctrl+C.
 
-##Using the bot
+## Using the bot
 You can simply add the bot to a group chat and it will work. You can also message it directly.
 
 To see a list of available plugins, use the command `/help`; if you need help about a specific plugin, do `/help pluginName`.
@@ -71,7 +71,7 @@ activePlugins: {
 
 See `docs/Plugin.md`, `docs/Util.md`.
 
-##Contributing
+## Contributing
 Did you made a plugin you want to share with everyone? Did you improve the code in any way? Did you fix an issue?
 
 Submit a pull request! 
@@ -80,7 +80,7 @@ This project will only grow if *YOU* help!
 
 Guidelines for contributing are outlined in `CONTRIBUTING.md`.
 
-##Contributors
+## Contributors
 In alphabetical order
 
 * [Cristian Baldi](https://github.com/crisbal/)
@@ -96,10 +96,10 @@ In alphabetical order
     * Created Unit Tests
     * Added automatic testing via Travis CI 
     
-##Need help?
+## Need help?
 Send me a mail or create an issue, I will answer ASAP. :+1:
 
-##License
+## License
 
 MIT License
 
