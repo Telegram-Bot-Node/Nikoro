@@ -2,7 +2,7 @@
   "name": "telegram-bot-node",
   "version": "1.0.0",
   "description": "An all-in-one, plugin-based, Telegram Bot.",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "dependencies": {
     "blather": "^2.0.0",
     "google-images": "^1.0.0",
