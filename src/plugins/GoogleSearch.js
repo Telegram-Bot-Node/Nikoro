@@ -1,9 +1,9 @@
-import Plugin from "../Plugin";
+const Plugin = require("../Plugin");
 const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
-import GoogleSearch from "this.google-search";
-import assert from "assert";
+const GoogleSearch = require("this.google-search");
+const assert = require("assert");
 
-export default class Google extends Plugin {
+module.exports = class Google extends Plugin {
 
     static get plugin() {
         return {

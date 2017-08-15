@@ -1,9 +1,9 @@
 // Author: Cristian Achille
 // Date: 25-10-2016
 
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Echo extends Plugin {
+module.exports = class Echo extends Plugin {
 
     static get plugin() {
         return {

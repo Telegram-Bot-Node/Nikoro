@@ -1,8 +1,8 @@
-import Plugin from "./../Plugin";
-import Auth from "./../helpers/Auth";
-import safe from "safe-regex";
+const Plugin = require("./../Plugin");
+const Auth = require("./../helpers/Auth");
+const safe = require("safe-regex");
 
-export default class RegexSet extends Plugin {
+module.exports = class RegexSet extends Plugin {
 
     static get plugin() {
         return {

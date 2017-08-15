@@ -1,33 +1,15 @@
 /* eslint-env node, es6, mocha */
-import Auth from "../helpers/Auth";
-import PluginManager from "../PluginManager";
+const Auth = require("../helpers/Auth");
+const PluginManager = require("../PluginManager");
 
-import EventEmitter from "events";
+const EventEmitter = require("events");
 class TelegramBot extends EventEmitter {
-    i = 0;
-    date = Math.floor(new Date() / 1000);
-/*    constructor() {
+    constructor() {
         super();
-        setInterval(() => {
-            this.emit("text", {
-                message_id: this.i++,
-                from: {
-                    id: 12345678,
-                    first_name: 'Foobar',
-                    username: 'foo_bar'
-                },
-                chat: {
-                    id: -123456789,
-                    title: 'Test group',
-                    type: 'group',
-                    all_members_are_administrators: false
-                },
-                date: this.date++,
-                text: '/help'
-            });
-        }, 10);
+        this.i = 0;
+        this.date = Math.floor(new Date() / 1000);        
     }
-*/
+
     pushMessage(message, type = "text") {
         if (!message.id)
             message.message_id = this.i++;

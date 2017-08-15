@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Reverse extends Plugin {
+module.exports = class Reverse extends Plugin {
 
     static get plugin() {
         return {

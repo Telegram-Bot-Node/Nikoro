@@ -1,10 +1,10 @@
-import Plugin from "../Plugin";
+const Plugin = require("../Plugin");
 const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
-import Util from "../Util";
-import GoogleImages from "google-images";
-import assert from "assert";
+const Util = require("../Util");
+const GoogleImages = require("google-images");
+const assert = require("assert");
 
-export default class ImageSearch extends Plugin {
+module.exports = class ImageSearch extends Plugin {
 
     static get plugin() {
         return {
@@ -19,8 +19,6 @@ export default class ImageSearch extends Plugin {
             }
         };
     }
-
-    client = null;
 
     start() {
         assert(typeof Config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");

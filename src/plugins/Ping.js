@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Ping extends Plugin {
+module.exports = class Ping extends Plugin {
 
     static get plugin() {
         return {

@@ -1,19 +1,23 @@
-import Log from "./Log";
-import fs from "fs";
+const Log = require("./Log");
+const fs = require("fs");
 
-export default class Plugin {
+module.exports = class Plugin {
 
-    static Type = {
-        NORMAL: 0x01,
-        INLINE: 0x02,
-        PROXY: 0x04,
-        SPECIAL: 0x08
-    };
+    static get Type() {
+        return {
+            NORMAL: 0x01,
+            INLINE: 0x02,
+            PROXY: 0x04,
+            SPECIAL: 0x08
+        }
+    }
 
-    static Visibility = {
-        VISIBLE: 0,
-        HIDDEN: 1
-    };
+    static get Visibility() {
+        return {
+            VISIBLE: 0,
+            HIDDEN: 1
+        }
+    }
 
     static get plugin() {
         return {

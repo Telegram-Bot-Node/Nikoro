@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Karma extends Plugin {
+module.exports = class Karma extends Plugin {
 
     static get plugin() {
         return {

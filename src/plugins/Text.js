@@ -1,4 +1,4 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
 const smallCaps = {a: "\u1d00", A: "\u1d00", b: "\u0299", B: "\u0299", c: "\u1d04", C: "\u1d04", d: "\u1d05", D: "\u1d05", e: "\u1d07", E: "\u1d07", f: "\ua730", F: "\ua730", g: "\u0262", G: "\u0262", h: "\u029c", H: "\u029c", i: "\u026a", I: "\u026a", j: "\u1d0a", J: "\u1d0a", k: "\u1d0b", K: "\u1d0b", l: "\u029f", L: "\u029f", m: "\u1d0d", M: "\u1d0d", n: "\u0274", N: "\u0274", o: "\u1d0f", O: "\u1d0f", p: "\u1d29", P: "\u1d29", q: "q", Q: "Q", r: "\u0280", R: "\u0280", s: "\ua731", S: "\ua731", t: "\u1d1b", T: "\u1d1b", u: "\u1d1c", U: "\u1d1c", v: "\u1d20", V: "\u1d20", w: "\u1d21", W: "\u1d21", x: "x", X: "x", y: "y", Y: "Y", z: "\u1d22", Z: "\u1d22"};
 const circled = {a: "\u24d0", A: "\u24b6", b: "\u24d1", B: "\u24b7", c: "\u24d2", C: "\u24b8", d: "\u24d3", D: "\u24b9", e: "\u24d4", E: "\u24ba", f: "\u24d5", F: "\u24bb", g: "\u24d6", G: "\u24bc", h: "\u24d7", H: "\u24bd", i: "\u24d8", I: "\u24be", j: "\u24d9", J: "\u24bf", k: "\u24da", K: "\u24c0", l: "\u24db", L: "\u24c1", m: "\u24dc", M: "\u24c2", n: "\u24dd", N: "\u24c3", o: "\u24de", O: "\u24c4", p: "\u24df", P: "\u24c5", q: "\u24e0", Q: "\u24c6", r: "\u24e1", R: "\u24c7", s: "\u24e2", S: "\u24c8", t: "\u24e3", T: "\u24c9", u: "\u24e4", U: "\u24ca", v: "\u24e5", V: "\u24cb", w: "\u24e6", W: "\u24cc", x: "\u24e7", X: "\u24cd", y: "\u24e8", Y: "\u24ce", z: "\u24e9", Z: "\u24cf"};
@@ -13,7 +13,7 @@ function translateText(text, dict) {
     return string;
 }
 
-export default class Text extends Plugin {
+module.exports = class Text extends Plugin {
 
     static get plugin() {
         return {

@@ -1,9 +1,9 @@
 // Author: Cristian Achille
 // Date: 19-10-2016
 
-import Plugin from '../Plugin';
+const Plugin = require("../Plugin");
 
-export default class Quote extends Plugin {
+module.exports = class Quote extends Plugin {
 
     static get plugin() {
         return {
@@ -18,9 +18,6 @@ export default class Quote extends Plugin {
             }
         };
     }
-
-    client = null;
-    KEY = 'plugin_quote'
 
     start() {
         if (!this.db.quotes)

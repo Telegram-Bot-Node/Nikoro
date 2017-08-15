@@ -1,6 +1,6 @@
-import Plugin from "../Plugin";
+const Plugin = require("../Plugin");
 
-export default class Vote extends Plugin {
+module.exports = class Vote extends Plugin {
     static get plugin() {
         return {
             name: "Vote",

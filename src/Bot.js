@@ -1,9 +1,9 @@
-import TelegramBot from "node-telegram-bot-api";
-import Log from "./Log";
+const TelegramBot = require("node-telegram-bot-api");
+const Log = require("./Log");
 const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
-import PluginManager from "./PluginManager";
-import Auth from "./helpers/Auth";
-import assert from "assert";
+const PluginManager = require("./PluginManager");
+const Auth = require("./helpers/Auth");
+const assert = require("assert");
 
 const log = Log.get("Bot");
 

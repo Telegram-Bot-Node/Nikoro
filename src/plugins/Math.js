@@ -1,7 +1,7 @@
-import Plugin from "./../Plugin";
-import mathjs from 'mathjs';
+const Plugin = require("./../Plugin");
+const mathjs = require("mathjs");
 
-export default class Math extends Plugin {
+module.exports = class Math extends Plugin {
     static get plugin() {
         return {
             name: "Math",

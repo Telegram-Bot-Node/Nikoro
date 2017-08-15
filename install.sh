@@ -22,11 +22,4 @@ if [ $? -ne 0 ] ; then
 fi
 echo "Dependencies installed."
 
-echo "Building codebase..."
-npm run build
-if [ $? -ne 0 ] ; then
-	exit 1
-fi
-echo "Codebase built."
-
 npm run configure

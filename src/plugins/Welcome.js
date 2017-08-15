@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Welcome extends Plugin {
+module.exports = class Welcome extends Plugin {
 
     static get plugin() {
         return {

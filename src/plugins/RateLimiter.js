@@ -1,7 +1,11 @@
-import Plugin from "./../Plugin";
-import Util from "./../Util";
+const Plugin = require("./../Plugin");
+const Util = require("./../Util");
 
-export default class RateLimiter extends Plugin {
+// Codice nuovo
+const spamInterval = 1000; // todo: move to config
+const oldThreshold = 60; // todo: move to config
+
+module.exports = class RateLimiter extends Plugin {
     static get plugin() {
         return {
             name: "RateLimiter",
@@ -13,10 +17,9 @@ export default class RateLimiter extends Plugin {
         };
     }
 
-    lastMessages = {};
-
-    spamInterval = 1000;
-    oldThreshold = 60; // Reject messages older than this many seconds
+    start() {
+        this.lastMessages = {};
+    }
 
     proxy(eventName, message) {
         // Ignore inline messages
@@ -27,11 +30,11 @@ export default class RateLimiter extends Plugin {
         const lastMessage = this.lastMessages[author];
 
         // Skip old messages when "catching up"
-        if ((Math.round(now / 1000) - message.date) > this.oldThreshold)
+        if ((Math.round(now / 1000) - message.date) > oldThreshold)
             return Promise.reject();
 
         // The difference is in milliseconds.
-        if (lastMessage && ((now - lastMessage) < this.spamInterval)) {
+        if (lastMessage && ((now - lastMessage) < spamInterval)) {
             this.log.verbose("Rejecting message from " + Util.buildPrettyUserName(message.from));
             return Promise.reject();
         }

@@ -1,7 +1,7 @@
-import Plugin from "./../Plugin";
-import Auth from "../helpers/Auth";
+const Plugin = require("./../Plugin");
+const Auth = require("../helpers/Auth");
 
-export default class Kick extends Plugin {
+module.exports = class Kick extends Plugin {
 
     static get plugin() {
         return {

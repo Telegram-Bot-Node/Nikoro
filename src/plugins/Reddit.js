@@ -1,7 +1,7 @@
-import Plugin from "../Plugin";
-import request from "request";
+const Plugin = require("../Plugin");
+const request = require("request");
 
-export default class Reddit extends Plugin {
+module.exports = class Reddit extends Plugin {
     static get plugin() {
         return {
             name: "Reddit",

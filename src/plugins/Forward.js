@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Forward extends Plugin {
+module.exports = class Forward extends Plugin {
 
     static get plugin() {
         return {

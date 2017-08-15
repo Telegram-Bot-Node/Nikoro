@@ -8,7 +8,7 @@ const Util = {};
 
 const request = require("request");
 const fs = require("fs");
-import Log from "./Log";
+const Log = require("./Log");
 const log = Log.get("Util");
 const assert = require("assert");
 

@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class UserStats extends Plugin {
+module.exports = class UserStats extends Plugin {
     static get plugin() {
         return {
             name: "UserStats",

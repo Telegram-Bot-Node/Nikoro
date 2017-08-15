@@ -1,6 +1,6 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
-export default class Config extends Plugin {
+module.exports = class Config extends Plugin {
 
     static get plugin() {
         return {

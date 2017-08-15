@@ -1,7 +1,7 @@
-import winston from "winston";
+const winston = require("winston");
 const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 
-function get(loggername, level = Config.loggingLevel || "info") {
+module.exports.get = (loggername, level = Config.loggingLevel || "info") => {
     if (loggername in winston.loggers)
         return winston.loggers.get(loggername);
 
@@ -12,8 +12,4 @@ function get(loggername, level = Config.loggingLevel || "info") {
             label: loggername
         }
     });
-}
-
-export default {
-    get
 };

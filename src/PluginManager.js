@@ -1,11 +1,11 @@
-import Log from "./Log";
-import MasterPlugin from "./MasterPlugin";
-import Plugin from "./Plugin";
-import Util from "./Util";
-import Auth from "./helpers/Auth";
-import {EventEmitter} from "events";
+const Log = require("./Log");
+const MasterPlugin = require("./MasterPlugin");
+const Plugin = require("./Plugin");
+const Util = require("./Util");
+const Auth = require("./helpers/Auth");
+const {EventEmitter} = require("events");
 
-export default class PluginManager {
+module.exports = class PluginManager {
 
     constructor(bot) {
         this.bot = bot;
@@ -128,8 +128,7 @@ export default class PluginManager {
     // Instantiates the plugin.
     // Returns the plugin itself.
     loadPlugin(pluginName) {
-        // default because of es6 classes
-        const ThisPlugin = require('./plugins/' + pluginName).default;
+        const ThisPlugin = require('./plugins/' + pluginName);
 
         this.log.debug(`Required ${pluginName}`);
 

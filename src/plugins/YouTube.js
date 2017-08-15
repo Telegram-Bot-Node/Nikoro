@@ -1,9 +1,9 @@
-import Plugin from "../Plugin";
+const Plugin = require("../Plugin");
 const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
-import YouTube from "youtube-api";
-import assert from "assert";
+const YouTube = require("youtube-api");
+const assert = require("assert");
 
-export default class YouTubePlugin extends Plugin {
+module.exports = class YouTubePlugin extends Plugin {
 
     static get plugin() {
         return {

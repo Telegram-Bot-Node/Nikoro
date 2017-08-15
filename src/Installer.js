@@ -1,6 +1,6 @@
-import fs from "fs";
-import walk from "walk-sync";
-import inquirer from "inquirer";
+const fs = require("fs");
+const walk = require("walk-sync");
+const inquirer = require("inquirer");
 
 const descriptionsToPathsMap = {};
 const pluginQuestions = [];

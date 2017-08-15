@@ -1,7 +1,7 @@
-import Plugin from "./../Plugin";
-import Util from "../Util";
+const Plugin = require("./../Plugin");
+const Util = require("../Util");
 
-export default class Set extends Plugin {
+module.exports = class Set extends Plugin {
 
     static get plugin() {
         return {

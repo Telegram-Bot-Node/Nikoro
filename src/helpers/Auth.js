@@ -13,7 +13,7 @@ function synchronize() {
     );
 }
 
-export default class Auth {
+module.exports = class Auth {
 
     static init() {
         fs.readFile("./helper_Auth.json", (err, data) => {

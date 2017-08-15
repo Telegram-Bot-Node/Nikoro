@@ -1,7 +1,7 @@
-import Plugin from "../Plugin";
-import request from "request";
+const Plugin = require("../Plugin");
+const request = require("request");
 
-export default class BoobsButts extends Plugin {
+module.exports = class BoobsButts extends Plugin {
     static get plugin() {
         return {
             name: "BoobsButts",

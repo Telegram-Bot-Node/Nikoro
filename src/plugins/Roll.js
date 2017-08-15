@@ -1,9 +1,9 @@
 // Author: Cristian Achille
 // Date: 22-10-2016
 
-import Plugin from '../Plugin';
+const Plugin = require("../Plugin");
 
-export default class Roll extends Plugin {
+module.exports = class Roll extends Plugin {
 
     static get plugin() {
         return {

@@ -1,4 +1,4 @@
-import Plugin from "./../Plugin";
+const Plugin = require("./../Plugin");
 
 function arraySample(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
@@ -70,7 +70,7 @@ class Blather {
     }
 }
 
-export default class Markov extends Plugin {
+module.exports = class Markov extends Plugin {
 
     static get plugin() {
         return {
@@ -83,8 +83,6 @@ export default class Markov extends Plugin {
         };
     }
 
-    m = null;
-    rate = 0.02;
 
     start() {
         if (this.db) {
@@ -92,6 +90,7 @@ export default class Markov extends Plugin {
         } else {
             this.m = new Blather();
         }
+        this.rate = 0.02;
     }
 
     onText(message, reply) {
