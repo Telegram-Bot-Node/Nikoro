@@ -26,6 +26,9 @@
     "test": "mocha src/test/",
     "install-hooks": "cp hooks/* .git/hooks/"
   },
+  "engines": {
+    "node": ">=6.0.0"
+  },
   "author": "Cristian Baldi",
   "license": "MIT"
 }
