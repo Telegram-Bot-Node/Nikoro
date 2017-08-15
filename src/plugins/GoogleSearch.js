@@ -1,5 +1,4 @@
 const Plugin = require("../Plugin");
-const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 const GoogleSearch = require("this.google-search");
 const assert = require("assert");
 
@@ -19,16 +18,15 @@ module.exports = class Google extends Plugin {
         };
     }
 
-    google = null;
-
-    start() {
-        assert(typeof Config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
-        assert(Config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
-        assert(typeof Config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
-        assert(Config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
+    start(config) {
+        this.config = config;
+        assert(typeof this.config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
+        assert(this.config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
+        assert(typeof this.config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
+        assert(this.config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
         this.google = new GoogleSearch({
-            key: Config.GOOGLE_API_KEY,
-            cx: Config.GOOGLE_CX
+            key: this.config.GOOGLE_API_KEY,
+            cx: this.config.GOOGLE_CX
         });
     }
 

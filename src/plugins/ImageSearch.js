@@ -1,5 +1,4 @@
 const Plugin = require("../Plugin");
-const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 const Util = require("../Util");
 const GoogleImages = require("google-images");
 const assert = require("assert");
@@ -20,13 +19,14 @@ module.exports = class ImageSearch extends Plugin {
         };
     }
 
-    start() {
-        assert(typeof Config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
-        assert(Config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
-        assert(typeof Config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
-        assert(Config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
+    start(config) {
+        this.config = config;
+        assert(typeof this.config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
+        assert(this.config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
+        assert(typeof this.config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
+        assert(this.config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
 
-        this.client = new GoogleImages(Config.GOOGLE_CX, Config.GOOGLE_API_KEY);
+        this.client = new GoogleImages(this.config.GOOGLE_CX, this.config.GOOGLE_API_KEY);
     }
 
     onCommand({message, command, args}, reply) {

@@ -1,5 +1,4 @@
 const Plugin = require("../Plugin");
-const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 const YouTube = require("youtube-api");
 const assert = require("assert");
 
@@ -18,12 +17,13 @@ module.exports = class YouTubePlugin extends Plugin {
         };
     }
 
-    start() {
-        assert(typeof Config.YOUTUBE_API_KEY === typeof "", "You must supply a YouTube API key.");
-        assert(Config.YOUTUBE_API_KEY !== "", "Please supply a valid YouTube API key.");
+    start(config) {
+        this.config = config;
+        assert(typeof this.config.YOUTUBE_API_KEY === typeof "", "You must supply a YouTube API key.");
+        assert(this.config.YOUTUBE_API_KEY !== "", "Please supply a valid YouTube API key.");
         YouTube.authenticate({
             type: "key",
-            key: Config.YOUTUBE_API_KEY
+            key: this.config.YOUTUBE_API_KEY
         });
     }
 

@@ -49,14 +49,13 @@ module.exports = class Plugin {
         );
     }
 
-    constructor(listener, bot) {
+    constructor(listener, config) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
-        this.log = Log.get(this.plugin.name);
+        this.log = Log.get(this.plugin.name, config);
         this.listener = listener;
-        this.bot = bot;
 
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {

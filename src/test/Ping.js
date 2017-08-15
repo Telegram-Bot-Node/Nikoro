@@ -1,6 +1,7 @@
 /* eslint-env node, es6, mocha */
 const Auth = require("../helpers/Auth");
 const PluginManager = require("../PluginManager");
+const config = JSON.parse(require("fs").readFileSync(__dirname + "/sample-config.json", "utf8"));
 
 const EventEmitter = require("events");
 class TelegramBot extends EventEmitter {
@@ -37,7 +38,7 @@ class TelegramBot extends EventEmitter {
 
 describe("Ping", function() {
     const bot = new TelegramBot();
-    const pluginManager = new PluginManager(bot);
+    const pluginManager = new PluginManager(bot, config);
     pluginManager.loadPlugins(["Ping"]);
     Auth.init();
     it("should reply to /ping", function(done) {

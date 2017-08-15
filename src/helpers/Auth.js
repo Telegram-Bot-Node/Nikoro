@@ -1,5 +1,4 @@
 const fs = require("fs");
-const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 
 let db;
 
@@ -15,12 +14,12 @@ function synchronize() {
 
 module.exports = class Auth {
 
-    static init() {
+    static init(config) {
         fs.readFile("./helper_Auth.json", (err, data) => {
             if (err) {
                 db = {
                     auth: {
-                        _globalAdmins: Config.globalAdmins
+                        _globalAdmins: config.globalAdmins
                     }
                 };
             } else {

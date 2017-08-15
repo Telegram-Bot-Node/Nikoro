@@ -9,7 +9,7 @@ const Util = {};
 const request = require("request");
 const fs = require("fs");
 const Log = require("./Log");
-const log = Log.get("Util");
+const log = Log.get("Util", {loggingLevel: "info"}); // todo: figure out how to manage this
 const assert = require("assert");
 
 /*

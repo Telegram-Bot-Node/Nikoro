@@ -7,15 +7,17 @@ const {EventEmitter} = require("events");
 
 module.exports = class PluginManager {
 
-    constructor(bot) {
+    constructor(bot, config) {
         this.bot = bot;
-        this.log = Log.get("PluginManager");
+        this.log = Log.get("PluginManager", config);
         this.plugins = [];
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(Infinity);
 
-        this.masterPlugin = new MasterPlugin(this.emitter, this);
+        this.masterPlugin = new MasterPlugin(this.emitter, this, config);
         this.addPlugin(this.masterPlugin);
+
+        this.config = config;
 
         const handleReply = (chatId, reply) => {
             switch (reply.type) {
@@ -135,7 +137,7 @@ module.exports = class PluginManager {
         const loadedPlugin = new ThisPlugin(this.emitter, this.bot);
         this.log.debug(`Created ${pluginName}.`);
 
-        loadedPlugin.start();
+        loadedPlugin.start(this.config);
 
         return loadedPlugin;
     }

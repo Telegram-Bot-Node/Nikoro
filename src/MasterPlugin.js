@@ -18,8 +18,8 @@ module.exports = class MasterPlugin extends Plugin {
         };
     }
 
-    constructor(listener, pluginManager) {
-        super(listener);
+    constructor(listener, pluginManager, config) {
+        super(listener, config);
 
         this.pluginManager = pluginManager;
     }

@@ -26,7 +26,7 @@ const questions = [
                 let plugin;
 
                 try {
-                    plugin = require(`${__dirname}/plugins/${path}`, false).default.plugin;
+                    plugin = require(`${__dirname}/plugins/${path}`, false).plugin;
                 } catch (e) {
                     return {
                         name: ` ${path}.js`,

@@ -5,7 +5,7 @@ const PluginManager = require("./PluginManager");
 const Auth = require("./helpers/Auth");
 const assert = require("assert");
 
-const log = Log.get("Bot");
+const log = Log.get("Bot", Config);
 
 assert(typeof Config.TELEGRAM_TOKEN === typeof "", "You must provide a Telegram bot token in Config.js.");
 assert(Config.TELEGRAM_TOKEN !== "", "Please provide a valid Telegram bot token.");
@@ -15,7 +15,7 @@ const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.info("Instance created.");
 
 log.verbose("Loading plugins...");
-const pluginManager = new PluginManager(bot);
+const pluginManager = new PluginManager(bot, Config);
 pluginManager.loadPlugins(Config.activePlugins);
 log.info("Plugins loaded.");
 
