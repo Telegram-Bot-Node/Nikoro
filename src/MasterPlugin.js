@@ -44,14 +44,17 @@ export default class MasterPlugin extends Plugin {
             const pluginName = args[0].toLowerCase();
             const plugin = data
                 .filter(pl => pl.name.toLowerCase() === pluginName)[0];
-            reply({
-                type: "text",
-                text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
-                options: {
-                    parse_mode: "markdown",
-                    disable_web_page_preview: true
-                }
-            });
+
+            if (plugin) {
+                reply({
+                    type: "text",
+                    text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
+                    options: {
+                        parse_mode: "markdown",
+                        disable_web_page_preview: true
+                    }
+                });    
+            } 
         }
     }
 }
