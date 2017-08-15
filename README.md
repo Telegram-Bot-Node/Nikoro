@@ -60,11 +60,11 @@ If you know JavaScript (ES6, specifically), you can easily write plugins for you
 * Edit `config.json`. Add `"MyPlugin"` to the list of active plugins:
 
 ```json
-activePlugins: {
+activePlugins: [
     "Auth",
     "Config",
     "MyPlugin"
-}
+]
 ```
 
 ### Writing
