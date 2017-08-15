@@ -8,7 +8,7 @@ class TelegramBot extends EventEmitter {
     constructor() {
         super();
         this.i = 0;
-        this.date = Math.floor(new Date() / 1000);        
+        this.date = Math.floor(new Date() / 1000);
     }
 
     pushMessage(message, type = "text") {

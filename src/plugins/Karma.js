@@ -61,4 +61,4 @@ module.exports = class Karma extends Plugin {
             text: `${target} now has ${this.db[chatId][target]} karma points`
         });
     }
-}
+};

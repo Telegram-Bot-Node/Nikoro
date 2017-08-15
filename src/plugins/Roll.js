@@ -38,4 +38,4 @@ module.exports = class Roll extends Plugin {
 
         reply({type: 'text', text: result});
     }
-}
+};

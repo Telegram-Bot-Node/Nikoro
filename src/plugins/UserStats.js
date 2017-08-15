@@ -90,4 +90,4 @@ module.exports = class UserStats extends Plugin {
         }
         reply({type: 'text', text});
     }
-}
+};

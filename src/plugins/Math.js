@@ -27,4 +27,4 @@ Check out math.js website for examples of supported stuff.`
             text: result
         });
     }
-}
+};

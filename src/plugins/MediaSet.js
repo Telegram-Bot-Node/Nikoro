@@ -146,4 +146,4 @@ module.exports = class MediaSet extends Plugin {
         }
     }
     */
-}
+};

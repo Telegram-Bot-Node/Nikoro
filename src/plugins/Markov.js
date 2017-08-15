@@ -83,7 +83,6 @@ module.exports = class Markov extends Plugin {
         };
     }
 
-
     start() {
         if (this.db) {
             this.m = Blather.destringify(JSON.stringify(this.db));
@@ -116,4 +115,4 @@ module.exports = class Markov extends Plugin {
             text: this.m.generateFragment((args.length > 0) ? args : undefined)
         });
     }
-}
+};

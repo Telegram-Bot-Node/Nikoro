@@ -47,4 +47,4 @@ module.exports = class ImageSearch extends Plugin {
             text: JSON.stringify(err, null, 4)
         }));
     }
-}
+};

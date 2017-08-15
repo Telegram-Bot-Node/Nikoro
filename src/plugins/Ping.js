@@ -20,4 +20,4 @@ module.exports = class Ping extends Plugin {
         reply({type: 'text', text: this.db.text});
         this.synchronize();
     }
-}
+};

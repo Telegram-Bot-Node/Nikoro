@@ -42,4 +42,4 @@ module.exports = class RateLimiter extends Plugin {
         this.lastMessages[author] = now;
         return Promise.resolve();
     }
-}
+};

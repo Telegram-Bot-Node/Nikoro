@@ -33,4 +33,4 @@ module.exports = class Welcome extends Plugin {
             text: "Goodbye " + (member.username ? `@${member.username}!` : `${member.first_name}!`)
         });
     }
-}
+};

@@ -73,5 +73,5 @@ module.exports = class Reddit extends Plugin {
                 caption: `${item.title}\n\n${item.url}`
             }
         });
-    }}
+    }};
 

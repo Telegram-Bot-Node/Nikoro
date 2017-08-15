@@ -77,4 +77,4 @@ module.exports = class Set extends Plugin {
             return;
         }
     }
-}
+};

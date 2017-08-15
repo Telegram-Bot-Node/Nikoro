@@ -50,4 +50,4 @@ module.exports = class YouTubePlugin extends Plugin {
             });
         });
     }
-}
+};

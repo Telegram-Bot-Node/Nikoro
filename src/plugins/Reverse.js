@@ -26,4 +26,4 @@ module.exports = class Reverse extends Plugin {
             ]
         });
     }
-}
+};

@@ -51,4 +51,4 @@ module.exports = class Imgur extends Plugin {
             url += letters[Math.floor(Math.random() * letters.length)];
         return url;
     }
-}
+};

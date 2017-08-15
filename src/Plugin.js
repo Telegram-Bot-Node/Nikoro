@@ -9,14 +9,14 @@ module.exports = class Plugin {
             INLINE: 0x02,
             PROXY: 0x04,
             SPECIAL: 0x08
-        }
+        };
     }
 
     static get Visibility() {
         return {
             VISIBLE: 0,
             HIDDEN: 1
-        }
+        };
     }
 
     static get plugin() {
@@ -117,4 +117,4 @@ module.exports = class Plugin {
     stop() {
         return;
     }
-}
+};

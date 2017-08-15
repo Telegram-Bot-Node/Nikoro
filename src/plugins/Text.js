@@ -43,4 +43,4 @@ module.exports = class Text extends Plugin {
             ]
         });
     }
-}
+};

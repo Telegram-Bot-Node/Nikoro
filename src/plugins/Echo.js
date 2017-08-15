@@ -20,4 +20,4 @@ module.exports = class Echo extends Plugin {
         this.log.debug("(((Echoing)))");
         reply({type: 'text', text: args.join(" ")});
     }
-}
+};

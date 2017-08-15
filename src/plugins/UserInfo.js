@@ -68,4 +68,4 @@ module.exports = class UserInfo extends Plugin {
 Known aliases: ${aliases.join(", ")}`
         });
     }
-}
+};

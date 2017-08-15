@@ -133,4 +133,4 @@ module.exports = class Vote extends Plugin {
             return;
         }
     }
-}
+};

@@ -53,8 +53,8 @@ module.exports = class MasterPlugin extends Plugin {
                         parse_mode: "markdown",
                         disable_web_page_preview: true
                     }
-                });    
-            } 
+                });
+            }
         }
     }
-}
+};

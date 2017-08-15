@@ -47,4 +47,4 @@ module.exports = class Porn extends Plugin {
             });
         });
     }
-}
+};

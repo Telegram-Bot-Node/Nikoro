@@ -52,4 +52,4 @@ module.exports = class Forward extends Plugin {
             return;
         }
     }
-}
+};

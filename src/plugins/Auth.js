@@ -71,4 +71,4 @@ module.exports = class AuthPlugin extends Plugin {
             return;
         }
     }
-}
+};

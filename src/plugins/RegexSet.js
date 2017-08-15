@@ -145,4 +145,4 @@ module.exports = class RegexSet extends Plugin {
         this.db.replacements.splice(ID, 1);
         reply({type: "text", text: "Deleted."});
     }
-}
+};

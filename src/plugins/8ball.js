@@ -39,4 +39,4 @@ module.exports = class The8Ball extends Plugin {
             text: this.choices[Math.floor(Math.random() * choices.length)]
         });
     }
-}
+};

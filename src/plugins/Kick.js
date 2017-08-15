@@ -109,4 +109,4 @@ module.exports = class Kick extends Plugin {
             text: "An error occurred while kicking the user."
         }));
     }
-}
+};

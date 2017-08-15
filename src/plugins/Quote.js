@@ -87,4 +87,4 @@ module.exports = class Quote extends Plugin {
 
         return author;
     }
-}
+};

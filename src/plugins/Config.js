@@ -55,7 +55,7 @@ module.exports = class Config extends Plugin {
             reply({type: 'text', text: "Unknown command"});
         }
     }
-}
+};
 
 function editTree(tree, path, newValue) {
     if (path.length === 0) return newValue;

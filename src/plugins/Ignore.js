@@ -104,4 +104,4 @@ module.exports = class Ignore extends Plugin {
             return;
         }
     }
-}
+};

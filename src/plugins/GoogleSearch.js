@@ -58,4 +58,4 @@ module.exports = class Google extends Plugin {
             });
         });
     }
-}
+};

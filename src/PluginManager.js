@@ -209,4 +209,4 @@ module.exports = class PluginManager {
 
         this.emitter.emit(event, message, ...callbacks);
     }
-}
+};
