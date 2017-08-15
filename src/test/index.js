@@ -29,6 +29,13 @@ class TelegramBot extends EventEmitter {
             };
         if (!message.date)
             message.date = this.date++;
+        const cmdRegex = /\/[\w_]+/i;
+        if (cmdRegex.test(message.text))
+            message.entities = [{
+                type: "bot_command",
+                offset: 0,
+                length: message.text.match(cmdRegex)[0].length
+            }];
         this.emit(type, message);
     }
     sendMessage(chatId, text, options) {

@@ -6,5 +6,5 @@
 
     "activePlugins": ["Ping"],
     "globalAdmins": [1],
-    "loggingLevel": "info"
+    "loggingLevel": "warn"
 }
