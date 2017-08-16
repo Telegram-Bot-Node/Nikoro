@@ -81,3 +81,73 @@ describe("Bot", function() {
         bot.pushMessage({text: `/echo ${string}`}, "text");
     });
 });
+
+describe("Ignore", function() {
+    const bot = new TelegramBot();
+    const pluginManager = new PluginManager(bot, config);
+    pluginManager.loadPlugins(["Auth", "Ping"]);
+    Auth.init();
+    it("should ignore", function(done) {
+        Auth.addAdmin(1, -123456789);
+        bot.pushMessage({
+            text: "/ignore 123",
+            from: {
+                id: 1,
+                first_name: 'Root',
+                username: 'root'
+            }
+        }, "text");
+
+        const callback = ({text}) => done(new Error("The bot replied to a ping"));
+        bot.on("_debug_message", callback);
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
+            done();
+        }, 100);
+    });
+});
+
+describe("Ping", function() {
+    const bot = new TelegramBot();
+    const pluginManager = new PluginManager(bot, config);
+    pluginManager.loadPlugins(["Ping"]);
+    Auth.init();
+    it("should reply to /ping", function(done) {
+        bot.pushMessage({text: "ping"}, "text");
+        bot.once("_debug_message", function() {
+            done();
+        });
+    });
+});
+
+describe("RateLimiter", function() {
+    const bot = new TelegramBot();
+    const pluginManager = new PluginManager(bot, config);
+    pluginManager.loadPlugins(["Ping"]);
+    Auth.init();
+    it("should reject spam", function(done) {
+        this.timeout(6000);
+        this.slow(6000);
+        const limit = 50;
+        let replies = 0;
+
+        pluginManager.loadPlugins(["RateLimiter"]);
+
+        const callback = function() {
+            replies++;
+        };
+        bot.on("_debug_message", callback);
+
+        for (let i = 0; i < limit; i++)
+            bot.pushMessage({text: "ping"}, "text");
+
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
+            pluginManager.removePlugin("RateLimiter");
+            if (replies === 1)
+                done();
+            else
+                done(new Error(`The bot replied ${replies} times.`));
+        }, 2 * limit); // The bot shouldn't take longer than 2 ms avg per message
+    });
+});
