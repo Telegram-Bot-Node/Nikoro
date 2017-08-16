@@ -30,7 +30,7 @@ module.exports = class Auth {
 
     synchronize() {
         fs.writeFile(
-            "./helper_Auth.json",
+            "./db/helper_Auth.json",
             JSON.stringify(this.db),
             err => {
                 if (err) throw err;
