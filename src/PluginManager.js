@@ -130,7 +130,7 @@ module.exports = class PluginManager {
     // Instantiates the plugin.
     // Returns the plugin itself.
     loadPlugin(pluginName) {
-        const ThisPlugin = require('./plugins/' + pluginName);
+        const ThisPlugin = require(__dirname + '/plugins/' + pluginName);
 
         this.log.debug(`Required ${pluginName}`);
 
