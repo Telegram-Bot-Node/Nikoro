@@ -70,44 +70,35 @@ module.exports = class Plugin {
 
         this.syncInterval = 5000;
 
-        setInterval(() => this.synchronize(), this.syncInterval);
+        this.syncTimer = setInterval(() => this.synchronize(), this.syncInterval);
 
-        // text
-        if (typeof this.onText === 'function')
-            this.listener.on("text", (...args) => this.onText(...args));
-        // inline query
-        if (typeof this.onInline === 'function')
-            this.listener.on("inline_query", (...args) => this.onInline(...args));
-        // text command
-        if (typeof this.onCommand === 'function')
-            this.listener.on("_command", (...args) => this.onCommand(...args));
-        // inline command
-        if (typeof this.onInlineCommand === 'function')
-            this.listener.on("_inline_command", (...args) => this.onInlineCommand(...args));
+        this.handlerNames = {
+            "text": "onText",
+            "inline_query": "onInline",
+            "_command": "onCommand",
+            "_inline_command": "onInlineCommand",
+            "audio": "onAudio",
+            "document": "onDocument",
+            "photo": "onPhoto",
+            "sticker": "onSticker",
+            "video": "onVideo",
+            "voice": "onVoice",
+            "contact": "onContact",
+            "location": "onLocation",
+            "new_chat_participant": "onNewChatParticipant",
+            "left_chat_participant": "onLeftChatParticipant",
+        }
 
-        // media
-        if (typeof this.onAudio === 'function')
-            this.listener.on("audio", (...args) => this.onAudio(...args));
-        if (typeof this.onDocument === 'function')
-            this.listener.on("document", (...args) => this.onDocument(...args));
-        if (typeof this.onPhoto === 'function')
-            this.listener.on("photo", (...args) => this.onPhoto(...args));
-        if (typeof this.onSticker === 'function')
-            this.listener.on("sticker", (...args) => this.onSticker(...args));
-        if (typeof this.onVideo === 'function')
-            this.listener.on("video", (...args) => this.onVideo(...args));
-        if (typeof this.onVoice === 'function')
-            this.listener.on("voice", (...args) => this.onVoice(...args));
+        this.handlers = {};
 
-        // other
-        if (typeof this.onContact === 'function')
-            this.listener.on("contact", (...args) => this.onContact(...args));
-        if (typeof this.onLocation === 'function')
-            this.listener.on("location", (...args) => this.onLocation(...args));
-        if (typeof this.onNewChatParticipant === 'function')
-            this.listener.on("new_chat_participant", (...args) => this.onNewChatParticipant(...args));
-        if (typeof this.onLeftChatParticipant === 'function')
-            this.listener.on("left_chat_participant", (...args) => this.onLeftChatParticipant(...args));
+        const eventNames = Object.keys(this.handlerNames);
+        for (const eventName of eventNames) {
+            const handlerName = this.handlerNames[eventName];
+            if (typeof this[handlerName] !== 'function') continue;
+            const handler = this[handlerName].bind(this);
+            this.listener.on(eventName, handler);
+            this.handlers[eventName] = handler; // Keeps a reference to the handler so that it can be removed later
+        }
     }
 
     start() {
@@ -115,6 +106,11 @@ module.exports = class Plugin {
     }
 
     stop() {
-        return;
+        clearInterval(this.syncTimer);
+        const eventNames = Object.keys(this.handlers);
+        for (const eventName of eventNames) {
+            const handler = this.handlers[eventName];
+            this.listener.removeListener(eventName, handler);
+        }
     }
 };

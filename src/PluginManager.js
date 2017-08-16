@@ -177,7 +177,9 @@ module.exports = class PluginManager {
 
     removePlugin(pluginName) {
         this.log.verbose(`Removing plugin ${pluginName}`);
-        this.plugins = this.plugins.filter(pl => pl.plugin.name.toLowerCase() !== pluginName.toLowerCase());
+        const isCurrentPlugin = pl => pl.plugin.name.toLowerCase() === pluginName.toLowerCase();
+        this.plugins.filter(isCurrentPlugin).forEach(pl => pl.stop());
+        this.plugins = this.plugins.filter(pl => !isCurrentPlugin(pl));
     }
 
     stopPlugins() {
