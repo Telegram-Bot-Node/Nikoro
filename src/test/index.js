@@ -53,20 +53,98 @@ describe("Bot", function() {
     let pluginManager;
     it("should start correctly with the Ping plugin", function() {
         bot = new TelegramBot();
-        pluginManager = new PluginManager(bot, config);
+        pluginManager = new PluginManager(bot, config, auth);
         pluginManager.loadPlugins(["Ping"]); // [] = Active plugins
     });
     it("should reply to /help", function(done) {
-        bot.pushMessage({text: "/help"}, "text");
+        bot.pushMessage({text: "/help"});
         bot.once("_debug_message", function() {
             done();
         });
     });
     it("should reply to /help Ping", function(done) {
-        bot.pushMessage({text: "/help Ping"}, "text");
+        bot.pushMessage({text: "/help Ping"});
         bot.once("_debug_message", function() {
             done();
         });
+    });
+    it("should enable plugins", function(done) {
+        const sentinel = Math.random().toString();
+        bot.on("_debug_message", function({text}) {
+            if (text.includes(sentinel)) done();
+        });
+        bot.pushMessage({
+            text: "/enableplugin echo",
+            from: {
+                id: 1,
+                first_name: 'Root',
+                username: 'root'
+            }
+        });
+        bot.pushMessage({text: `/echo ${sentinel}`});
+    });
+    it("should disable plugins", function(done) {
+        this.slow(200);
+        const sentinel = Math.random().toString();
+        const callback = ({text}) => {
+            if (text.includes(sentinel)) done(new Error("Echo wasn't disabled"));
+        }
+        bot.on("_debug_message", callback);
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
+            done();
+        }, 100);
+
+        bot.pushMessage({
+            text: "/disableplugin echo",
+            from: {
+                id: 1,
+                first_name: 'Root',
+                username: 'root'
+            }
+        });
+        bot.pushMessage({text: `/echo ${sentinel}`});
+    });
+    it("shouldn't let unauthorized users enable plugins", function(done) {
+        this.slow(200);
+        const sentinel = Math.random().toString();
+        const callback = ({text}) => {
+            if (text.includes(sentinel)) done(new Error("Echo was enabled"));
+        };
+        bot.on("_debug_message", callback);
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
+            done();
+        }, 100);
+
+        bot.pushMessage({
+            text: "/enableplugin echo",
+            from: {
+                id: 1000,
+                first_name: 'Evil Eve',
+                username: 'eve'
+            }
+        });
+        bot.pushMessage({text: `/echo ${sentinel}`});
+    });
+    it("shouldn't let unauthorized users disable plugins", function(done) {
+        this.slow(200);
+        pluginManager.loadPlugins(["Echo"]);
+        const sentinel = Math.random().toString();
+        const callback = ({text}) => {
+            if (text.includes(sentinel)) done();
+        };
+        bot.on("_debug_message", callback);
+
+        bot.pushMessage({
+            text: "/disableplugin echo",
+            from: {
+                id: 1000,
+                first_name: 'Evil Eve',
+                username: 'eve'
+            }
+        });
+        bot.pushMessage({text: `/echo ${sentinel}`});
     });
     it("should support multiline inputs", function(done) {
         pluginManager.loadPlugins(["Echo"]);
@@ -78,16 +156,24 @@ describe("Bot", function() {
             }
             done();
         });
-        bot.pushMessage({text: `/echo ${string}`}, "text");
+        bot.pushMessage({text: `/echo ${string}`});
     });
 });
 
 describe("Ignore", function() {
     const bot = new TelegramBot();
-    const pluginManager = new PluginManager(bot, config);
+    const pluginManager = new PluginManager(bot, config, auth);
     pluginManager.loadPlugins(["auth", "Ping"]);
     it("should ignore", function(done) {
+        this.slow(200);
         auth.addAdmin(1, -123456789);
+        const callback = ({text}) => done(new Error("The bot replied to a ping"));
+        bot.on("_debug_message", callback);
+        setTimeout(function() {
+            bot.removeListener("_debug_message", callback);
+            done();
+        }, 100);
+
         bot.pushMessage({
             text: "/ignore 123",
             from: {
@@ -95,32 +181,23 @@ describe("Ignore", function() {
                 first_name: 'Root',
                 username: 'root'
             }
-        }, "text");
-
-        const callback = ({text}) => done(new Error("The bot replied to a ping"));
-        bot.on("_debug_message", callback);
-        setTimeout(function() {
-            bot.removeListener("_debug_message", callback);
-            done();
-        }, 100);
+        });
     });
 });
 
 describe("Ping", function() {
     const bot = new TelegramBot();
-    const pluginManager = new PluginManager(bot, config);
+    const pluginManager = new PluginManager(bot, config, auth);
     pluginManager.loadPlugins(["Ping"]);
     it("should reply to /ping", function(done) {
-        bot.pushMessage({text: "ping"}, "text");
-        bot.once("_debug_message", function() {
-            done();
-        });
+        bot.once("_debug_message", () => done());
+        bot.pushMessage({text: "ping"});
     });
 });
 
 describe("RateLimiter", function() {
     const bot = new TelegramBot();
-    const pluginManager = new PluginManager(bot, config);
+    const pluginManager = new PluginManager(bot, config, auth);
     pluginManager.loadPlugins(["Ping"]);
     it("should reject spam", function(done) {
         this.timeout(6000);
@@ -130,13 +207,11 @@ describe("RateLimiter", function() {
 
         pluginManager.loadPlugins(["RateLimiter"]);
 
-        const callback = function() {
-            replies++;
-        };
+        const callback = () => replies++;
         bot.on("_debug_message", callback);
 
         for (let i = 0; i < limit; i++)
-            bot.pushMessage({text: "ping"}, "text");
+            bot.pushMessage({text: "ping"});
 
         setTimeout(function() {
             bot.removeListener("_debug_message", callback);
