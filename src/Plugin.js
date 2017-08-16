@@ -43,7 +43,7 @@ module.exports = class Plugin {
     }) {
         if (!this.db) return;
         fs.writeFile(
-            `./plugin_${this.plugin.name}.json`,
+            `./db/plugin_${this.plugin.name}.json`,
             JSON.stringify(this.db, null, 4),
             cb
         );
@@ -60,7 +60,7 @@ module.exports = class Plugin {
         if (this.plugin.needs) {
             if (this.plugin.needs.database) {
                 try {
-                    const serialized = fs.readFileSync(`./plugin_${this.plugin.name}.json`, "utf8");
+                    const serialized = fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8");
                     this.db = JSON.parse(serialized);
                 } catch (e) {
                     this.db = {};

@@ -2,7 +2,7 @@ const fs = require("fs");
 
 module.exports = class Auth {
     constructor(config) {
-        fs.readFile("./helper_Auth.json", (err, data) => {
+        fs.readFile("./db/helper_Auth.json", (err, data) => {
             if (err) {
                 this.db = {
                     auth: {
