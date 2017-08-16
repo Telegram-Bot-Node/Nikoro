@@ -11,7 +11,7 @@ class Blather {
         split = text => text.split(/\s+/),
         depth = 2,
         joiner = "<|>",
-        dictionary = {starts: [], chains: {}}
+        dictionary = {}
     }) {
         this.isStart = isStart;
         this.clean = clean;
@@ -21,7 +21,7 @@ class Blather {
         this.dictionary = dictionary;
     }
 
-    addFragment(text) {
+    addFragment(text, chat) {
         const tokens = this.split(text);
         const limit = tokens.length - 1 - this.depth;
         for (let i = 0; i < tokens.length; i++) {
@@ -30,23 +30,23 @@ class Blather {
             const key = tokens.slice(i, i + this.depth).join(this.joiner);
 
             if (this.isStart(key, i))
-                this.dictionary.starts.push(key);
+                this.dictionary[chat].starts.push(key);
 
-            this.dictionary.chains[key] = this.dictionary.chains[key] || [];
-            this.dictionary.chains[key].push(tokens[i + this.depth]);
+            this.dictionary[chat].chains[key] = this.dictionary[chat].chains[key] || [];
+            this.dictionary[chat].chains[key].push(tokens[i + this.depth]);
         }
     }
 
     // start is an array of words with which to start
-    generateFragment(start = arraySample(this.dictionary.starts).split(this.joiner)) {
-        return this.fill(start, this.shouldStopFragment);
+    generateFragment(chat, start = arraySample(this.dictionary[chat].starts).split(this.joiner)) {
+        return this.fill(start, chat, this.shouldStopFragment);
     }
 
-    fill(chain, stopCondition) {
+    fill(chain, chat, stopCondition) {
         let key = chain.slice(chain.length - this.depth).join(this.joiner);
 
-        while (this.dictionary.chains[key] && !stopCondition(chain)) {
-            chain.push(arraySample(this.dictionary.chains[key]));
+        while (this.dictionary[chat].chains[key] && !stopCondition(chain)) {
+            chain.push(arraySample(this.dictionary[chat].chains[key]));
             key = chain.slice(chain.length - this.depth).join(this.joiner);
         }
 
@@ -93,6 +93,8 @@ module.exports = class Markov extends Plugin {
     }
 
     onText(message, reply) {
+        const chat = message.chat.id;
+        if (!this.m.dictionary[chat]) this.m.dictionary[chat] = {starts: [], chains: {}};
         // Take advantage of this to sync the db to memory
         this.db = {
             depth: this.m.depth,
@@ -100,19 +102,21 @@ module.exports = class Markov extends Plugin {
             dictionary: this.m.dictionary
         };
 
-        this.m.addFragment(message.text);
+        this.m.addFragment(message.text, chat);
         if (Math.random() > this.rate) return;
         reply({
             type: "text",
-            text: this.m.generateFragment()
+            text: this.m.generateFragment(chat)
         });
     }
 
     onCommand({message, command, args}, reply) {
         if (command !== "markov") return;
+        const chat = message.chat.id;
+        if (!this.m.dictionary[chat]) return;
         reply({
             type: "text",
-            text: this.m.generateFragment((args.length > 0) ? args : undefined)
+            text: this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined)
         });
     }
 };
