@@ -3,7 +3,7 @@ module.exports = class AuthPlugin extends Plugin {
 
     static get plugin() {
         return {
-            name: "this.auth",
+            name: "Auth",
             description: "Plugin to handle authentication",
             help: "",
 

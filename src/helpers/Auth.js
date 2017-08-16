@@ -1,16 +1,29 @@
 const fs = require("fs");
 
+// https://stackoverflow.com/a/1584377
+Array.prototype.unique = function() {
+    var a = this.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+
+    return a;
+};
+
 module.exports = class Auth {
     constructor(config) {
         fs.readFile("./db/helper_Auth.json", (err, data) => {
             if (err) {
                 this.db = {
-                    auth: {
-                        _globalAdmins: config.globalAdmins
-                    }
+                    auth: {},
+                    _globalAdmins: config.globalAdmins
                 };
             } else {
                 this.db = JSON.parse(data);
+                this.db._globalAdmins = this.db._globalAdmins.concat(config.globalAdmins).unique();
             }
         });
     }
@@ -88,10 +101,10 @@ module.exports = class Auth {
     }
 
     addGlobalAdmin(userId) {
-        if (!this.db.this._globalAdmins)
-            this.db.this._globalAdmins = [];
+        if (!this.db._globalAdmins)
+            this.db._globalAdmins = [];
 
-        this.db.this._globalAdmins.push(userId);
+        this.db._globalAdmins.push(userId);
         this.synchronize();
     }
 
@@ -110,8 +123,8 @@ module.exports = class Auth {
     }
 
     getGlobalAdmins() {
-        if (this.db.this._globalAdmins) {
-            return this.db.this._globalAdmins;
+        if (this.db._globalAdmins) {
+            return this.db._globalAdmins;
         }
         return [];
     }
