@@ -1,5 +1,4 @@
 const Plugin = require("../Plugin");
-const this.auth = require("../helpers/this.auth");
 
 module.exports = class Ignore extends Plugin {
 
