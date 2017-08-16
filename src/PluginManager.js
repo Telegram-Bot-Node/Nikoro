@@ -2,14 +2,14 @@ const Log = require("./Log");
 const MasterPlugin = require("./MasterPlugin");
 const Plugin = require("./Plugin");
 const Util = require("./Util");
-const Auth = require("./helpers/Auth");
 const {EventEmitter} = require("events");
 
 module.exports = class PluginManager {
 
-    constructor(bot, config) {
+    constructor(bot, config, auth) {
         this.bot = bot;
         this.log = Log.get("PluginManager", config);
+        this.auth = auth;
         this.plugins = [];
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(Infinity);
@@ -77,7 +77,7 @@ module.exports = class PluginManager {
                             }
                         );
                         if (!parts) return message;
-                        if (!Auth.isAdmin(message.from.id)) return message;
+                        if (!auth.isAdmin(message.from.id)) return message;
                         const command = parts[0];
                         const pluginName = parts[1];
                         switch (command) {
@@ -137,7 +137,7 @@ module.exports = class PluginManager {
         const loadedPlugin = new ThisPlugin(this.emitter, this.bot);
         this.log.debug(`Created ${pluginName}.`);
 
-        loadedPlugin.start(this.config);
+        loadedPlugin.start(this.config, this.auth);
 
         return loadedPlugin;
     }

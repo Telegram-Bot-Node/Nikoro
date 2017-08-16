@@ -1,5 +1,4 @@
 const Plugin = require("./../Plugin");
-const Auth = require("./../helpers/Auth");
 const safe = require("safe-regex");
 
 module.exports = class RegexSet extends Plugin {
@@ -16,7 +15,8 @@ module.exports = class RegexSet extends Plugin {
         };
     }
 
-    start() {
+    start(config, auth) {
+        this.auth = auth;
         if (!this.db.replacements)
             this.db.replacements = [];
     }
@@ -48,7 +48,7 @@ module.exports = class RegexSet extends Plugin {
         const author = message.from.id;
         switch (command) {
         case "regexset":
-            if (!Auth.isMod(author, chatID))
+            if (!this.auth.isMod(author, chatID))
                 return reply({
                     type: "text",
                     text: "RegexSet is restricted to mods."
@@ -59,7 +59,7 @@ module.exports = class RegexSet extends Plugin {
             this.regexlist(args, reply, chatID);
             return;
         case "regexdelete":
-            if (!Auth.isMod(author, chatID))
+            if (!this.auth.isMod(author, chatID))
                 return reply({
                     type: "text",
                     text: "RegexSet is restricted to mods."

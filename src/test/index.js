@@ -1,7 +1,8 @@
 /* eslint-env node, es6, mocha */
-const Auth = require("../helpers/Auth");
 const PluginManager = require("../PluginManager");
 const config = JSON.parse(require("fs").readFileSync(__dirname + "/sample-config.json", "utf8"));
+const Auth = require("../helpers/Auth");
+let auth = new Auth(config);
 
 const EventEmitter = require("events");
 class TelegramBot extends EventEmitter {
@@ -54,7 +55,6 @@ describe("Bot", function() {
         bot = new TelegramBot();
         pluginManager = new PluginManager(bot, config);
         pluginManager.loadPlugins(["Ping"]); // [] = Active plugins
-        Auth.init();
     });
     it("should reply to /help", function(done) {
         bot.pushMessage({text: "/help"}, "text");
@@ -85,10 +85,9 @@ describe("Bot", function() {
 describe("Ignore", function() {
     const bot = new TelegramBot();
     const pluginManager = new PluginManager(bot, config);
-    pluginManager.loadPlugins(["Auth", "Ping"]);
-    Auth.init();
+    pluginManager.loadPlugins(["auth", "Ping"]);
     it("should ignore", function(done) {
-        Auth.addAdmin(1, -123456789);
+        auth.addAdmin(1, -123456789);
         bot.pushMessage({
             text: "/ignore 123",
             from: {
@@ -111,7 +110,6 @@ describe("Ping", function() {
     const bot = new TelegramBot();
     const pluginManager = new PluginManager(bot, config);
     pluginManager.loadPlugins(["Ping"]);
-    Auth.init();
     it("should reply to /ping", function(done) {
         bot.pushMessage({text: "ping"}, "text");
         bot.once("_debug_message", function() {
@@ -124,7 +122,6 @@ describe("RateLimiter", function() {
     const bot = new TelegramBot();
     const pluginManager = new PluginManager(bot, config);
     pluginManager.loadPlugins(["Ping"]);
-    Auth.init();
     it("should reject spam", function(done) {
         this.timeout(6000);
         this.slow(6000);

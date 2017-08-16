@@ -1,17 +1,19 @@
 const Plugin = require("./../Plugin");
-const Auth = require("./../helpers/Auth");
-
 module.exports = class AuthPlugin extends Plugin {
 
     static get plugin() {
         return {
-            name: "Auth",
+            name: "this.auth",
             description: "Plugin to handle authentication",
             help: "",
 
             visibility: Plugin.Visibility.VISIBLE,
             type: Plugin.Type.SPECIAL
         };
+    }
+
+    start(config, auth) {
+        this.auth = auth;
     }
 
     onCommand({message, command, args}, reply) {
@@ -23,45 +25,45 @@ module.exports = class AuthPlugin extends Plugin {
         case "modlist":
             return reply({
                 type: "text",
-                text: JSON.stringify(Auth.getMods(chat))
+                text: JSON.stringify(this.auth.getMods(chat))
             });
         case "adminlist":
             return reply({
                 type: "text",
-                text: JSON.stringify(Auth.getAdmins(chat))
+                text: JSON.stringify(this.auth.getAdmins(chat))
             });
         // The code from here on is admin-only.
         case "addmod":
-            if (!Auth.isAdmin(author, chat)) return;
+            if (!this.auth.isAdmin(author, chat)) return;
 
-            Auth.addMod(targetId, chat);
+            this.auth.addMod(targetId, chat);
 
             return reply({
                 type: "text",
                 text: "Done."
             });
         case "addadmin":
-            if (!Auth.isAdmin(author, chat)) return;
+            if (!this.auth.isAdmin(author, chat)) return;
 
-            Auth.addAdmin(targetId, chat);
+            this.auth.addAdmin(targetId, chat);
 
             return reply({
                 type: "text",
                 text: "Done."
             });
         case "delmod":
-            if (!Auth.isAdmin(author, chat)) return;
+            if (!this.auth.isAdmin(author, chat)) return;
 
-            Auth.removeMod(targetId, chat);
+            this.auth.removeMod(targetId, chat);
 
             return reply({
                 type: "text",
                 text: "Done."
             });
         case "deladmin":
-            if (!Auth.isAdmin(author, chat)) return;
+            if (!this.auth.isAdmin(author, chat)) return;
 
-            Auth.removeAdmin(targetId, chat);
+            this.auth.removeAdmin(targetId, chat);
 
             return reply({
                 type: "text",

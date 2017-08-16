@@ -3,6 +3,7 @@ const Log = require("./Log");
 const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
 const PluginManager = require("./PluginManager");
 const Auth = require("./helpers/Auth");
+let auth = new Auth(Config);
 const assert = require("assert");
 
 const log = Log.get("Bot", Config);
@@ -15,12 +16,11 @@ const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.info("Instance created.");
 
 log.verbose("Loading plugins...");
-const pluginManager = new PluginManager(bot, Config);
+const pluginManager = new PluginManager(bot, Config, auth);
 pluginManager.loadPlugins(Config.activePlugins);
 log.info("Plugins loaded.");
 
 log.verbose("Configuring permissions...");
-Auth.init();
 log.info("Permissions configured.");
 log.info("The bot is online!");
 

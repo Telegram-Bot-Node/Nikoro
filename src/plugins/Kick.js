@@ -1,5 +1,4 @@
 const Plugin = require("./../Plugin");
-const Auth = require("../helpers/Auth");
 
 module.exports = class Kick extends Plugin {
 
@@ -12,6 +11,10 @@ module.exports = class Kick extends Plugin {
                 database: true
             }
         };
+    }
+
+    start(config, auth) {
+        this.auth = auth;
     }
 
     onCommand({message, command, args}, reply) {
@@ -45,12 +48,12 @@ module.exports = class Kick extends Plugin {
                 text: JSON.stringify(this.db[message.chat.id])
             });
         case "kick":
-            if (!Auth.isMod(message.from.id)) return;
+            if (!this.auth.isMod(message.from.id)) return;
             if (!target) return reply({
                 type: "text",
                 text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
             });
-            if (Auth.isMod(target)) return reply({
+            if (this.auth.isMod(target)) return reply({
                 type: "text",
                 text: "Can't kick mods or admins."
             });
@@ -60,12 +63,12 @@ module.exports = class Kick extends Plugin {
             }));
             return;
         case "ban":
-            if (!Auth.isMod(message.from.id)) return;
+            if (!this.auth.isMod(message.from.id)) return;
             if (!target) return reply({
                 type: "text",
                 text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
             });
-            if (Auth.isMod(target)) return reply({
+            if (this.auth.isMod(target)) return reply({
                 type: "text",
                 text: "Can't ban mods or admins."
             });
@@ -78,7 +81,7 @@ module.exports = class Kick extends Plugin {
             }));
             return;
         case "pardon":
-            if (!Auth.isMod(message.from.id)) return;
+            if (!this.auth.isMod(message.from.id)) return;
             if (!target) return reply({
                 type: "text",
                 text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
@@ -102,7 +105,7 @@ module.exports = class Kick extends Plugin {
         const target = message.new_chat_participant.id;
 
         if (this.db[message.chat.id].indexOf(target) === -1) return;
-        if (Auth.isMod(target)) return;
+        if (this.auth.isMod(target)) return;
 
         this.bot.kickChatMember(message.chat.id, target).catch((/* err */) => reply({
             type: "text",

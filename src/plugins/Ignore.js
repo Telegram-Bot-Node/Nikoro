@@ -1,5 +1,5 @@
 const Plugin = require("../Plugin");
-const Auth = require("../helpers/Auth");
+const this.auth = require("../helpers/this.auth");
 
 module.exports = class Ignore extends Plugin {
 
@@ -18,7 +18,8 @@ module.exports = class Ignore extends Plugin {
         };
     }
 
-    start() {
+    start(config, auth) {
+        this.auth = auth;
         if (!this.db.ignored)
             this.db.ignored = [];
     }
@@ -58,7 +59,7 @@ module.exports = class Ignore extends Plugin {
                     text: "No target found."
                 });
 
-            if (Auth.isMod(target)) return reply({
+            if (this.auth.isMod(target)) return reply({
                 type: "text",
                 text: "Can't ignore mods."
             });
