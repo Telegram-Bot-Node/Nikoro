@@ -1,17 +1,5 @@
 const fs = require("fs");
 
-let db;
-
-function synchronize() {
-    fs.writeFile(
-        "./helper_Auth.json",
-        JSON.stringify(db),
-        err => {
-            if (err) throw err;
-        }
-    );
-}
-
 module.exports = class Auth {
     constructor(config) {
         fs.readFile("./helper_Auth.json", (err, data) => {
@@ -25,6 +13,16 @@ module.exports = class Auth {
                 this.db = JSON.parse(data);
             }
         });
+    }
+
+    synchronize() {
+        fs.writeFile(
+            "./helper_Auth.json",
+            JSON.stringify(this.db),
+            err => {
+                if (err) throw err;
+            }
+        );
     }
 
     isMod(userId, chatId) {
@@ -53,7 +51,7 @@ module.exports = class Auth {
             this.db.auth[chatId].admins = [];
 
         this.db.auth[chatId].admins.push(userId);
-        synchronize();
+        this.synchronize();
     }
 
     removeAdmin(userId, chatId) {
@@ -64,7 +62,7 @@ module.exports = class Auth {
             this.db.auth[chatId].admins = [];
 
         this.db.auth[chatId].admins = this.db.auth[chatId].admins.filter(admin => admin !== userId);
-        synchronize();
+        this.synchronize();
     }
 
     addMod(userId, chatId) {
@@ -75,7 +73,7 @@ module.exports = class Auth {
             this.db.auth[chatId].mods = [];
 
         this.db.auth[chatId].mods.push(userId);
-        synchronize();
+        this.synchronize();
     }
 
     removeMod(userId, chatId) {
@@ -86,7 +84,7 @@ module.exports = class Auth {
             this.db.auth[chatId].mods = [];
 
         this.db.auth[chatId].mods = this.db.auth[chatId].mods.filter(mod => mod !== userId);
-        synchronize();
+        this.synchronize();
     }
 
     addGlobalAdmin(userId) {
@@ -94,7 +92,7 @@ module.exports = class Auth {
             this.db.this._globalAdmins = [];
 
         this.db.this._globalAdmins.push(userId);
-        synchronize();
+        this.synchronize();
     }
 
     getMods(chatId) {
