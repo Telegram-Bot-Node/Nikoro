@@ -18,6 +18,5 @@ module.exports = class Ping extends Plugin {
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
         reply({type: 'text', text: this.db.text});
-        this.synchronize();
     }
 };
