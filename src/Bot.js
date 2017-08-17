@@ -32,7 +32,7 @@ process.on("uncaughtException", handleShutdown("Uncaught exception"));
 
 function handleShutdown(reason) {
     return (err) => {
-    	if (err) log.error(err);
+    	                                                                                                                        if (err) log.error(err);
         log.warn("Shutting down, reason: " + reason);
         log.info("Stopping safely all the plugins...");
         pluginManager.stopPlugins().then(function() {

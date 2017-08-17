@@ -8,7 +8,7 @@ module.exports = class Vote extends Plugin {
             help: `\`/vote <option>\` to vote for an option
 \`/clearvote\` to clear the current vote
 \`/setvote <topic>\` to set the current topic for the vote
-\`/getvote\` or \`/voteresults\` to get info and results about the current vote.`,
+\`/getvote\` or \`/voteresults\` to get info and results about the current vote.`
         };
     }
 

@@ -6,14 +6,17 @@ module.exports = class Ping extends Plugin {
         return {
             name: "Ping",
             description: "Ping - Pong",
-            help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
+            help: "Send `ping`, get `pong`\nIf only life was _this_ easy."
         };
     }
 
+    get commands() { return {
+        ping: () => "Pong!"
+    }; }
+
     onText({message}, reply) {
-        if (!this.db.text) this.db.text = "Pong!";
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
-        reply({type: 'text', text: this.db.text});
+        reply({type: 'text', text: "Pong!"});
     }
 };

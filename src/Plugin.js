@@ -62,7 +62,7 @@ module.exports = class Plugin {
             const {db, blacklist} = JSON.parse(fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8"));
             if (db) this.db = db;
             if (blacklist) this.blacklist = new Set(blacklist);
-        } catch(e) {}
+        } catch (e) {}
 
         this.syncInterval = 5000;
 
@@ -99,6 +99,27 @@ module.exports = class Plugin {
             this.listener.on(eventName, wrappedHandler);
             this.handlers[eventName] = wrappedHandler; // Keeps a reference to the handler so that it can be removed later
         }
+
+        /* this.commands can contain an object, mapping command names (eg. "ping") to either:
+         *
+         *   - a string, in which case the string is sent as a message
+         *   - an object, in which case it is passed to reply()
+         */
+        this.listener.on("_command", ({message, command, args}, reply) => {
+            if (!this.commands) return;
+            for (const trigger of Object.keys(this.commands)) {
+                if (command !== trigger) continue;
+                const ret = this.commands[trigger]({message, args});
+                if (typeof ret === "string" || typeof ret === "number")
+                    reply({
+                        type: "text",
+                        text: ret
+                    });
+                else if (typeof ret === "undefined") return;
+                else
+                    reply(ret);
+            }
+        });
     }
 
     start() {

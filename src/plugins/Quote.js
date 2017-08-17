@@ -12,7 +12,7 @@ module.exports = class Quote extends Plugin {
             help: ` commands: 
                 \`/addquote\` adds the replied message 
                 \`/quote <id>\` returns the quote by ID
-                \`/quote\` returns a random quote`,
+                \`/quote\` returns a random quote`
         };
     }
 

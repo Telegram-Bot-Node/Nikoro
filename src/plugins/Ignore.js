@@ -9,7 +9,7 @@ module.exports = class Ignore extends Plugin {
             help: "Syntax: /ignore <ID>",
 
             visibility: Plugin.Visibility.VISIBLE,
-            type: Plugin.Type.NORMAL | Plugin.Type.PROXY,
+            type: Plugin.Type.NORMAL | Plugin.Type.PROXY
         };
     }
 

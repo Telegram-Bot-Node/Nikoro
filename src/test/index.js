@@ -88,7 +88,7 @@ describe("Bot", function() {
         const sentinel = Math.random().toString();
         const callback = ({text}) => {
             if (text.includes(sentinel)) done(new Error("Echo wasn't disabled"));
-        }
+        };
         bot.on("_debug_message", callback);
         setTimeout(function() {
             bot.removeListener("_debug_message", callback);
