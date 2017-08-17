@@ -62,10 +62,10 @@ module.exports = class PluginManager {
         for (const eventName of events) {
             bot.on(
                 eventName,
-                message => Promise.resolve(message)
-                    .then(message => {
+                message => {
+                    hardcoded: {
                         // Hardcoded hot-swap plugin
-                        if (!message.text) return message;
+                        if (!message.text) break hardcoded;
                         const parts = Util.parseCommand(
                             message.text,
                             [
@@ -76,8 +76,8 @@ module.exports = class PluginManager {
                                 overrideDeprecation: true
                             }
                         );
-                        if (!parts) return message;
-                        if (!auth.isAdmin(message.from.id)) return message;
+                        if (!parts) break hardcoded;
+                        if (!auth.isAdmin(message.from.id)) break hardcoded;
                         const command = parts[0];
                         const pluginName = parts[1];
                         switch (command) {
@@ -100,29 +100,26 @@ module.exports = class PluginManager {
                         default:
                             throw new Error("Unexpected case");
                         }
-                        return message;
-                    })
-                    .then(
-                        message => Promise.all(
-                            this.plugins
-                                .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
-                                .map(plugin => plugin.proxy(eventName, message))
+                    }
+                    Promise.all(
+                        this.plugins
+                            .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
+                            .map(plugin => plugin.proxy(eventName, message))
                         )
-                        .then(() => message)
-                    )
-                    .then(message => this.emit(
-                        eventName,
-                        message,
-                        eventName === "inline_query" ?
-                            reply => handleReply(message.id, reply) :
-                            reply => handleReply(message.chat.id, reply),
-                        eventName === "inline_query" ?
-                            null :
-                            (target, fromChatId, messageId) => bot.forwardMessage(target, fromChatId, messageId)
-                    ))
-                    .catch(err => {
-                        if (err) this.log.error("Message rejected with error", err);
-                    })
+                       .then(() => this.emit(
+                            eventName,
+                            message,
+                            eventName === "inline_query" ?
+                                reply => handleReply(message.id, reply) :
+                                reply => handleReply(message.chat.id, reply),
+                            eventName === "inline_query" ?
+                                null :
+                                (target, fromChatId, messageId) => bot.forwardMessage(target, fromChatId, messageId)
+                        ))
+                        .catch(err => {
+                            if (err) this.log.error("Message rejected with error", err);
+                        });
+                }
             );
         }
     }
