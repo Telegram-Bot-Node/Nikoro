@@ -26,13 +26,13 @@ module.exports = class MasterPlugin extends Plugin {
 
     onCommand({message, command, args}, reply) {
         if (command !== "help") return;
-        const data = this.pluginManager.plugins
+        const availablePlugins = this.pluginManager.plugins
             .map(pl => pl.plugin)
             .filter(pl => pl.visibility !== Plugin.Visibility.HIDDEN);
         if (args.length === 0) {
             reply({
                 type: "text",
-                text: data
+                text: availablePlugins
                     .map(pl => `*${pl.name}*: ${pl.description}`)
                     .join("\n"),
                 options: {
@@ -42,10 +42,10 @@ module.exports = class MasterPlugin extends Plugin {
             });
         } else {
             const pluginName = args[0].toLowerCase();
-            const plugin = data
+            const plugin = availablePlugins
                 .filter(pl => pl.name.toLowerCase() === pluginName)[0];
 
-            if (plugin) {
+            if (plugin)
                 reply({
                     type: "text",
                     text: `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
@@ -54,7 +54,11 @@ module.exports = class MasterPlugin extends Plugin {
                         disable_web_page_preview: true
                     }
                 });
-            }
+            else
+                reply({
+                    type: "text",
+                    text: "No such plugin."
+                });
         }
     }
 };
