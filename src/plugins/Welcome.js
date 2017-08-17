@@ -6,9 +6,6 @@ module.exports = class Welcome extends Plugin {
         return {
             name: "Welcome",
             description: "Says welcome and goodbye.",
-            needs: {
-                database: 1
-            }
         };
     }
 

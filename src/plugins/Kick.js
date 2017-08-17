@@ -7,9 +7,6 @@ module.exports = class Kick extends Plugin {
             name: "Kick",
             description: "Kicks users",
             help: "Reply with /kick or ban, or send /[kick|ban] ID.",
-            needs: {
-                database: true
-            }
         };
     }
 

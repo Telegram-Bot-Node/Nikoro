@@ -10,11 +10,6 @@ module.exports = class MasterPlugin extends Plugin {
 
             type: Plugin.Type.SPECIAL,
             visibility: Plugin.Visibility.HIDDEN,
-
-            needs: {
-                database: true,
-                utils: true
-            }
         };
     }
 

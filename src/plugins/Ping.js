@@ -7,9 +7,6 @@ module.exports = class Ping extends Plugin {
             name: "Ping",
             description: "Ping - Pong",
             help: "Send `ping`, get `pong`\nIf only life was _this_ easy.",
-            needs: {
-                database: 1
-            }
         };
     }
 

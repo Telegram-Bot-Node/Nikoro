@@ -24,10 +24,6 @@ module.exports = class Plugin {
             name: "Plugin",
             description: "Base Plugin",
             help: "There is no need to ask for help",
-            needs: {
-                database: false,
-                utils: false
-            },
 
             visibility: Plugin.Visibility.HIDDEN,
             type: Plugin.Type.SPECIAL

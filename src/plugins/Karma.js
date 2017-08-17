@@ -7,9 +7,6 @@ module.exports = class Karma extends Plugin {
             name: "Karma",
             description: "Keeps scores about users.",
             help: "@username++, @username--.",
-            needs: {
-                database: 1
-            }
         };
     }
 

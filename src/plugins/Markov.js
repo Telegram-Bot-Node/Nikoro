@@ -77,9 +77,6 @@ module.exports = class Markov extends Plugin {
             name: "Markov",
             description: "Generates random text.",
             help: "/markov, or `/markov <seed>`",
-            needs: {
-                database: true
-            }
         };
     }
 

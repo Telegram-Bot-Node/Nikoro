@@ -7,10 +7,6 @@ module.exports = class Forward extends Plugin {
             name: "Forward",
             description: "Forward messages to a channel or group on command.",
             help: "Reply /fwd to a message. Use `/fwdset <ID/name>` to set the destination.",
-
-            needs: {
-                database: true
-            }
         };
     }
 

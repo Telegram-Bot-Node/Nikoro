@@ -8,10 +8,6 @@ module.exports = class RegexSet extends Plugin {
             name: "RegexSet",
             description: "Regex-capable set command",
             help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar',
-
-            needs: {
-                database: true
-            }
         };
     }
 

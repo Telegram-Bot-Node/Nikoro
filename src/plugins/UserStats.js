@@ -6,9 +6,6 @@ module.exports = class UserStats extends Plugin {
             name: "UserStats",
             description: "Get user stats on message count.",
             help: "Enter /userstats to get statistics.",
-            needs: {
-                database: true
-            }
         };
     }
 

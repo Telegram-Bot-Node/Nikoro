@@ -10,10 +10,6 @@ module.exports = class Ignore extends Plugin {
 
             visibility: Plugin.Visibility.VISIBLE,
             type: Plugin.Type.NORMAL | Plugin.Type.PROXY,
-
-            needs: {
-                database: true
-            }
         };
     }
 

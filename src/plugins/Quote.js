@@ -13,9 +13,6 @@ module.exports = class Quote extends Plugin {
                 \`/addquote\` adds the replied message 
                 \`/quote <id>\` returns the quote by ID
                 \`/quote\` returns a random quote`,
-            needs: {
-                database: true
-            }
         };
     }
 

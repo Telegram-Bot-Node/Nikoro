@@ -8,10 +8,6 @@ module.exports = class MediaSet extends Plugin {
             name: "MediaSet",
             description: "Media-capable set command",
             help: '/mset `trigger`',
-
-            needs: {
-                database: true
-            }
         };
     }
 

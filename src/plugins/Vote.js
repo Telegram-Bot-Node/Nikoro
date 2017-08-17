@@ -9,9 +9,6 @@ module.exports = class Vote extends Plugin {
 \`/clearvote\` to clear the current vote
 \`/setvote <topic>\` to set the current topic for the vote
 \`/getvote\` or \`/voteresults\` to get info and results about the current vote.`,
-            needs: {
-                database: true
-            }
         };
     }
 

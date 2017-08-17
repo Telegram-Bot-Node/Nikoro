@@ -8,10 +8,6 @@ module.exports = class UserInfo extends Plugin {
             help: "Syntax: `/id user`",
 
             type: Plugin.Type.PROXY,
-
-            needs: {
-                database: true
-            }
         };
     }
 
