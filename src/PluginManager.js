@@ -4,6 +4,9 @@ const Plugin = require("./Plugin");
 const Util = require("./Util");
 const {EventEmitter} = require("events");
 
+// A small utility functor to find a plugin with a given name
+const nameMatches = targetName => pl => pl.plugin.name.toLowerCase() === targetName.toLowerCase();
+
 module.exports = class PluginManager {
 
     constructor(bot, config, auth) {
@@ -63,44 +66,7 @@ module.exports = class PluginManager {
             bot.on(
                 eventName,
                 message => {
-                    hardcoded: {
-                        // Hardcoded hot-swap plugin
-                        if (!message.text) break hardcoded;
-                        const parts = Util.parseCommand(
-                            message.text,
-                            [
-                                "enableplugin",
-                                "disableplugin"
-                            ],
-                            {
-                                overrideDeprecation: true
-                            }
-                        );
-                        if (!parts) break hardcoded;
-                        if (!auth.isAdmin(message.from.id)) break hardcoded;
-                        const command = parts[0];
-                        const pluginName = parts[1];
-                        switch (command) {
-                        case "enableplugin": {
-                            this.log.info(`Enabling ${pluginName} from message interface`);
-                            const status = this.loadAndAdd(pluginName);
-                            handleReply(message.chat.id, {
-                                type: "text",
-                                text: `Status: ${status}`
-                            });
-                            break;
-                        }
-                        case "disableplugin":
-                            this.removePlugin(pluginName);
-                            handleReply(message.chat.id, {
-                                type: "text",
-                                text: "Done."
-                            });
-                            break;
-                        default:
-                            throw new Error("Unexpected case");
-                        }
-                    }
+                    this.parseEnableDisable(message);
                     Promise.all(
                         this.plugins
                             .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
@@ -122,6 +88,75 @@ module.exports = class PluginManager {
                 }
             );
         }
+    }
+
+    parseEnableDisable(message) {
+        // Hardcoded hot-swap plugin
+        if (!message.text) return;
+        const parts = Util.parseCommand(
+            message.text,
+            [
+                "enable",
+                "disable"
+            ],
+            {
+                overrideDeprecation: true
+            }
+        );
+        if (!parts) return;
+        if (!this.auth.isAdmin(message.from.id)) return;
+        // Syntax: /("enable"|"disable") pluginName [targetChat|"chat"]
+        // The string "chat" will enable the plugin in the current chat.
+        let [command, pluginName, targetChat] = parts;
+        if (targetChat === "chat") targetChat = message.chat.id;
+        targetChat = Number(targetChat);
+        // Checks if it is already in this.plugins
+        const isGloballyEnabled = this.plugins.some(nameMatches(pluginName));
+        let response;
+        switch (command) {
+        case "enable":
+            if (targetChat) {
+                // Enable it if necessary
+                let status = true;
+                if (!isGloballyEnabled)
+                    status = this.loadAndAdd(pluginName);
+                if (status) {
+                    const plugin = this.plugins.find(nameMatches(pluginName));
+                    plugin.blacklist.delete(targetChat);
+                    response = `Plugin enabled successfully for chat ${targetChat}.`;
+                } else {
+                    response = "Couldn't load plugin.";
+                }
+            } else {
+                if (isGloballyEnabled) {
+                    response = "Plugin already enabled.";
+                } else {
+                    this.log.info(`Enabling ${pluginName} from message interface`);
+                    const status = this.loadAndAdd(pluginName);
+                    response = status ? "Plugin enabled successfully." : "An error occurred.";
+                }
+            }
+            break;
+        case "disable":
+            if (targetChat) {
+                if (isGloballyEnabled) {
+                    const plugin = this.plugins.find(nameMatches(pluginName));
+                    plugin.blacklist.add(targetChat);
+                    response = `Plugin disabled successfully for chat ${targetChat}.`;
+                } else {
+                    response = "Plugin isn't enabled.";
+                }
+            } else {
+                if (isGloballyEnabled) {
+                    this.removePlugin(pluginName);
+                    response = "Plugin disabled successfully.";
+                } else {
+                    response = "Plugin already enabled.";
+                }
+            }
+            break;
+        }
+        this.bot.sendMessage(message.chat.id, response);
     }
 
     // Instantiates the plugin.
@@ -174,7 +209,7 @@ module.exports = class PluginManager {
 
     removePlugin(pluginName) {
         this.log.verbose(`Removing plugin ${pluginName}`);
-        const isCurrentPlugin = pl => pl.plugin.name.toLowerCase() === pluginName.toLowerCase();
+        const isCurrentPlugin = nameMatches(pluginName);
         this.plugins.filter(isCurrentPlugin).forEach(pl => pl.stop());
         this.plugins = this.plugins.filter(pl => !isCurrentPlugin(pl));
     }
@@ -206,6 +241,6 @@ module.exports = class PluginManager {
             this.emitter.emit("_inline_command", {message, command, args}, ...callbacks);
         }
 
-        this.emitter.emit(event, message, ...callbacks);
+        this.emitter.emit(event, {message}, ...callbacks);
     }
 };

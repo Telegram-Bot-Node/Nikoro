@@ -92,7 +92,7 @@ module.exports = class Markov extends Plugin {
         this.rate = 0.02;
     }
 
-    onText(message, reply) {
+    onText({message}, reply) {
         const chat = message.chat.id;
         if (!this.m.dictionary[chat]) this.m.dictionary[chat] = {starts: [], chains: {}};
         // Take advantage of this to sync the db to memory

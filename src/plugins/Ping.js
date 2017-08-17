@@ -13,7 +13,7 @@ module.exports = class Ping extends Plugin {
         };
     }
 
-    onText(message, reply) {
+    onText({message}, reply) {
         if (!this.db.text) this.db.text = "Pong!";
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");

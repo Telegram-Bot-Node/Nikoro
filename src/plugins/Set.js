@@ -20,7 +20,7 @@ module.exports = class Set extends Plugin {
             this.db.replacements = [];
     }
 
-    onText(message, reply) {
+    onText({message}, reply) {
         const chatID = message.chat.id;
 
         for (const item of this.db.replacements) {

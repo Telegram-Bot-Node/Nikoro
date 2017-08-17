@@ -31,7 +31,7 @@ module.exports = class Karma extends Plugin {
         });
     }
 
-    onText(message, reply) {
+    onText({message}, reply) {
         // Telegram usernames are 5 or more characters long
         // and contain [A-Z], [a-z], [0-9].
         // Match that, plus either "++" or "--"

@@ -23,7 +23,7 @@ module.exports = class MediaSet extends Plugin {
             this.db.pendingRequests = {};
     }
 
-    onText(message, reply) {
+    onText({message}, reply) {
         const text = message.text;
 
         if (!this.db.triggers[message.chat.id]) return;
@@ -41,22 +41,22 @@ module.exports = class MediaSet extends Plugin {
         }
     }
 
-    onAudio(message, reply) {
+    onAudio({message}, reply) {
         this.setStepTwo(message, reply, "audio");
     }
-    onDocument(message, reply) {
+    onDocument({message}, reply) {
         this.setStepTwo(message, reply, "document");
     }
-    onPhoto(message, reply) {
+    onPhoto({message}, reply) {
         this.setStepTwo(message, reply, "photo");
     }
-    onSticker(message, reply) {
+    onSticker({message}, reply) {
         this.setStepTwo(message, reply, "sticker");
     }
-    onVideo(message, reply) {
+    onVideo({message}, reply) {
         this.setStepTwo(message, reply, "video");
     }
-    onVoice(message, reply) {
+    onVoice({message}, reply) {
         this.setStepTwo(message, reply, "voice");
     }
 

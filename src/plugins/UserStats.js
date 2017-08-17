@@ -22,7 +22,7 @@ module.exports = class UserStats extends Plugin {
         return 0;
     }
 
-    onText(message) {
+    onText({message}) {
         // Reject inline messages
         if (!message.chat) return;
 
