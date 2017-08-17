@@ -9,7 +9,7 @@ module.exports = class MasterPlugin extends Plugin {
             help: "This plugin has access to PluginManager and will perform all the 'meta'/'super' actions.",
 
             type: Plugin.Type.SPECIAL,
-            visibility: Plugin.Visibility.HIDDEN,
+            visibility: Plugin.Visibility.HIDDEN
         };
     }
 

@@ -7,7 +7,7 @@ module.exports = class Set extends Plugin {
         return {
             name: "Set",
             description: "Trigger bot responses whenever someone says a specific sentence.",
-            help: "`/set <trigger> <response>` to set a trigger, `/unset <trigger>` to delete it.",
+            help: "`/set <trigger> <response>` to set a trigger, `/unset <trigger>` to delete it."
         };
     }
 

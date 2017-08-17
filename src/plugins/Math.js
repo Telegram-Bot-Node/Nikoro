@@ -12,19 +12,8 @@ Check out math.js website for examples of supported stuff.`
         };
     }
 
-    onCommand({message, command, args}, reply) {
-        if (command !== 'math' && command !== 'calc') return;
-        let result = "";
-
-        try {
-            result = 'result ' + mathjs.eval(args.join(' '));
-        } catch (e) {
-            result = 'invalid input';
-        }
-
-        reply({
-            type: "text",
-            text: result
-        });
-    }
+    get commands() { return {
+        calc: ({args}) => mathjs.eval(args.join(" ")),
+        math: ({args}) => mathjs.eval(args.join(" "))
+    };}
 };
