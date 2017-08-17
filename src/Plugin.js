@@ -44,7 +44,10 @@ module.exports = class Plugin {
         if (!this.db) return;
         fs.writeFile(
             `./db/plugin_${this.plugin.name}.json`,
-            JSON.stringify(this.db, null, 4),
+            JSON.stringify({
+                db: this.db,
+                blacklist: Array.from(this.blacklist)
+            }, null, 2),
             cb
         );
     }
@@ -56,18 +59,14 @@ module.exports = class Plugin {
 
         this.log = Log.get(this.plugin.name, config);
         this.listener = listener;
-        this.blacklist = new Set(); // Chats where the plugin is disabled
 
-        if (this.plugin.needs) {
-            if (this.plugin.needs.database) {
-                try {
-                    const serialized = fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8");
-                    this.db = JSON.parse(serialized);
-                } catch (e) {
-                    this.db = {};
-                }
-            }
-        }
+        this.db = {};
+        this.blacklist = new Set(); // Chats where the plugin is disabled
+        try {
+            const {db, blacklist} = JSON.parse(fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8"));
+            if (db) this.db = db;
+            if (blacklist) this.blacklist = new Set(blacklist);
+        } catch(e) {}
 
         this.syncInterval = 5000;
 
