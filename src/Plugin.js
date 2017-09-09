@@ -53,6 +53,8 @@ module.exports = class Plugin {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
+        this.bot = config;
+
         this.log = Log.get(this.plugin.name, config);
         this.listener = listener;
 
