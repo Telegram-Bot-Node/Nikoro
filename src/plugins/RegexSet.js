@@ -67,8 +67,21 @@ module.exports = class RegexSet extends Plugin {
         }
     }
 
-    regexset(args, reply, chatID) {
-        args = args.filter(arg => arg !== '-'); // Strip "-"
+    regexset(parts, reply, chatID) {
+        // "Split" the parts array by "-"
+        let args = [[]], currentArg = 0;
+        for (const part of parts) {
+            if (part === "-") {
+                args.push([]);
+                currentArg++;
+            } else {
+                args[currentArg].push(part);
+            }
+        }
+        args = args.map(arr => arr.join(" "));
+
+        console.log(args);
+
         const literalRegex = args[0];
         let flags;
         let text;
@@ -82,9 +95,10 @@ module.exports = class RegexSet extends Plugin {
             text = args[2];
             break;
         default:
+            console.log(args);
             reply({
                 type: "text",
-                text: "Syntax: /regexset needle [- flags] - replacement, eg. `/regexset fo+ - i - bar`"
+                text: "Syntax: /regexset needle [- flags] - replacement"
             });
             return;
         }
