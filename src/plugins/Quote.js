@@ -21,28 +21,19 @@ module.exports = class Quote extends Plugin {
             this.db.quotes = [];
     }
 
-    onCommand({message, command, args}, reply) {
-        switch (command) {
-        case "addquote":
-            this.addQuote(message, reply);
-            return;
-        case "quote":
+    get commands() { return {
+        addquote: ({message}) => this.addQuote(message),
+        quote: ({args}) => {
             if (args[0])
-                this.findQuote(args[0] - 1, reply);
-            else
-                this.randomQuote(reply);
-            return;
-        default:
-            return;
+                return this.findQuote(args[0] - 1);
+            return this.randomQuote();
         }
-    }
+    }; }
 
-    addQuote(message, reply) {
+    addQuote(message) {
         if (message.reply_to_message === undefined ||
-                message.reply_to_message.text === undefined) {
-            reply({type: 'text', text: 'Please reply to a text message first'});
-            return;
-        }
+                message.reply_to_message.text === undefined)
+            return "Please reply to a text message first";
 
         const author = this.getAuthor(message.reply_to_message);
         const text = message.reply_to_message.text;
@@ -52,20 +43,19 @@ module.exports = class Quote extends Plugin {
             text
         });
 
-        reply({type: 'text', text: `Quote added with ID ${this.db.quotes.length}`});
+        return `Quote added with ID ${this.db.quotes.length}`;
     }
 
-    findQuote(id, reply) {
+    findQuote(id) {
         const quote = this.db.quotes[id];
-        if (!quote)
-            return reply({type: 'text', text: "Quote not found"});
+        if (!quote) return "Quote not found";
 
-        reply({type: 'text', text: `<${quote.author}>: ${quote.text}`});
+        return `<${quote.author}>: ${quote.text}`;
     }
 
-    randomQuote(reply) {
+    randomQuote() {
         const id = Math.floor(Math.random() * this.db.quotes.length);
-        this.findQuote(id, reply);
+        this.findQuote(id);
     }
 
     getAuthor(obj) {

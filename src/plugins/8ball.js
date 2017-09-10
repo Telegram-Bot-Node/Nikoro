@@ -32,11 +32,7 @@ module.exports = class The8Ball extends Plugin {
         };
     }
 
-    onCommand({message, command, args}, reply) {
-        if (command !== "8ball") return;
-        reply({
-            type: "text",
-            text: this.choices[Math.floor(Math.random() * choices.length)]
-        });
-    }
+    get commands() { return {
+        "8ball": () => this.choices[Math.floor(Math.random() * choices.length)]
+    }; }
 };
