@@ -71,7 +71,6 @@ module.exports = class UserStats extends Plugin {
         },
         wordstats: ({message}) => {
             const statsObject = this.db["stat" + message.chat.id];
-            const totalCount = statsObject.totalMessageCount;
             const userList = Object.keys(statsObject)
                 .map(item => statsObject[item])
                 .filter(item => typeof item === "object")
