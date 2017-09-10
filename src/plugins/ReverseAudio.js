@@ -10,7 +10,7 @@ module.exports = class ReverseAudio extends Plugin {
         return {
             name: "ReverseAudio",
             description: "Reverses audio! :D",
-            help: "reply to an audio with /reverseaudio",
+            help: "Reply to an audio with /reverseaudio",
             needs: { }
         }
     }
@@ -20,8 +20,11 @@ module.exports = class ReverseAudio extends Plugin {
     }
 
     onCommand({message, command, args}, reply) {
-        if (command !== "reverseaudio") return;
-        if (!message.hasOwnProperty('reply_to_message')) return;
+        if (command !== "reverseaudio" && command !== "reverse") return;
+        if (!message.hasOwnProperty('reply_to_message')) return reply({
+            type: "text",
+            text: "You need to reply to an audio with this command."
+        });
         console.log("it's reverseaudio!");
         let target;
         let isVoice = false;
@@ -49,8 +52,8 @@ module.exports = class ReverseAudio extends Plugin {
                 const fn = `/tmp/${Util.makeUUID()}.ogg`;
                 child_process.spawnSync(ffmpeg, ["-i", filepath, "-af", "areverse", fn]);
                 reply({
-                    type: "voice",
-                    voice: fn
+                    type: "audio",
+                    audio: fn
                 })
             })
                 /* fs.readFile(filepath, 'utf8', (err, data) => {
