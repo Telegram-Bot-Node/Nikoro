@@ -7,7 +7,7 @@ module.exports = class RegexSet extends Plugin {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",
-            help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar',
+            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar',
         };
     }
 
@@ -68,6 +68,7 @@ module.exports = class RegexSet extends Plugin {
     }
 
     regexset(args, reply, chatID) {
+        args = args.filter(arg => arg !== '-'); // Strip "-"
         const literalRegex = args[0];
         let flags;
         let text;
@@ -83,7 +84,7 @@ module.exports = class RegexSet extends Plugin {
         default:
             reply({
                 type: "text",
-                text: "Syntax: /regexset needle - flags - replacement"
+                text: "Syntax: /regexset needle [- flags] - replacement, eg. `/regexset fo+ - i - bar`"
             });
             return;
         }
