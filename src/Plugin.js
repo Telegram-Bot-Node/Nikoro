@@ -62,7 +62,7 @@ module.exports = class Plugin {
             const {db, blacklist} = JSON.parse(fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8"));
             if (db) this.db = db;
             if (blacklist) this.blacklist = new Set(blacklist);
-        } catch(e) {}
+        } catch (e) {}
 
         this.syncInterval = 5000;
 

@@ -7,7 +7,7 @@ module.exports = class RegexSet extends Plugin {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",
-            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar',
+            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar'
         };
     }
 
@@ -17,7 +17,7 @@ module.exports = class RegexSet extends Plugin {
             this.db.replacements = [];
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chatID = message.chat.id;
 
         for (const item of this.db.replacements) {
@@ -35,41 +35,36 @@ module.exports = class RegexSet extends Plugin {
                 );
             replacement = replacement.replace(/\$name/g, message.from.first_name);
             replacement = replacement.replace(/\$username/g, message.from.username);
-            reply({type: "text", text: replacement});
+            this.sendMessage(message.chat.id, replacement);
         }
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         const chatID = message.chat.id;
         const author = message.from.id;
         switch (command) {
         case "regexset":
             if (!this.auth.isMod(author, chatID))
-                return reply({
-                    type: "text",
-                    text: "RegexSet is restricted to mods."
-                });
-            this.regexset(args, reply, chatID);
+                return this.sendMessage(message.chat.id, "RegexSet is restricted to mods.");
+            this.regexset(message, args, chatID);
             return;
         case "regexlist":
-            this.regexlist(args, reply, chatID);
+            this.regexlist(message, args, chatID);
             return;
         case "regexdelete":
             if (!this.auth.isMod(author, chatID))
-                return reply({
-                    type: "text",
-                    text: "RegexSet is restricted to mods."
-                });
-            this.regexdelete(args, reply, chatID);
+                return this.sendMessage(message.chat.id, "RegexSet is restricted to mods.");
+            this.regexdelete(message, args, chatID);
             return;
         default:
             return;
         }
     }
 
-    regexset(parts, reply, chatID) {
+    regexset(message, parts, chatID) {
         // "Split" the parts array by "-"
-        let args = [[]], currentArg = 0;
+        let args = [[]];
+        let currentArg = 0;
         for (const part of parts) {
             if (part === "-") {
                 args.push([]);
@@ -79,8 +74,6 @@ module.exports = class RegexSet extends Plugin {
             }
         }
         args = args.map(arr => arr.join(" "));
-
-        console.log(args);
 
         const literalRegex = args[0];
         let flags;
@@ -95,34 +88,27 @@ module.exports = class RegexSet extends Plugin {
             text = args[2];
             break;
         default:
-            console.log(args);
-            reply({
-                type: "text",
-                text: "Syntax: /regexset needle [- flags] - replacement"
-            });
+            this.sendMessage(message.chat.id, "Syntax: /regexset needle [- flags] - replacement");
             return;
         }
 
         try {
             RegExp(literalRegex, "g" + flags);
         } catch (e) {
-            reply({type: "text", text: "Cannot compile regular expression."});
+            this.sendMessage(message.chat.id, "Cannot compile regular expression.");
             return;
         }
 
         if (!safe(literalRegex))
-            return reply({
-                type: "text",
-                text: "That regular expression seems to be inefficient."
-            });
+            return this.sendMessage(message.chat.id, "That regular expression seems to be inefficient.");
 
         this.db.replacements.push({regex: literalRegex, text, flags, chatID});
-        reply({type: "text", text: "Done."});
+        this.sendMessage(message.chat.id, "Done.");
     }
 
-    regexlist(args, reply, chatID) {
+    regexlist(message, args, chatID) {
         if (this.db.replacements.length === 0) {
-            reply({type: "text", text: "List empty."});
+            this.sendMessage(message.chat.id, "List empty.");
             return;
         }
 
@@ -132,28 +118,28 @@ module.exports = class RegexSet extends Plugin {
             string += `${ID}: "${item.regex}" -> "${item.text}"\n`;
         });
         if (string === "")
-            reply({type: "text", text: "No items set for this chat."});
+            this.sendMessage(message.chat.id, "No items set for this chat.");
         else
-            reply({type: "text", text: string});
+            this.sendMessage(message.chat.id, string);
     }
 
-    regexdelete(args, reply, chatID) {
+    regexdelete(message, args, chatID) {
         if (args.length !== 1) {
-            reply({type: "text", text: "Syntax: /regexdelete ID"});
+            this.sendMessage(message.chat.id, "Syntax: /regexdelete ID");
             return;
         }
 
         const ID = Number(args[0]);
         if (!this.db.replacements[ID]) {
-            reply({type: "text", text: "No such expression."});
+            this.sendMessage(message.chat.id, "No such expression.");
             return;
         }
         if (this.db.replacements[ID].chatID !== chatID) {
-            reply({type: "text", text: "No such item in this chat."});
+            this.sendMessage(message.chat.id, "No such item in this chat.");
             return;
         }
 
         this.db.replacements.splice(ID, 1);
-        reply({type: "text", text: "Deleted."});
+        this.sendMessage(message.chat.id, "Deleted.");
     }
 };

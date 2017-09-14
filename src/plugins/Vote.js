@@ -8,7 +8,7 @@ module.exports = class Vote extends Plugin {
             help: `\`/vote <option>\` to vote for an option
 \`/clearvote\` to clear the current vote
 \`/setvote <topic>\` to set the current topic for the vote
-\`/getvote\` or \`/voteresults\` to get info and results about the current vote.`,
+\`/getvote\` or \`/voteresults\` to get info and results about the current vote.`
         };
     }
 
@@ -17,43 +17,28 @@ module.exports = class Vote extends Plugin {
             this.db.votes = {};
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         const chatId = message.chat.id;
         switch (command) {
         case "vote": {
             if (args.length === 0)
-                return reply({
-                    type: "text",
-                    text: "Syntax: `/vote <option>`"
-                });
+                return this.sendMessage(message.chat.id, "Syntax: `/vote <option>`");
             if (!this.db.votes[chatId])
-                return reply({
-                    type: "text",
-                    text: "There is no vote at this time."
-                });
+                return this.sendMessage(message.chat.id, "There is no vote at this time.");
 
             this.db.votes[chatId].results[message.from.username] = args.join(" ");
 
-            reply({
-                type: "text",
-                text: "Your vote has been registered."
-            });
+            this.sendMessage(message.chat.id, "Your vote has been registered.");
             return;
         }
         case "clearvote": {
             delete this.db.votes[chatId];
-            reply({
-                type: "text",
-                text: "Question cleared."
-            });
+            this.sendMessage(message.chat.id, "Question cleared.");
             return;
         }
         case "setvote": {
             if (args.length === 0)
-                return reply({
-                    type: "text",
-                    text: "Please specify a question."
-                });
+                return this.sendMessage(message.chat.id, "Please specify a question.");
 
             const question = args.join(" ");
 
@@ -63,18 +48,12 @@ module.exports = class Vote extends Plugin {
                 results: {}
             };
 
-            reply({
-                type: "text",
-                text: "Question set."
-            });
+            this.sendMessage(message.chat.id, "Question set.");
             return;
         }
         case "getvote": {
             if (!this.db.votes[chatId])
-                return reply({
-                    type: "text",
-                    text: "There is no vote at this time."
-                });
+                return this.sendMessage(message.chat.id, "There is no vote at this time.");
 
             const poll = this.db.votes[chatId];
             const totalVotes = Object.keys(poll.results).length;
@@ -120,10 +99,7 @@ module.exports = class Vote extends Plugin {
                 .map(tuple => tuple.string)
                 .join("\n\n");
 
-            reply({
-                type: "text",
-                text: response
-            });
+            this.sendMessage(message.chat.id, response);
             return;
         }
         default:

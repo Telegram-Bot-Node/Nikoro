@@ -12,7 +12,7 @@ module.exports = class Quote extends Plugin {
             help: ` commands: 
                 \`/addquote\` adds the replied message 
                 \`/quote <id>\` returns the quote by ID
-                \`/quote\` returns a random quote`,
+                \`/quote\` returns a random quote`
         };
     }
 
@@ -21,27 +21,25 @@ module.exports = class Quote extends Plugin {
             this.db.quotes = [];
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         switch (command) {
         case "addquote":
-            this.addQuote(message, reply);
+            const out = this.addQuote(message);
+            this.sendMessage(message.chat.id, out);
             return;
         case "quote":
-            if (args[0])
-                this.findQuote(args[0] - 1, reply);
-            else
-                this.randomQuote(reply);
+            const quote = args[0] ? this.findQuote(args[0] - 1) : this.randomQuote();
+            this.sendMessage(message.chat.id, quote);
             return;
         default:
             return;
         }
     }
 
-    addQuote(message, reply) {
+    addQuote(message) {
         if (message.reply_to_message === undefined ||
                 message.reply_to_message.text === undefined) {
-            reply({type: 'text', text: 'Please reply to a text message first'});
-            return;
+            return "Please reply to a text message first";
         }
 
         const author = this.getAuthor(message.reply_to_message);
@@ -52,20 +50,20 @@ module.exports = class Quote extends Plugin {
             text
         });
 
-        reply({type: 'text', text: `Quote added with ID ${this.db.quotes.length}`});
+        return `Quote added with ID ${this.db.quotes.length}`;
     }
 
-    findQuote(id, reply) {
+    findQuote(id) {
         const quote = this.db.quotes[id];
         if (!quote)
-            return reply({type: 'text', text: "Quote not found"});
+            return "Quote not found";
 
-        reply({type: 'text', text: `<${quote.author}>: ${quote.text}`});
+        return `<${quote.author}>: ${quote.text}`;
     }
 
     randomQuote(reply) {
         const id = Math.floor(Math.random() * this.db.quotes.length);
-        this.findQuote(id, reply);
+        return this.findQuote(id, reply);
     }
 
     getAuthor(obj) {

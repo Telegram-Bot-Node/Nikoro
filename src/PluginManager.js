@@ -18,6 +18,7 @@ module.exports = class PluginManager {
         this.emitter.setMaxListeners(Infinity);
 
         this.masterPlugin = new MasterPlugin(this.emitter, this, config);
+        this.masterPlugin.sendMessage = this.bot.sendMessage.bind(this.bot); // Dirty patch
         this.addPlugin(this.masterPlugin);
 
         this.config = config;
@@ -116,6 +117,8 @@ module.exports = class PluginManager {
                     response = "Plugin already enabled.";
                 }
             }
+            break;
+        default:
             break;
         }
         this.bot.sendMessage(message.chat.id, response);

@@ -76,7 +76,7 @@ module.exports = class Markov extends Plugin {
         return {
             name: "Markov",
             description: "Generates random text.",
-            help: "/markov, or `/markov <seed>`",
+            help: "/markov, or `/markov <seed>`"
         };
     }
 
@@ -89,7 +89,7 @@ module.exports = class Markov extends Plugin {
         this.rate = 0.02;
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chat = message.chat.id;
         if (!this.m.dictionary[chat]) this.m.dictionary[chat] = {starts: [], chains: {}};
         // Take advantage of this to sync the db to memory
@@ -101,19 +101,13 @@ module.exports = class Markov extends Plugin {
 
         this.m.addFragment(message.text, chat);
         if (Math.random() > this.rate) return;
-        reply({
-            type: "text",
-            text: this.m.generateFragment(chat)
-        });
+        this.sendMessage(message.chat.id, this.m.generateFragment(chat));
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "markov") return;
         const chat = message.chat.id;
         if (!this.m.dictionary[chat]) return;
-        reply({
-            type: "text",
-            text: this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined)
-        });
+        this.sendMessage(message.chat.id, this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined));
     }
 };

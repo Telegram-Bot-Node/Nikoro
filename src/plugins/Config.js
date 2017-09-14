@@ -10,7 +10,7 @@ module.exports = class Config extends Plugin {
         };
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "config") return;
 
         const [type, pluginName, property, ...jsonValue] = args;
@@ -20,10 +20,8 @@ module.exports = class Config extends Plugin {
             jsonValueString = jsonValue.join(" ");
         }
 
-        if (!type) return reply({
-            type: "text",
-            text: "Syntax: /config (get|set) Plugin foo.bar [JSON value]"
-        });
+        if (!type)
+            return this.sendMessage(message.chat.id, "Syntax: /config (get|set) Plugin foo.bar [JSON value]");
 
         let config;
         /* eslint-disable no-case-declarations */
@@ -32,27 +30,21 @@ module.exports = class Config extends Plugin {
             config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
             if (jsonValueString)
                 config = property.split('.').reduce((x, d) => x[d], config);
-            reply({
-                type: 'text',
-                text: JSON.stringify(config)
-            });
+            this.sendMessage(message.chat.id, JSON.stringify(config));
             return;
         case "set":
             let value;
             try {
                 value = JSON.parse(jsonValueString);
             } catch (e) {
-                return reply({
-                    type: "text",
-                    text: "Couldn't parse the JSON value."
-                });
+                return this.sendMessage(message.chat.id, "Couldn't parse the JSON value.");
             }
             config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
             editTree(config, property.split('.'), value);
             this.db["plugin_" + pluginName].config = config;
-            return reply({type: "text", text: "Done."});
+            return this.sendMessage(message.chat.id, "Done.");
         default:
-            reply({type: 'text', text: "Unknown command"});
+            this.sendMessage(message.chat.id, "Unknown command");
         }
     }
 };

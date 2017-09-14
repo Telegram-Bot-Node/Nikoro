@@ -7,7 +7,7 @@ module.exports = class MediaSet extends Plugin {
         return {
             name: "MediaSet",
             description: "Media-capable set command",
-            help: '/mset `trigger`',
+            help: '/mset `trigger`'
         };
     }
 
@@ -19,7 +19,7 @@ module.exports = class MediaSet extends Plugin {
             this.db.pendingRequests = {};
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const text = message.text;
 
         if (!this.db.triggers[message.chat.id]) return;
@@ -33,53 +33,67 @@ module.exports = class MediaSet extends Plugin {
             const media = triggers[trigger];
 
             this.log.verbose("Match on " + Util.buildPrettyChatName(message.chat));
-            reply({type: media.type, [media.type]: media.fileId});
+            switch (media.type) {
+            case "audio":
+                return this.sendAudio(message.chat.id, media.fileId);
+            case "document":
+                return this.sendDocument(message.chat.id, media.fileId);
+            case "photo":
+                return this.sendPhoto(message.chat.id, media.fileId);
+            case "sticker":
+                return this.sendSticker(message.chat.id, media.fileId);
+            case "video":
+                return this.sendVideo(message.chat.id, media.fileId);
+            case "voice":
+                return this.sendVoice(message.chat.id, media.fileId);
+            default:
+                throw new Error("Unrecognized type");
+            }
         }
     }
 
-    onAudio({message}, reply) {
-        this.setStepTwo(message, reply, "audio");
+    onAudio({message}) {
+        this.setStepTwo(message, "audio");
     }
-    onDocument({message}, reply) {
-        this.setStepTwo(message, reply, "document");
+    onDocument({message}) {
+        this.setStepTwo(message, "document");
     }
-    onPhoto({message}, reply) {
-        this.setStepTwo(message, reply, "photo");
+    onPhoto({message}) {
+        this.setStepTwo(message, "photo");
     }
-    onSticker({message}, reply) {
-        this.setStepTwo(message, reply, "sticker");
+    onSticker({message}) {
+        this.setStepTwo(message, "sticker");
     }
-    onVideo({message}, reply) {
-        this.setStepTwo(message, reply, "video");
+    onVideo({message}) {
+        this.setStepTwo(message, "video");
     }
-    onVoice({message}, reply) {
-        this.setStepTwo(message, reply, "voice");
+    onVoice({message}) {
+        this.setStepTwo(message, "voice");
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "mset") return;
-        if (args.length !== 1) return reply({
-            type: "text",
-            text: "Syntax: /mset `trigger`",
-            options: {
-                parse_mode: "Markdown"
-            }
-        });
+        if (args.length !== 1)
+            return this.sendMessage(
+                message.chat.id,
+                "Syntax: /mset `trigger`",
+                {
+                    parse_mode: "Markdown"
+                }
+            );
 
         this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
 
         if (!this.db.pendingRequests[message.chat.id])
             this.db.pendingRequests[message.chat.id] = {};
 
-        reply({
-            type: "text",
-            text: "Perfect! Now send me the media as a reply to this message!"
-        }).then(({message_id}) => {
+        this.sendMessage(message.chat.id, "Perfect! Now send me the media as a reply to this message!")
+        .then(({message_id}) => {
             this.db.pendingRequests[message.chat.id][message_id] = args[0];
         });
     }
 
-    setStepTwo(message, reply, mediaType) {
+    setStepTwo(message, mediaType) {
         // is this a reply for a "now send media" message?
         if (!message.hasOwnProperty('reply_to_message')) return;
         // are there pending requests for this chat?
@@ -118,28 +132,8 @@ module.exports = class MediaSet extends Plugin {
 
             this.synchronize();
 
-            reply({type: "text", text: "Done! Enjoy!"});
+            this.sendMessage(message.chat.id, "Done! Enjoy!");
             return;
         }
     }
-
-    /*
-    unset(message, reply) {
-        const text = message.text;
-
-        const args = Util.parseCommand(text, "munset");
-        if (!args) return;
-        if (args.length != 2) {
-            reply({type: "text", text: "Syntax: /munset trigger"});
-            return;
-        }
-        const key = String(args[1]);
-        if (this.replacements[ID]) {
-            this.replacements.splice(ID, 1);
-            reply({type: "text", text: "Deleted."})
-        } else {
-            reply({type: "text", text: "No such expression."})
-        }
-    }
-    */
 };

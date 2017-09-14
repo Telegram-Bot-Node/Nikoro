@@ -7,7 +7,7 @@ module.exports = class Set extends Plugin {
         return {
             name: "Set",
             description: "Trigger bot responses whenever someone says a specific sentence.",
-            help: "`/set <trigger> <response>` to set a trigger, `/unset <trigger>` to delete it.",
+            help: "`/set <trigger> <response>` to set a trigger, `/unset <trigger>` to delete it."
         };
     }
 
@@ -16,44 +16,35 @@ module.exports = class Set extends Plugin {
             this.db.replacements = [];
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chatID = message.chat.id;
 
         for (const item of this.db.replacements) {
             if (chatID !== item.chatID) continue;
             if (!Util.startsWith(message.text, item.trigger)) continue;
-            reply({type: "text", text: item.replacement});
+            this.sendMessage(message.chat.id, item.replacement);
         }
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         const chatID = message.chat.id;
         let trigger;
         let replacement;
         switch (command) {
         case "set":
             if (args.length < 2)
-                return reply({
-                    type: "text",
-                    text: "Syntax: `/set <trigger> <replacement>`"
-                });
+                return this.sendMessage(message.chat.id, "Syntax: `/set <trigger> <replacement>`");
 
             trigger = args.shift();
             replacement = args.join(" ");
             this.db.replacements.push({trigger, replacement, chatID});
-            reply({
-                type: "text",
-                text: "Done."
-            });
+            this.sendMessage(message.chat.id, "Done.");
             return;
         case "unset":
             trigger = args[0];
             // Take only replacements with either a different chat id or a different trigger
             this.db.replacements = this.db.replacements.filter(item => (item.chatID !== chatID) || (item.trigger !== trigger));
-            reply({
-                type: "text",
-                text: "Done."
-            });
+            this.sendMessage(message.chat.id, "Done.");
             return;
         case "get": {
             let text = "";
@@ -63,10 +54,7 @@ module.exports = class Set extends Plugin {
             }
             if (text === "")
                 text = "No triggers set.";
-            reply({
-                type: "text",
-                text
-            });
+            this.sendMessage(message.chat.id, text);
             return;
         }
         default:

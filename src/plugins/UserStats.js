@@ -5,7 +5,7 @@ module.exports = class UserStats extends Plugin {
         return {
             name: "UserStats",
             description: "Get user stats on message count.",
-            help: "Enter /userstats to get statistics.",
+            help: "Enter /userstats to get statistics."
         };
     }
 
@@ -56,35 +56,40 @@ module.exports = class UserStats extends Plugin {
         }
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command}) {
         if (command !== "userstats" && command !== "wordstats") return;
 
         let text = `Total messages:\n\n`;
         const statsObject = this.db["stat" + message.chat.id];
         const totalCount = statsObject.totalMessageCount;
-        let userList = Object.keys(statsObject)
+        const userList = Object.keys(statsObject)
             .map(item => statsObject[item])
             .filter(item => typeof item === "object");
 
         switch (command) {
         case "userstats":
-            userList = userList.sort((a, b) => b.messageCount - a.messageCount);
-            for (const user of userList) {
-                const percentage = (user.messageCount / totalCount * 100).toFixed(4);
-                text += `${user.username}: ${user.messageCount} (${percentage}%)\n`;
-            }
+            text += userList
+                // Sort the users by messageCount
+                .sort((a, b) => b.messageCount - a.messageCount)
+                .map(user => {
+                    const percentage = (user.messageCount / totalCount * 100).toFixed(4);
+                    return `${user.username}: ${user.messageCount} (${percentage}%)`;
+                })
+                .join("\n");
             break;
         case "wordstats":
-            userList = userList.sort((a, b) => b.wordCount - a.wordCount);
-            for (const user of userList) {
-                if (!user.wordCount) continue;
-                const averageWords = (user.wordCount / user.messageCount).toFixed(4);
-                text += `${user.username}: ${user.wordCount} words (${averageWords} words/message)\n`;
-            }
+            text += userList
+                // Sort the users by wordCount
+                .sort((a, b) => b.wordCount - a.wordCount)
+                .map(user => {
+                    const averageWords = (user.wordCount / user.messageCount).toFixed(4);
+                    return `${user.username}: ${user.wordCount} words (${averageWords} words/message)`;
+                })
+                .join("\n");
             break;
         default:
             return;
         }
-        reply({type: 'text', text});
+        this.sendMessage(message.chat.id, text);
     }
 };

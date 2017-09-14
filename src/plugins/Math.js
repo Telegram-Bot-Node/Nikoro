@@ -12,7 +12,7 @@ Check out math.js website for examples of supported stuff.`
         };
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== 'math' && command !== 'calc') return;
         let result = "";
 
@@ -22,9 +22,6 @@ Check out math.js website for examples of supported stuff.`
             result = 'invalid input';
         }
 
-        reply({
-            type: "text",
-            text: result
-        });
+        this.sendMessage(message.chat.id, result);
     }
 };

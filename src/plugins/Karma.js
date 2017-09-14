@@ -6,11 +6,11 @@ module.exports = class Karma extends Plugin {
         return {
             name: "Karma",
             description: "Keeps scores about users.",
-            help: "@username++, @username--.",
+            help: "@username++, @username--."
         };
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command}) {
         if (command !== "karmachart") return;
         let text = "";
         for (const username in this.db[message.chat.id]) {
@@ -18,17 +18,11 @@ module.exports = class Karma extends Plugin {
             text += `${username}: ${this.db[message.chat.id][username]} points\n`;
         }
         if (text === "")
-            return reply({
-                type: "text",
-                text: "No score yet."
-            });
-        reply({
-            type: "text",
-            text
-        });
+            return this.sendMessage(message.chat.id, "No score yet.");
+        this.sendMessage(message.chat.id, text);
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         // Telegram usernames are 5 or more characters long
         // and contain [A-Z], [a-z], [0-9].
         // Match that, plus either "++" or "--"
@@ -41,10 +35,7 @@ module.exports = class Karma extends Plugin {
         const operator = parts[2];
 
         if (target.toLowerCase() === message.from.username.toLowerCase())
-            return reply({
-                type: "text",
-                text: "You can't karma yourself!"
-            });
+            return this.sendMessage(message.chat.id, "You can't karma yourself!");
 
         if (!this.db[chatId])
             this.db[chatId] = {};
@@ -53,9 +44,6 @@ module.exports = class Karma extends Plugin {
 
         this.db[chatId][target] += (operator === "++") ? +1 : -1;
 
-        reply({
-            type: "text",
-            text: `${target} now has ${this.db[chatId][target]} karma points`
-        });
+        this.sendMessage(message.chat.id, `${target} now has ${this.db[chatId][target]} karma points`);
     }
 };

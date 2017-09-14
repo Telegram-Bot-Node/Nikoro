@@ -6,7 +6,7 @@ module.exports = class Kick extends Plugin {
         return {
             name: "Kick",
             description: "Kicks users",
-            help: "Reply with /kick or ban, or send /[kick|ban] ID.",
+            help: "Reply with /kick or ban, or send /[kick|ban] ID."
         };
     }
 
@@ -14,7 +14,7 @@ module.exports = class Kick extends Plugin {
         this.auth = auth;
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         let target;
         if (args.length === 1) target = Number(args[0]);
         else if (message.reply_to_message) {
@@ -31,71 +31,38 @@ module.exports = class Kick extends Plugin {
 
         switch (command) {
         case "list":
-            return reply({
-                type: "text",
-                text: JSON.stringify(this.db["chat" + message.chat.id])
-            });
+            return this.sendMessage(message.chat.id, JSON.stringify(this.db["chat" + message.chat.id]));
         case "banlist":
-            if (!this.db[message.chat.id]) return reply({
-                type: "text",
-                text: "Empty."
-            });
-            return reply({
-                type: "text",
-                text: JSON.stringify(this.db[message.chat.id])
-            });
+            if (!this.db[message.chat.id]) return this.sendMessage(message.chat.id, "Empty.");
+            return this.sendMessage(message.chat.id, JSON.stringify(this.db[message.chat.id]));
         case "kick":
             if (!this.auth.isMod(message.from.id)) return;
-            if (!target) return reply({
-                type: "text",
-                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
-            });
-            if (this.auth.isMod(target)) return reply({
-                type: "text",
-                text: "Can't kick mods or admins."
-            });
-            this.bot.kickChatMember(message.chat.id, target).catch((/* err */) => reply({
-                type: "text",
-                text: "An error occurred while kicking the user."
-            }));
+            if (!target) return this.sendMessage(message.chat.id, "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled.");
+            if (this.auth.isMod(target)) return this.sendMessage(message.chat.id, "Can't kick mods or admins.");
+            this.kickChatMember(message.chat.id, target).catch((/* err */) => this.sendMessage(message.chat.id, "An error occurred while kicking the user."));
             return;
         case "ban":
             if (!this.auth.isMod(message.from.id)) return;
-            if (!target) return reply({
-                type: "text",
-                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
-            });
-            if (this.auth.isMod(target)) return reply({
-                type: "text",
-                text: "Can't ban mods or admins."
-            });
+            if (!target) return this.sendMessage(message.chat.id, "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled.");
+            if (this.auth.isMod(target)) return this.sendMessage(message.chat.id, "Can't ban mods or admins.");
             if (!banned)
                 this.db[message.chat.id] = [];
             this.db[message.chat.id].push(target);
-            this.bot.kickChatMember(message.chat.id, target).catch((/* err */) => reply({
-                type: "text",
-                text: "An error occurred while kicking the user."
-            }));
+            this.kickChatMember(message.chat.id, target).catch((/* err */) => this.sendMessage(message.chat.id, "An error occurred while kicking the user."));
             return;
         case "pardon":
             if (!this.auth.isMod(message.from.id)) return;
-            if (!target) return reply({
-                type: "text",
-                text: "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled."
-            });
+            if (!target) return this.sendMessage(message.chat.id, "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled.");
             if (!banned) return;
             this.db[message.chat.id] = banned.filter(id => id !== target);
-            reply({
-                type: "text",
-                text: "Pardoned."
-            });
+            this.sendMessage(message.chat.id, "Pardoned.");
             return;
         default:
             return;
         }
     }
 
-    onNewChatParticipant(message, reply) {
+    onNewChatParticipant({message}) {
         // If there is no database, nobody was ever banned so far. Return early.
         if (!this.db[message.chat.id]) return;
 
@@ -104,9 +71,6 @@ module.exports = class Kick extends Plugin {
         if (this.db[message.chat.id].indexOf(target) === -1) return;
         if (this.auth.isMod(target)) return;
 
-        this.bot.kickChatMember(message.chat.id, target).catch((/* err */) => reply({
-            type: "text",
-            text: "An error occurred while kicking the user."
-        }));
+        this.kickChatMember(message.chat.id, target).catch((/* err */) => this.sendMessage(message.chat.id, "An error occurred while kicking the user."));
     }
 };

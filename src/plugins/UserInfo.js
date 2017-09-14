@@ -7,7 +7,7 @@ module.exports = class UserInfo extends Plugin {
             description: "Log information about users",
             help: "Syntax: `/id user`",
 
-            type: Plugin.Type.PROXY,
+            type: Plugin.Type.PROXY
         };
     }
 
@@ -29,7 +29,7 @@ module.exports = class UserInfo extends Plugin {
         return Promise.resolve();
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "id") return;
 
         let username;
@@ -43,25 +43,16 @@ module.exports = class UserInfo extends Plugin {
             else
                 username = message.reply_to_message.from.username;
         } else
-            return reply({
-                type: "text",
-                text: "Syntax: /id @username"
-            });
+            return this.sendMessage(message.chat.id, "Syntax: /id @username");
 
         if (!(username in this.db))
-            return reply({
-                type: "text",
-                text: "I've never seen that user before."
-            });
+            return this.sendMessage(message.chat.id, "I've never seen that user before.");
 
         const userId = this.db[username];
         const aliases = Object.keys(this.db).filter(username => this.db[username] === userId);
 
-        reply({
-            type: "text",
-            text: `${username} - ${this.db[username]}
+        this.sendMessage(message.chat.id, `${username} - ${this.db[username]}
 
-Known aliases: ${aliases.join(", ")}`
-        });
+Known aliases: ${aliases.join(", ")}`);
     }
 };
