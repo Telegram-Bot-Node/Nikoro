@@ -2,9 +2,9 @@ const fs = require("fs");
 
 // https://stackoverflow.com/a/1584377
 Array.prototype.unique = function() {
-    var a = this.concat();
-    for (var i = 0; i < a.length; ++i) {
-        for (var j = i + 1; j < a.length; ++j) {
+    const a = this.concat();
+    for (let i = 0; i < a.length; ++i) {
+        for (let j = i + 1; j < a.length; ++j) {
             if (a[i] === a[j])
                 a.splice(j--, 1);
         }

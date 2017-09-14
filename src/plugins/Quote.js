@@ -21,19 +21,26 @@ module.exports = class Quote extends Plugin {
             this.db.quotes = [];
     }
 
-    get commands() { return {
-        addquote: ({message}) => this.addQuote(message),
-        quote: ({args}) => {
-            if (args[0])
-                return this.findQuote(args[0] - 1);
-            return this.randomQuote();
+    onCommand({message, command, args}) {
+        switch (command) {
+        case "addquote":
+            const out = this.addQuote(message);
+            this.sendMessage(message.chat.id, out);
+            return;
+        case "quote":
+            const quote = args[0] ? this.findQuote(args[0] - 1) : this.randomQuote();
+            this.sendMessage(message.chat.id, quote);
+            return;
+        default:
+            return;
         }
-    }; }
+    }
 
     addQuote(message) {
         if (message.reply_to_message === undefined ||
-                message.reply_to_message.text === undefined)
+                message.reply_to_message.text === undefined) {
             return "Please reply to a text message first";
+        }
 
         const author = this.getAuthor(message.reply_to_message);
         const text = message.reply_to_message.text;
@@ -48,14 +55,15 @@ module.exports = class Quote extends Plugin {
 
     findQuote(id) {
         const quote = this.db.quotes[id];
-        if (!quote) return "Quote not found";
+        if (!quote)
+            return "Quote not found";
 
         return `<${quote.author}>: ${quote.text}`;
     }
 
-    randomQuote() {
+    randomQuote(reply) {
         const id = Math.floor(Math.random() * this.db.quotes.length);
-        this.findQuote(id);
+        return this.findQuote(id, reply);
     }
 
     getAuthor(obj) {

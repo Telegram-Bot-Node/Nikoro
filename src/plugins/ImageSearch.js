@@ -29,7 +29,7 @@ module.exports = class ImageSearch extends Plugin {
         this.client = new GoogleImages(this.config.GOOGLE_CX, this.config.GOOGLE_API_KEY);
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "images") return;
         const query = args.join(" ");
         this.client.search(query).then(images => {
@@ -37,14 +37,8 @@ module.exports = class ImageSearch extends Plugin {
             Util.downloadAndSaveTempResource(
                 url,
                 url.match(/\.([\w]+)$/)[1],
-                path => reply({
-                    type: "photo",
-                    photo: path
-                })
+                path => this.sendPhoto(message.chat.id, path)
             );
-        }).catch(err => reply({
-            type: "text",
-            text: JSON.stringify(err, null, 4)
-        }));
+        }).catch(err => this.sendMessage(message.chat.id, JSON.stringify(err, null, 4)));
     }
 };

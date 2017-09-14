@@ -17,70 +17,93 @@ module.exports = class Vote extends Plugin {
             this.db.votes = {};
     }
 
-    get commands() { return {
-        vote: ({args, message}) => {
-            const chatId = message.chat.id;
-            if (args.length === 0) return "Syntax: `/vote <option>`";
-            if (!this.db.votes[chatId]) return "There is no vote at this time.";
+    onCommand({message, command, args}) {
+        const chatId = message.chat.id;
+        switch (command) {
+        case "vote": {
+            if (args.length === 0)
+                return this.sendMessage(message.chat.id, "Syntax: `/vote <option>`");
+            if (!this.db.votes[chatId])
+                return this.sendMessage(message.chat.id, "There is no vote at this time.");
 
             this.db.votes[chatId].results[message.from.username] = args.join(" ");
-            return "Your vote has been registered.";
-        },
-        clearvote: ({message}) => {
-            delete this.db.votes[message.chat.id];
-            return "Question cleared.";
-        },
-        setvote: ({args, message}) => {
-            if (args.length === 0) return "Please specify a question.";
+
+            this.sendMessage(message.chat.id, "Your vote has been registered.");
+            return;
+        }
+        case "clearvote": {
+            delete this.db.votes[chatId];
+            this.sendMessage(message.chat.id, "Question cleared.");
+            return;
+        }
+        case "setvote": {
+            if (args.length === 0)
+                return this.sendMessage(message.chat.id, "Please specify a question.");
+
             const question = args.join(" ");
 
             // Note that previous results are automatically removed
-            this.db.votes[message.chat.id] = {
+            this.db.votes[chatId] = {
                 text: question,
                 results: {}
             };
 
-            return "Question set.";
-        },
-        getvote: ({message}) => {
-            const chatId = message.chat.id;
-            if (!this.db.votes[chatId]) return "There is no vote at this time.";
+            this.sendMessage(message.chat.id, "Question set.");
+            return;
+        }
+        case "getvote": {
+            if (!this.db.votes[chatId])
+                return this.sendMessage(message.chat.id, "There is no vote at this time.");
 
             const poll = this.db.votes[chatId];
             const totalVotes = Object.keys(poll.results).length;
             let response = `Question: ${poll.text}\n` +
                 `Vote count: ${totalVotes}\n\n`;
 
-            const uniqueAnswers = new Set();
+            // Get an array like [{user: "foo", answer: "bar"}, ...]
+            const arrayOfVotes = [];
             for (const user in poll.results) {
                 if (!poll.results.hasOwnProperty(user)) continue;
-                uniqueAnswers.add(poll.results[user]);
+                arrayOfVotes.push({
+                    user,
+                    answer: poll.results[user]
+                });
             }
 
-            // Map<Answer, Array<Users>>
-            const answerToUsersMap = new Map();
-            for (const answer of uniqueAnswers) {
-                const users = [];
-                // Which users voted for this answer?
-                for (const user in poll.results) {
-                    if (!poll.results.hasOwnProperty(user)) continue;
-                    if (poll.results[user] !== answer) continue;
-                    users.push(user);
-                }
-                answerToUsersMap.set(answer, users);
+            // The key is the vote, the content is the array of users who voted.
+            // Eg. {"bar": ["foo"]}
+            const voteCounts = {};
+            for (const vote of arrayOfVotes) {
+                const answer = vote.answer;
+                const user = vote.user;
+                if (voteCounts[answer])
+                    voteCounts[answer].push(user);
+                else
+                    voteCounts[answer] = [user];
             }
 
-            // Sort the map (https://stackoverflow.com/a/31159284) by user array length
-            const sortedMap = new Map([...answerToUsersMap.entries()]
-                .sort(([[answerA, usersA], [answerB, usersB]]) => usersA.length - usersB.length));
+            // Make a string for each option, and then sort the options by vote count
+            const voteStrings = [];
+            for (const answer in voteCounts) {
+                if (!voteCounts.hasOwnProperty(answer)) continue;
+                const votes = voteCounts[answer];
+                const percentage = (100 * votes.length / totalVotes).toFixed(2);
+                voteStrings.push({
+                    votes,
+                    string: `${answer}: ${votes.length} votes (${percentage}%)\n` +
+                        votes.join(", ")
+                });
+            }
+            response += voteStrings
+                .sort((a, b) => a.votes - b.votes)
+                .map(tuple => tuple.string)
+                .join("\n\n");
 
-            sortedMap.forEach((users, answer) => {
-                const votes = users.length;
-                const percentage = (100 * votes / totalVotes).toFixed(2);
-                response += `${answer}: ${votes} votes (${percentage}%)\n` + users.join(", ") + "\n";
-            });
-
-            return response;
+            this.sendMessage(message.chat.id, response);
+            return;
         }
-    };}
+        default:
+            return;
+        }
+    }
 };

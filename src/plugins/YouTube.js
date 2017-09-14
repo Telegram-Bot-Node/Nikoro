@@ -27,27 +27,28 @@ module.exports = class YouTubePlugin extends Plugin {
         });
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "yt") return;
         const query = args.join(" ");
         YouTube.search.list({
             part: "snippet", // required by YT API
             q: query
         }, function(err, data) {
-            if (err)
-                return reply({
-                    type: "text",
-                    text: "An error happened."
-                });
+            if (err) {
+                this.sendMessage(message.chat.id, "An error happened.");
+                return;
+            }
 
             const result = data.items[0];
-            reply({
-                type: "text",
-                text: `[${result.snippet.title}](https://youtube.com/watch?v=${result.id.videoId})\n\n${result.snippet.description}`,
-                options: {
+            this.sendMessage(
+                message.chat.id,
+                `[${result.snippet.title}](https://youtube.com/watch?v=${result.id.videoId})
+
+${result.snippet.description}`,
+                {
                     parse_mode: "Markdown"
                 }
-            });
+            );
         });
     }
 };

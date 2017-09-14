@@ -30,17 +30,14 @@ module.exports = class Google extends Plugin {
         });
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "google") return;
         const query = args.join(" ");
         this.google.build({
             q: query
         }, function(err, response) {
             if (err) {
-                reply({
-                    type: "text",
-                    text: "An error happened."
-                });
+                this.sendMessage(message.chat.id, "An error happened.");
                 return;
             }
             const links = response.items;
@@ -49,13 +46,7 @@ module.exports = class Google extends Plugin {
                 .join("\n\n")
                 .replace(/<br>/g, "\n") // This tag doesn't work in Telegram HTML.
                 .replace(/&nbsp;/g, " "); // This entity doesn't work in Telegram HTML.
-            reply({
-                type: "text",
-                text: text,
-                options: {
-                    parse_mode: "HTML"
-                }
-            });
+            this.sendMessage(message.chat.id, text, {parse_mode: "HTML"});
         });
     }
 };

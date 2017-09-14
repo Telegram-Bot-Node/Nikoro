@@ -16,41 +16,49 @@ module.exports = class Set extends Plugin {
             this.db.replacements = [];
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chatID = message.chat.id;
 
         for (const item of this.db.replacements) {
             if (chatID !== item.chatID) continue;
             if (!Util.startsWith(message.text, item.trigger)) continue;
-            reply({type: "text", text: item.replacement});
+            this.sendMessage(message.chat.id, item.replacement);
         }
     }
 
-    get commands() { return {
-        set: ({args, message}) => {
-            const chatID = message.chat.id;
-            if (args.length < 2) return "Syntax: `/set <trigger> <replacement>`";
+    onCommand({message, command, args}) {
+        const chatID = message.chat.id;
+        let trigger;
+        let replacement;
+        switch (command) {
+        case "set":
+            if (args.length < 2)
+                return this.sendMessage(message.chat.id, "Syntax: `/set <trigger> <replacement>`");
 
-            const trigger = args.shift();
-            const replacement = args.join(" ");
+            trigger = args.shift();
+            replacement = args.join(" ");
             this.db.replacements.push({trigger, replacement, chatID});
-            return "Done.";
-        },
-        unset: ({args, message}) => {
-            const chatID = message.chat.id;
-            const trigger = args[0];
+            this.sendMessage(message.chat.id, "Done.");
+            return;
+        case "unset":
+            trigger = args[0];
             // Take only replacements with either a different chat id or a different trigger
             this.db.replacements = this.db.replacements.filter(item => (item.chatID !== chatID) || (item.trigger !== trigger));
-            return "Done.";
-        },
-        get: ({message}) => {
-            const chatID = message.chat.id;
+            this.sendMessage(message.chat.id, "Done.");
+            return;
+        case "get": {
             let text = "";
             for (const item of this.db.replacements) {
                 if (item.chatID !== chatID) continue;
                 text += `${item.trigger} => ${item.replacement}\n`;
             }
-            return (text === "") ? "No triggers set." : text;
+            if (text === "")
+                text = "No triggers set.";
+            this.sendMessage(message.chat.id, text);
+            return;
         }
-    }; }
+        default:
+            return;
+        }
+    }
 };

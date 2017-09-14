@@ -29,30 +29,30 @@ module.exports = class UserInfo extends Plugin {
         return Promise.resolve();
     }
 
-    get commands() { return {
-        id: ({message, args}) => {
-            let username;
-            if (args.length === 1)
-                username = args[0].replace("@", "");
-            else if (message.reply_to_message) {
-                if (message.reply_to_message.new_chat_participant)
-                    username = message.reply_to_message.new_chat_participant.username;
-                else if (message.reply_to_message.left_chat_participant)
-                    username = message.reply_to_message.left_chat_participant.username;
-                else
-                    username = message.reply_to_message.from.username;
-            } else
-                return "Syntax: /id @username";
+    onCommand({message, command, args}) {
+        if (command !== "id") return;
 
-            if (!(username in this.db))
-                return "I've never seen that user before.";
+        let username;
+        if (args.length === 1)
+            username = args[0].replace("@", "");
+        else if (message.reply_to_message) {
+            if (message.reply_to_message.new_chat_participant)
+                username = message.reply_to_message.new_chat_participant.username;
+            else if (message.reply_to_message.left_chat_participant)
+                username = message.reply_to_message.left_chat_participant.username;
+            else
+                username = message.reply_to_message.from.username;
+        } else
+            return this.sendMessage(message.chat.id, "Syntax: /id @username");
 
-            const userId = this.db[username];
-            const aliases = Object.keys(this.db).filter(username => this.db[username] === userId);
+        if (!(username in this.db))
+            return this.sendMessage(message.chat.id, "I've never seen that user before.");
 
-            return `${username} - ${this.db[username]}
+        const userId = this.db[username];
+        const aliases = Object.keys(this.db).filter(username => this.db[username] === userId);
 
-    Known aliases: ${aliases.join(", ")}`;
-        }
-    };}
+        this.sendMessage(message.chat.id, `${username} - ${this.db[username]}
+
+Known aliases: ${aliases.join(", ")}`);
+    }
 };
