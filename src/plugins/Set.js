@@ -26,39 +26,31 @@ module.exports = class Set extends Plugin {
         }
     }
 
-    onCommand({message, command, args}) {
-        const chatID = message.chat.id;
-        let trigger;
-        let replacement;
-        switch (command) {
-        case "set":
-            if (args.length < 2)
-                return this.sendMessage(message.chat.id, "Syntax: `/set <trigger> <replacement>`");
+    get commands() { return {
+        set: ({args, message}) => {
+            const chatID = message.chat.id;
+            if (args.length < 2) return "Syntax: `/set <trigger> <replacement>`";
 
-            trigger = args.shift();
-            replacement = args.join(" ");
+            const trigger = args.shift();
+            const replacement = args.join(" ");
             this.db.replacements.push({trigger, replacement, chatID});
-            this.sendMessage(message.chat.id, "Done.");
-            return;
-        case "unset":
-            trigger = args[0];
+            return "Done.";
+        },
+        unset: ({args, message}) => {
+            const chatID = message.chat.id;
+            const trigger = args[0];
             // Take only replacements with either a different chat id or a different trigger
             this.db.replacements = this.db.replacements.filter(item => (item.chatID !== chatID) || (item.trigger !== trigger));
-            this.sendMessage(message.chat.id, "Done.");
-            return;
-        case "get": {
+            return "Done.";
+        },
+        get: ({message}) => {
+            const chatID = message.chat.id;
             let text = "";
             for (const item of this.db.replacements) {
                 if (item.chatID !== chatID) continue;
                 text += `${item.trigger} => ${item.replacement}\n`;
             }
-            if (text === "")
-                text = "No triggers set.";
-            this.sendMessage(message.chat.id, text);
-            return;
+            return (text === "") ? "No triggers set." : text;
         }
-        default:
-            return;
-        }
-    }
+    }; }
 };

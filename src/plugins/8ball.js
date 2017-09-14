@@ -32,8 +32,7 @@ module.exports = class The8Ball extends Plugin {
         };
     }
 
-    onCommand({message, command}) {
-        if (command !== "8ball") return;
-        this.sendMessage(message.chat.id, this.choices[Math.floor(Math.random() * choices.length)]);
-    }
+    get commands() { return {
+        "8ball": () => this.choices[Math.floor(Math.random() * choices.length)]
+    }; }
 };

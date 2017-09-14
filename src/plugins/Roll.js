@@ -15,21 +15,18 @@ module.exports = class Roll extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
-        if (command !== "roll") return;
+    get commands() { return {
+        roll: ({args: [input]}) => {
+            if (!input) return "You can't roll the air, give me something! (example: /roll 1d6)";
+            const parts = input.split("d");
+            const n = Number(parts[0]);
+            const m = Number(parts[1]);
 
-        if (!args[0])
-            return this.sendMessage(message.chat.id, "You can't roll the air, give me something! (example: /roll 1d6)");
+            let result = "";
+            for (let i = 0; i < n; i++)
+                result += (Math.floor(Math.random() * m) + 1) + " ";
 
-        const n = Number(args[0].split('d')[0]);
-        const m = Number(args[0].split('d')[1]);
-        if (isNaN(n) || isNaN(m))
-            return this.sendMessage(message.chat.id, "I need some numbers (example: /roll 1d6)");
-
-        let result = 0;
-        for (let i = 0; i < n; i++)
-            result += Math.floor(Math.random() * m) + 1;
-
-        this.sendMessage(message.chat.id, result);
-    }
+            return result;
+        }
+    };}
 };

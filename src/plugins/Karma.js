@@ -6,21 +6,18 @@ module.exports = class Karma extends Plugin {
         return {
             name: "Karma",
             description: "Keeps scores about users.",
-            help: "@username++, @username--."
+            help: "@username++, @username--. Use /karmachart to view scores."
         };
     }
 
-    onCommand({message, command}) {
-        if (command !== "karmachart") return;
-        let text = "";
-        for (const username in this.db[message.chat.id]) {
-            if (!this.db[message.chat.id].hasOwnProperty(username)) continue;
-            text += `${username}: ${this.db[message.chat.id][username]} points\n`;
+    get commands() { return {
+        karmachart: ({message}) => {
+            if (!this.db[message.chat.id]) return "No scores yet.";
+            const users = Object.keys(this.db[message.chat.id]);
+            if (users.length === 0) return "No scores yet.";
+            return users.map(user => `${user}: ${this.db[message.chat.id][user]} points`).join("\n");
         }
-        if (text === "")
-            return this.sendMessage(message.chat.id, "No score yet.");
-        this.sendMessage(message.chat.id, text);
-    }
+    };}
 
     onText({message}) {
         // Telegram usernames are 5 or more characters long

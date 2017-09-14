@@ -10,10 +10,13 @@ module.exports = class Ping extends Plugin {
         };
     }
 
+    get commands() { return {
+        ping: () => "Pong!"
+    }; }
+
     onText({message}) {
-        if (!this.db.text) this.db.text = "Pong!";
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
-        this.sendMessage(message.chat.id, this.db.text);
+        this.sendMessage(message.from.id, "Pong!");
     }
 };

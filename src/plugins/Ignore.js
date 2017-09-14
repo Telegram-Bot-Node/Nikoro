@@ -25,16 +25,14 @@ module.exports = class Ignore extends Plugin {
         return Promise.resolve();
     }
 
-    onCommand({message, command, args}) {
-        switch (command) {
-        case "ignorelist":
-            return this.sendMessage(message.chat.id, JSON.stringify(this.db.ignored));
-        case "ignore": {
+    get commands() { return {
+        ignorelist: () => JSON.stringify(this.db.ignored),
+        ignore: ({args, message}) => {
             let target;
             if (args.length === 1) {
                 target = args[0];
-                if (/[@a-z_]/i.test(target))
-                    return this.sendMessage(message.chat.id, "Syntax: `/ignore <ID>`");
+                if (/[@a-z_]/i.test(target)) // May not ignore usernames
+                    return "Syntax: `/ignore <ID>`";
             } else if (message.reply_to_message) {
                 if (message.reply_to_message.new_chat_participant)
                     target = message.reply_to_message.new_chat_participant.id;
@@ -42,22 +40,20 @@ module.exports = class Ignore extends Plugin {
                     target = message.reply_to_message.left_chat_participant.id;
                 else
                     target = message.reply_to_message.from.id;
-            } else
-                return this.sendMessage(message.chat.id, "No target found.");
+            } else return "No target found.";
 
-            if (this.auth.isMod(target)) return this.sendMessage(message.chat.id, "Can't ignore mods.");
+            if (this.auth.isMod(target)) return "Can't ignore mods.";
 
             this.db.ignored.push(target);
 
-            this.sendMessage(message.chat.id, "Ignored.");
-            return;
-        }
-        case "unignore": {
+            return "Ignored.";
+        },
+        unignore: ({args, message}) => {
             let target;
             if (args.length === 1) {
                 target = args[0];
                 if (/[@a-z_]/i.test(target))
-                    return this.sendMessage(message.chat.id, "Syntax: `/ignore <ID>`");
+                    return "Syntax: `/ignore <ID>`";
             } else if (message.reply_to_message) {
                 if (message.reply_to_message.new_chat_participant)
                     target = message.reply_to_message.new_chat_participant.id;
@@ -65,15 +61,10 @@ module.exports = class Ignore extends Plugin {
                     target = message.reply_to_message.left_chat_participant.id;
                 else
                     target = message.reply_to_message.from.id;
-            } else
-                return this.sendMessage(message.chat.id, "No target found.");
+            } else return "No target found.";
 
             this.db.ignored = this.db.ignored.filter(id => id !== target);
-            this.sendMessage(message.chat.id, "Done.");
-            return;
+            return "Done.";
         }
-        default:
-            return;
-        }
-    }
+    }; }
 };
