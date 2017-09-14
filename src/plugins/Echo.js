@@ -18,6 +18,6 @@ module.exports = class Echo extends Plugin {
         if (!args[0]) return;
 
         this.log.debug("(((Echoing)))");
-        this.compose(message.chat.id, args.join(" "));
+        this.sendMessage(message.chat.id, args.join(" "));
     }
 };
