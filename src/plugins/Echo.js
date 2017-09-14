@@ -13,11 +13,11 @@ module.exports = class Echo extends Plugin {
         };
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command, args}) {
         if (command !== "echo") return;
         if (!args[0]) return;
 
         this.log.debug("(((Echoing)))");
-        reply({type: 'text', text: args.join(" ")});
+        this.compose(message.chat.id, args.join(" "));
     }
 };

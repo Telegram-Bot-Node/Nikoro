@@ -22,38 +22,6 @@ module.exports = class PluginManager {
 
         this.config = config;
 
-        const handleReply = (chatId, reply) => {
-            switch (reply.type) {
-            case "text":
-                return bot.sendMessage(chatId, reply.text, reply.options);
-
-            case "inline":
-                return bot.answerInlineQuery(chatId, reply.results, reply.options);
-
-            case "audio":
-                return bot.sendAudio(chatId, reply.audio, reply.options);
-            case "document":
-                return bot.sendDocument(chatId, reply.document, reply.options);
-            case "photo":
-                return bot.sendPhoto(chatId, reply.photo, reply.options);
-            case "sticker":
-                return bot.sendSticker(chatId, reply.sticker, reply.options);
-            case "video":
-                return bot.sendVideo(chatId, reply.video, reply.options);
-            case "voice":
-                return bot.sendVoice(chatId, reply.voice, reply.options);
-
-            case "status": case "chatAction":
-                return bot.sendChatAction(chatId, reply.status, reply.options);
-
-            default: {
-                const message = `Unrecognized reply type ${reply.type}`;
-                this.log.error(message);
-                return Promise.reject(message);
-            }
-            }
-        };
-
         const events = [
             "text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location",
             "inline_query", "chosen_inline_request",
@@ -74,13 +42,7 @@ module.exports = class PluginManager {
                         )
                        .then(() => this.emit(
                             eventName,
-                            message,
-                            eventName === "inline_query" ?
-                                reply => handleReply(message.id, reply) :
-                                reply => handleReply(message.chat.id, reply),
-                            eventName === "inline_query" ?
-                                null :
-                                (target, fromChatId, messageId) => bot.forwardMessage(target, fromChatId, messageId)
+                            message
                         ))
                         .catch(err => {
                             if (err) this.log.error("Message rejected with error", err);
@@ -167,8 +129,16 @@ module.exports = class PluginManager {
         this.log.debug(`Required ${pluginName}`);
 
         const loadedPlugin = new ThisPlugin(this.emitter, this.bot);
-        this.log.debug(`Created ${pluginName}.`);
 
+        for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(this.bot))) {
+            if (typeof this.bot[method] !== "function") continue;
+            if (method === "constructor" || method === "on") continue;
+            if (/^_/.test(method)) continue; // Do not expose internal methods
+            this.log.debug(`Binding ${method}`);
+            loadedPlugin[method] = this.bot[method].bind(this.bot);
+        }
+
+        this.log.debug(`Created ${pluginName}.`);
         loadedPlugin.start(this.config, this.auth);
 
         return loadedPlugin;
@@ -218,7 +188,7 @@ module.exports = class PluginManager {
         return Promise.all(this.plugins.map(pl => pl.stop()));
     }
 
-    emit(event, message, ...callbacks) {
+    emit(event, message) {
         this.log.debug(`Triggered event ${event}`);
 
         // Command emitter
@@ -233,14 +203,14 @@ module.exports = class PluginManager {
                 args = message.text.slice(entity.offset + entity.length + 1).split(" ");
             }
 
-            this.emitter.emit("_command", {message, command, args}, ...callbacks);
+            this.emitter.emit("_command", {message, command, args});
         } else if (message.query !== undefined) {
             const parts = message.query.split(" ");
             const command = parts[0].toLowerCase();
             const args = parts.length > 1 ? parts.slice(1) : [];
-            this.emitter.emit("_inline_command", {message, command, args}, ...callbacks);
+            this.emitter.emit("_inline_command", {message, command, args});
         }
 
-        this.emitter.emit(event, {message}, ...callbacks);
+        this.emitter.emit(event, {message});
     }
 };
