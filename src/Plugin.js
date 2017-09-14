@@ -134,4 +134,42 @@ module.exports = class Plugin {
             this.listener.removeListener(eventName, handler);
         }
     }
+
+    compose(chatId, options) { // Internal method, used to simplify API access
+        if (typeof chatId === "object") // Shortcut: you can pass message rather than message.chat.id
+            chatId = chatId.chat.id;
+
+        if (typeof options === "string") // Shortcut: you can pass a string rather than {type: text, text: arg}
+            options = {type: "text", text: options}
+
+        switch (options.type) {
+            case "text":
+                return this.sendMessage(chatId, options.text, options.options);
+
+            case "inline":
+                return this.answerInlineQuery(chatId, options.results, options.options);
+
+            case "audio":
+                return this.sendAudio(chatId, options.audio, options.options);
+            case "document":
+                return this.sendDocument(chatId, options.document, options.options);
+            case "photo":
+                return this.sendPhoto(chatId, options.photo, options.options);
+            case "sticker":
+                return this.sendSticker(chatId, options.sticker, options.options);
+            case "video":
+                return this.sendVideo(chatId, options.video, options.options);
+            case "voice":
+                return this.sendVoice(chatId, options.voice, options.options);
+
+            case "status": case "chatAction":
+                return this.sendChatAction(chatId, options.status, options.options);
+
+            default: {
+                const message = `Unrecognized reply type ${options.type}`;
+                this.log.error(message);
+                throw new Error(message);
+            }
+        }
+    }
 };
