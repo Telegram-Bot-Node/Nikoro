@@ -9,7 +9,7 @@ module.exports = class Ignore extends Plugin {
             help: "Syntax: /ignore <ID>",
 
             visibility: Plugin.Visibility.VISIBLE,
-            type: Plugin.Type.NORMAL | Plugin.Type.PROXY,
+            type: Plugin.Type.NORMAL | Plugin.Type.PROXY
         };
     }
 
@@ -25,22 +25,14 @@ module.exports = class Ignore extends Plugin {
         return Promise.resolve();
     }
 
-    onCommand({message, command, args}, reply) {
-        switch (command) {
-        case "ignorelist":
-            return reply({
-                type: "text",
-                text: JSON.stringify(this.db.ignored)
-            });
-        case "ignore": {
+    get commands() { return {
+        ignorelist: () => JSON.stringify(this.db.ignored),
+        ignore: ({args, message}) => {
             let target;
             if (args.length === 1) {
                 target = args[0];
-                if (/[@a-z_]/i.test(target))
-                    return reply({
-                        type: "text",
-                        text: "Syntax: `/ignore <ID>`"
-                    });
+                if (/[@a-z_]/i.test(target)) // May not ignore usernames
+                    return "Syntax: `/ignore <ID>`";
             } else if (message.reply_to_message) {
                 if (message.reply_to_message.new_chat_participant)
                     target = message.reply_to_message.new_chat_participant.id;
@@ -48,34 +40,20 @@ module.exports = class Ignore extends Plugin {
                     target = message.reply_to_message.left_chat_participant.id;
                 else
                     target = message.reply_to_message.from.id;
-            } else
-                return reply({
-                    type: "text",
-                    text: "No target found."
-                });
+            } else return "No target found.";
 
-            if (this.auth.isMod(target)) return reply({
-                type: "text",
-                text: "Can't ignore mods."
-            });
+            if (this.auth.isMod(target)) return "Can't ignore mods.";
 
             this.db.ignored.push(target);
 
-            reply({
-                type: "text",
-                text: "Ignored."
-            });
-            return;
-        }
-        case "unignore": {
+            return "Ignored.";
+        },
+        unignore: ({args, message}) => {
             let target;
             if (args.length === 1) {
                 target = args[0];
                 if (/[@a-z_]/i.test(target))
-                    return reply({
-                        type: "text",
-                        text: "Syntax: `/ignore <ID>`"
-                    });
+                    return "Syntax: `/ignore <ID>`";
             } else if (message.reply_to_message) {
                 if (message.reply_to_message.new_chat_participant)
                     target = message.reply_to_message.new_chat_participant.id;
@@ -83,21 +61,10 @@ module.exports = class Ignore extends Plugin {
                     target = message.reply_to_message.left_chat_participant.id;
                 else
                     target = message.reply_to_message.from.id;
-            } else
-                return reply({
-                    type: "text",
-                    text: "No target found."
-                });
+            } else return "No target found.";
 
             this.db.ignored = this.db.ignored.filter(id => id !== target);
-            reply({
-                type: "text",
-                text: "Done."
-            });
-            return;
+            return "Done.";
         }
-        default:
-            return;
-        }
-    }
+    }; }
 };

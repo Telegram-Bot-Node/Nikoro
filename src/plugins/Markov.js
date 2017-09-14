@@ -76,7 +76,7 @@ module.exports = class Markov extends Plugin {
         return {
             name: "Markov",
             description: "Generates random text.",
-            help: "/markov, or `/markov <seed>`",
+            help: "/markov, or `/markov <seed>`"
         };
     }
 
@@ -107,13 +107,11 @@ module.exports = class Markov extends Plugin {
         });
     }
 
-    onCommand({message, command, args}, reply) {
-        if (command !== "markov") return;
-        const chat = message.chat.id;
-        if (!this.m.dictionary[chat]) return;
-        reply({
-            type: "text",
-            text: this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined)
-        });
-    }
+    get commands() { return {
+        markov: ({message, args}) => {
+            const chat = message.chat.id;
+            if (!this.m.dictionary[chat]) return;
+            return this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined);
+        }
+    };}
 };

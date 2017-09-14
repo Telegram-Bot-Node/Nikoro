@@ -7,7 +7,7 @@ module.exports = class UserInfo extends Plugin {
             description: "Log information about users",
             help: "Syntax: `/id user`",
 
-            type: Plugin.Type.PROXY,
+            type: Plugin.Type.PROXY
         };
     }
 
@@ -29,39 +29,30 @@ module.exports = class UserInfo extends Plugin {
         return Promise.resolve();
     }
 
-    onCommand({message, command, args}, reply) {
-        if (command !== "id") return;
+    get commands() { return {
+        id: ({message, args}) => {
+            let username;
+            if (args.length === 1)
+                username = args[0].replace("@", "");
+            else if (message.reply_to_message) {
+                if (message.reply_to_message.new_chat_participant)
+                    username = message.reply_to_message.new_chat_participant.username;
+                else if (message.reply_to_message.left_chat_participant)
+                    username = message.reply_to_message.left_chat_participant.username;
+                else
+                    username = message.reply_to_message.from.username;
+            } else
+                return "Syntax: /id @username";
 
-        let username;
-        if (args.length === 1)
-            username = args[0].replace("@", "");
-        else if (message.reply_to_message) {
-            if (message.reply_to_message.new_chat_participant)
-                username = message.reply_to_message.new_chat_participant.username;
-            else if (message.reply_to_message.left_chat_participant)
-                username = message.reply_to_message.left_chat_participant.username;
-            else
-                username = message.reply_to_message.from.username;
-        } else
-            return reply({
-                type: "text",
-                text: "Syntax: /id @username"
-            });
+            if (!(username in this.db))
+                return "I've never seen that user before.";
 
-        if (!(username in this.db))
-            return reply({
-                type: "text",
-                text: "I've never seen that user before."
-            });
+            const userId = this.db[username];
+            const aliases = Object.keys(this.db).filter(username => this.db[username] === userId);
 
-        const userId = this.db[username];
-        const aliases = Object.keys(this.db).filter(username => this.db[username] === userId);
+            return `${username} - ${this.db[username]}
 
-        reply({
-            type: "text",
-            text: `${username} - ${this.db[username]}
-
-Known aliases: ${aliases.join(", ")}`
-        });
-    }
+    Known aliases: ${aliases.join(", ")}`;
+        }
+    };}
 };
