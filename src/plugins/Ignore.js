@@ -55,6 +55,7 @@ module.exports = class Ignore extends Plugin {
                 target = args[0];
                 if (/[@a-z_]/i.test(target))
                     return "Syntax: `/ignore <ID>`";
+            target = Number(target);
             } else if (message.reply_to_message) {
                 if (message.reply_to_message.new_chat_participant)
                     target = message.reply_to_message.new_chat_participant.id;
