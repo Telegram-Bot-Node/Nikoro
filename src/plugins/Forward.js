@@ -34,6 +34,7 @@ module.exports = class Forward extends Plugin {
                     type: "text",
                     text: "Use /fwdset to set the target channel/group."
                 });
+                return;
             }
             if (!message.reply_to_message) {
                 reply({
