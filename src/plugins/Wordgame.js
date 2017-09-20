@@ -26,17 +26,17 @@ module.exports = class Wordgame extends Plugin {
     }
 
     get commands() { return {
-        cancel() {
+        cancel: () => {
             this.state = "";
             return "Done.";
         },
-        anagram() {
+        anagram: () => {
             if (this.state) return "Another game is already running, use /cancel to stop it";
             this.state = "type";
             this.word = getRandomWord();
             return `What's the anagram of "${shuffleWord(this.word)}"?`;
         },
-        type() {
+        type: () => {
             if (this.state) return "Another game is already running, use /cancel to stop it";
             this.state = "type";
             this.word = getRandomWord();
@@ -45,6 +45,7 @@ module.exports = class Wordgame extends Plugin {
     };}
 
     onText({message}, reply) {
+        if (this.state === "") return;
         if (message.text !== this.word) return;
         this.state = "";
         reply({
