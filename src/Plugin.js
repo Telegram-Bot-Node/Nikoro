@@ -111,7 +111,7 @@ module.exports = class Plugin {
                 if (command !== trigger) continue;
                 const ret = this.commands[trigger]({message, args});
                 if (typeof ret === "string" || typeof ret === "number") {
-                    this.sendMessage(message.from.id, ret);
+                    this.sendMessage(message.chat.id, ret);
                     return;
                 }
                 if (typeof ret === "undefined")
