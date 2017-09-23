@@ -111,8 +111,8 @@ module.exports = class PluginManager {
                 }
             } else {
                 if (isGloballyEnabled) {
-                    this.removePlugin(pluginName);
-                    response = "Plugin disabled successfully.";
+                    const outcome = this.removePlugin(pluginName);
+                    response = outcome ? "Plugin disabled successfully." : "An error occurred.";
                 } else {
                     response = "Plugin already enabled.";
                 }
@@ -180,11 +180,15 @@ module.exports = class PluginManager {
         Error.stackTraceLimit = 10; // Reset to default value
     }
 
+    // Returns true if at least one plugin was removed
     removePlugin(pluginName) {
         this.log.verbose(`Removing plugin ${pluginName}`);
+        const prevPluginNum = this.plugins.length;
         const isCurrentPlugin = nameMatches(pluginName);
         this.plugins.filter(isCurrentPlugin).forEach(pl => pl.stop());
         this.plugins = this.plugins.filter(pl => !isCurrentPlugin(pl));
+        const curPluginNum = this.plugins.length;
+        return (prevPluginNum - curPluginNum) > 0;
     }
 
     stopPlugins() {

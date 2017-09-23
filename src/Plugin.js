@@ -105,7 +105,7 @@ module.exports = class Plugin {
          *   - a string, in which case the string is sent as a message
          *   - an object, in which case it is sent with the appropriate message type
          */
-        this.listener.on("_command", ({message, command, args}) => {
+        const shortcutHandler = ({message, command, args}) => {
             if (!this.commands) return;
             for (const trigger of Object.keys(this.commands)) {
                 if (command !== trigger) continue;
@@ -136,14 +136,15 @@ module.exports = class Plugin {
                 case "status": case "chatAction":
                     return this.sendChatAction(message.chat.id, ret.status, ret.options);
 
-                default: {
-                    const message = `Unrecognized reply type ${ret.type}`;
-                    this.log.error(message);
-                    return Promise.reject(message);
-                }
+                default:
+                    const errorMessage = `Unrecognized reply type ${ret.type}`;
+                    this.log.error(errorMessage);
+                    return Promise.reject(errorMessage);
                 }
             }
-        });
+        };
+        this.listener.on("_command", shortcutHandler);
+        this.shortcutHandler = shortcutHandler;
     }
 
     start() {
@@ -157,5 +158,6 @@ module.exports = class Plugin {
             const handler = this.handlers[eventName];
             this.listener.removeListener(eventName, handler);
         }
+        this.listener.removeListener("_command", this.shortcutHandler);
     }
 };

@@ -4,6 +4,16 @@ const config = JSON.parse(require("fs").readFileSync(__dirname + "/sample-config
 const Auth = require("../helpers/Auth");
 let auth = new Auth(config);
 
+// Enables us to get around the "done called multiple times" without much repetition.
+const fixDone = done => {
+    let wasDoneCalled = false;
+    return (...args) => {
+        if (wasDoneCalled) return;
+        wasDoneCalled = true;
+        done(...args);
+    }
+};
+
 const EventEmitter = require("events");
 class TelegramBot extends EventEmitter {
     constructor() {
@@ -74,7 +84,7 @@ describe("Bot", function() {
             if (text.includes(sentinel)) done();
         });
         bot.pushMessage({
-            text: "/enableplugin echo",
+            text: "/enable Echo",
             from: {
                 id: 1,
                 first_name: 'Root',
@@ -83,8 +93,9 @@ describe("Bot", function() {
         });
         bot.pushMessage({text: `/echo ${sentinel}`});
     });
-    it("should disable plugins", function(done) {
-        this.slow(200);
+    it("should disable plugins", function(_done) {
+        this.slow(1100);
+        const done = fixDone(_done);
         const sentinel = Math.random().toString();
         const callback = ({text}) => {
             if (text.includes(sentinel)) done(new Error("Echo wasn't disabled"));
@@ -93,10 +104,10 @@ describe("Bot", function() {
         setTimeout(function() {
             bot.removeListener("_debug_message", callback);
             done();
-        }, 100);
+        }, 1000);
 
         bot.pushMessage({
-            text: "/disableplugin echo",
+            text: "/disable Echo",
             from: {
                 id: 1,
                 first_name: 'Root',
@@ -105,8 +116,9 @@ describe("Bot", function() {
         });
         bot.pushMessage({text: `/echo ${sentinel}`});
     });
-    it("shouldn't let unauthorized users enable plugins", function(done) {
+    it("shouldn't let unauthorized users enable plugins", function(_done) {
         this.slow(200);
+        const done = fixDone(_done);
         const sentinel = Math.random().toString();
         const callback = ({text}) => {
             if (text.includes(sentinel)) done(new Error("Echo was enabled"));
@@ -118,7 +130,7 @@ describe("Bot", function() {
         }, 100);
 
         bot.pushMessage({
-            text: "/enableplugin echo",
+            text: "/enable echo",
             from: {
                 id: 1000,
                 first_name: 'Evil Eve',
@@ -127,8 +139,9 @@ describe("Bot", function() {
         });
         bot.pushMessage({text: `/echo ${sentinel}`});
     });
-    it("shouldn't let unauthorized users disable plugins", function(done) {
+    it("shouldn't let unauthorized users disable plugins", function(_done) {
         this.slow(200);
+        const done = fixDone(_done);
         pluginManager.loadPlugins(["Echo"]);
         const sentinel = Math.random().toString();
         const callback = ({text}) => {
@@ -137,7 +150,7 @@ describe("Bot", function() {
         bot.on("_debug_message", callback);
 
         bot.pushMessage({
-            text: "/disableplugin echo",
+            text: "/disable echo",
             from: {
                 id: 1000,
                 first_name: 'Evil Eve',
@@ -163,7 +176,7 @@ describe("Bot", function() {
 describe("Ignore", function() {
     const bot = new TelegramBot();
     const pluginManager = new PluginManager(bot, config, auth);
-    pluginManager.loadPlugins(["auth", "Ping"]);
+    pluginManager.loadPlugins(["Auth", "Ping"]);
     it("should ignore", function(done) {
         this.slow(200);
         auth.addAdmin(1, -123456789);
