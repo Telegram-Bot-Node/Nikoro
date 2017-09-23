@@ -18,7 +18,7 @@ module.exports = class RegexSet extends Plugin {
             this.db.replacements = [];
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chatID = message.chat.id;
 
         for (const item of this.db.replacements) {
@@ -36,7 +36,7 @@ module.exports = class RegexSet extends Plugin {
                 );
             replacement = replacement.replace(/\$name/g, message.from.first_name);
             replacement = replacement.replace(/\$username/g, message.from.username);
-            reply({type: "text", text: replacement});
+            this.sendMessage(message.chat.id, replacement);
         }
     }
 

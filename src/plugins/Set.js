@@ -16,13 +16,13 @@ module.exports = class Set extends Plugin {
             this.db.replacements = [];
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chatID = message.chat.id;
 
         for (const item of this.db.replacements) {
             if (chatID !== item.chatID) continue;
             if (!Util.startsWith(message.text, item.trigger)) continue;
-            reply({type: "text", text: item.replacement});
+            this.sendMessage(message.chat.id, item.replacement);
         }
     }
 

@@ -89,7 +89,7 @@ module.exports = class Markov extends Plugin {
         this.rate = 0.02;
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         const chat = message.chat.id;
         if (!this.m.dictionary[chat]) this.m.dictionary[chat] = {starts: [], chains: {}};
         // Take advantage of this to sync the db to memory
@@ -101,10 +101,7 @@ module.exports = class Markov extends Plugin {
 
         this.m.addFragment(message.text, chat);
         if (Math.random() > this.rate) return;
-        reply({
-            type: "text",
-            text: this.m.generateFragment(chat)
-        });
+        this.sendMessage(message.chat.id, this.m.generateFragment(chat));
     }
 
     get commands() { return {

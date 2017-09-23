@@ -9,21 +9,16 @@ module.exports = class Reverse extends Plugin {
         };
     }
 
-    onInlineCommand({message, command, args}, reply) {
+    onInlineCommand({message, command, args}) {
         if (command !== "reverse") return;
         const text = args.join(" ").split("").reverse().join("");
-        reply({
-            type: "inline",
-            results: [
-                {
-                    type: "article",
-                    id: "1",
-                    title: text,
-                    input_message_content: {
-                        message_text: text
-                    }
-                }
-            ]
-        });
+        this.answerInlineQuery(message.id, [{
+            type: "article",
+            id: "1",
+            title: text,
+            input_message_content: {
+                message_text: text
+            }
+        }]);
     }
 };

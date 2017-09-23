@@ -103,21 +103,45 @@ module.exports = class Plugin {
         /* this.commands can contain an object, mapping command names (eg. "ping") to either:
          *
          *   - a string, in which case the string is sent as a message
-         *   - an object, in which case it is passed to reply()
+         *   - an object, in which case it is sent with the appropriate message type
          */
-        this.listener.on("_command", ({message, command, args}, reply) => {
+        this.listener.on("_command", ({message, command, args}) => {
             if (!this.commands) return;
             for (const trigger of Object.keys(this.commands)) {
                 if (command !== trigger) continue;
                 const ret = this.commands[trigger]({message, args});
-                if (typeof ret === "string" || typeof ret === "number")
-                    reply({
-                        type: "text",
-                        text: ret
-                    });
-                else if (typeof ret === "undefined") return;
-                else
-                    reply(ret);
+                if (typeof ret === "string" || typeof ret === "number") {
+                    this.sendMessage(message.from.id, ret);
+                    return;
+                }
+                if (typeof ret === "undefined")
+                    return;
+                switch (ret.type) {
+                case "text":
+                    return this.sendMessage(message.chat.id, ret.text, ret.options);
+
+                case "audio":
+                    return this.sendAudio(message.chat.id, ret.audio, ret.options);
+                case "document":
+                    return this.sendDocument(message.chat.id, ret.document, ret.options);
+                case "photo":
+                    return this.sendPhoto(message.chat.id, ret.photo, ret.options);
+                case "sticker":
+                    return this.sendSticker(message.chat.id, ret.sticker, ret.options);
+                case "video":
+                    return this.sendVideo(message.chat.id, ret.video, ret.options);
+                case "voice":
+                    return this.sendVoice(message.chat.id, ret.voice, ret.options);
+
+                case "status": case "chatAction":
+                    return this.sendChatAction(message.chat.id, ret.status, ret.options);
+
+                default: {
+                    const message = `Unrecognized reply type ${ret.type}`;
+                    this.log.error(message);
+                    return Promise.reject(message);
+                }
+                }
             }
         });
     }

@@ -14,9 +14,9 @@ module.exports = class Ping extends Plugin {
         ping: () => "Pong!"
     }; }
 
-    onText({message}, reply) {
+    onText({message}) {
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
-        reply({type: 'text', text: "Pong!"});
+        this.sendMessage(message.from.id, "Pong!");
     }
 };

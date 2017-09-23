@@ -10,16 +10,16 @@ module.exports = class Imgur extends Plugin {
         };
     }
 
-    onCommand({message, command, args}, reply) {
+    onCommand({message, command}) {
         if (command !== "imgur") return;
-        Imgur.findValidPic(0, reply);
+        Imgur.findValidPic(0, message);
     }
 
-    static findValidPic(s, reply) {
+    static findValidPic(s, message) {
         if (s > 50)
             return;
 
-        reply({type: "status", status: "upload_photo"});
+        this.sendChatAction(message.chat.id, "upload_photo");
 
         const url = Imgur.generateUrl(6);
         const options = {
@@ -29,18 +29,12 @@ module.exports = class Imgur extends Plugin {
 
         request(options, (error, response) => {
             if (error)
-                return reply({
-                    type: "text",
-                    text: "An error occurred."
-                });
+                return this.sendMessage(message.chat.id, "An error occurred.");
 
             if (response.statusCode === 404 || response.headers["content-length"] === "503")
-                return Imgur.findValidPic(s + 1, reply);
+                return Imgur.findValidPic(s + 1, message);
 
-            reply({
-                type: 'photo',
-                photo: `https://i.imgur.com/${url}.png`
-            });
+            this.sendPhoto(message.chat.id, `https://i.imgur.com/${url}.png`);
         });
     }
 

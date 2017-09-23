@@ -12,66 +12,53 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
-    onCommand({message, command, args}, reply) {
-        if (command !== "reddit" && command !== "redimg") {
+    onCommand({message, command, args}) {
+        if (command !== "reddit" && command !== "redimg")
             return;
-        }
 
         const sub = args[0];
         const url = "https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json";
         request(url, (error, response, body) => {
             if (error || response.statusCode !== 200) {
-                return reply({
-                    type: "text",
-                    text: "An error occurred."
-                });
+                return this.sendMessage(message.chat.id, "An error occurred.");
             }
             try {
                 switch (command) {
                 case "reddit":
-                    this.reddit(body, reply);
+                    this.reddit(message, body);
                     break;
                 case "redimg":
-                    this.redimg(body, reply);
+                    this.redimg(message, body);
                     break;
                 default:
                     return;
                 }
             } catch (e) {
-                return reply({
-                    type: "text",
-                    text: "An error occurred."
-                });
+                return this.sendMessage(message.chat.id, "An error occurred.");
             }
         });
     }
 
-    reddit(body, reply) {
+    reddit(message, body) {
         const data = JSON.parse(body);
         const results = data.data.children;
         const item = results[Math.floor(Math.random() * results.length)].data;
-        reply({
-            type: "text",
-            text: `[${item.title}](https://reddit.com${item.permalink}) - r/${item.subreddit}`,
-            options: {
+        this.sendMessage(
+            message.chat.id,
+            `[${item.title}](https://reddit.com${item.permalink}) - r/${item.subreddit}`,
+            {
                 parse_mode: "Markdown"
             }
-        });
+        );
     }
 
-    redimg(body, reply) {
+    redimg(message, body) {
         const data = JSON.parse(body);
         const results = data.data.children
             .map(c => c.data)
             .filter(c => c.post_hint === "image");
         const item = results[Math.floor(Math.random() * results.length)];
 
-        reply({
-            type: "photo",
-            photo: item.url,
-            options: {
-                caption: `${item.title}\n\n${item.url}`
-            }
-        });
+        this.sendPhoto(message.chat.id, item.url, {caption: `${item.title}\n\n${item.url}`});
     }};
 
