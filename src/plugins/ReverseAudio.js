@@ -21,10 +21,8 @@ module.exports = class ReverseAudio extends Plugin {
 
     onCommand({message, command, args}, reply) {
         if (command !== "reverseaudio" && command !== "reverse") return;
-        if (!message.hasOwnProperty('reply_to_message')) return reply({
-            type: "text",
-            text: "You need to reply to an audio with this command."
-        });
+        if (!message.hasOwnProperty('reply_to_message')) 
+            return this.sendMessage(message.chat.id, "You need to reply to an audio with this command.");
         console.log("it's reverseaudio!");
         let target;
         let isVoice = false;
@@ -34,10 +32,7 @@ module.exports = class ReverseAudio extends Plugin {
         } else if (message.reply_to_message.hasOwnProperty("audio")) {
             target = message.reply_to_message.audio.file_id;
         } else {
-            reply({
-                type: "text",
-                text: "Welp, I want an audio/voice message, anything else won't work :c"
-            })
+            this.sendMessage(message.chat.id, "Welp, I want an audio/voice message, anything else won't work :c");
             return;
         }
 
@@ -51,10 +46,7 @@ module.exports = class ReverseAudio extends Plugin {
             Util.downloadAndSaveTempResource(fileurl, "ogg", (filepath) => {
                 const fn = `/tmp/${Util.makeUUID()}.ogg`;
                 child_process.spawnSync(ffmpeg, ["-i", filepath, "-af", "areverse", fn]);
-                reply({
-                    type: "audio",
-                    audio: fn
-                })
+                this.sendAudio(message.chat.id, fn);
             })
                 /* fs.readFile(filepath, 'utf8', (err, data) => {
                     if (err) return console.log(err);

@@ -13,6 +13,7 @@ module.exports = class Rule34 extends Plugin {
     }
 
     onCommand({message, command, args}, reply) {
+<<<<<<< HEAD
         if (command !== "rule34") return;
         if (args.length === 0) 
             return this.sendMessage(message.chat.id, "Please enter a search query.");
@@ -23,6 +24,18 @@ module.exports = class Rule34 extends Plugin {
 
         request(`https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1&tags=${encodeURIComponent(query).replace("%2B","+")}`, (err, res, data) => {
             if (err || res.statusCode === 404)
+=======
+    	if (command !== "rule34") return;
+    	if (args.length === 0) 
+            return this.sendMessage(message.chat.id, "Please enter a search query.");
+    	const query = args.join("+");
+    	console.log(query)
+
+    	console.log(`https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1&tags=${encodeURIComponent(query)}`);
+
+    	request(`https://rule34.xxx/index.php?page=dapi&s=post&q=index&limit=1&tags=${encodeURIComponent(query).replace("%2B","+")}`, (err, res, data) => {
+    		if (err || res.statusCode === 404)
+>>>>>>> 32524d8... Convert ReverseAudio.js and Rule34.js to the new syntax
                 return this.sendMessage(message.chat.id, "An error occurred.");
 
             console.log(data)
@@ -34,12 +47,21 @@ module.exports = class Rule34 extends Plugin {
             console.log(imgurlarr);
 
             if (imgurlarr == null || imgurlarr.length === 0)
+<<<<<<< HEAD
                 return this.sendMessage(message.chat.id, "No results found.");
 
             console.log(imgurlarr[0].substring(9).slice(1, -1));
 
             Util.downloadAndSaveTempResource("https:" + imgurlarr[0].substring(9).slice(1, -1), "jpg", imgpath => {
                 return this.sendPhoto(message.chat.id, imgpath);
+=======
+            	return this.sendMessage(message.chat.id, "No results found.");
+
+            console.log(imgurlarr[0].substring(9).slice(1, -1));
+
+            Util.downloadAndSaveTempResource(imgurlarr[0].substring(9).slice(1, -1), "jpg", imgpath => {
+            	return this.sendPhoto(message.chat.id, imgpath);
+>>>>>>> 32524d8... Convert ReverseAudio.js and Rule34.js to the new syntax
             })
         })
     }
