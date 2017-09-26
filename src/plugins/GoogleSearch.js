@@ -35,7 +35,7 @@ module.exports = class Google extends Plugin {
         const query = args.join(" ");
         this.google.build({
             q: query
-        }, function(err, response) {
+        }, (err, response) => {
             if (err) {
                 this.sendMessage(message.chat.id, "An error happened.");
                 return;
