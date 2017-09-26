@@ -25,22 +25,22 @@ module.exports = class Rule34 extends Plugin {
     		if (err || res.statusCode === 404)
                 return this.sendMessage(message.chat.id, "An error occurred.");
 
-            console.log(data)
+            this.log.debug(data)
 
-            const regexp = /file_url="(\/\/img\.rule34\.xxx\/images\/\d+\/[0-9a-f]+\.\w+)"/ig
+            const regexp = /file_url="(\/\/img\.rule34\.xxx\/images\/\d+\/[0-9a-f]+\.\w+)"/i
 
             const imgurlarr = data.match(regexp);
 
-            console.log(imgurlarr);
+            // console.log(imgurlarr);
 
             if (imgurlarr == null || imgurlarr.length === 0)
             	return this.sendMessage(message.chat.id, "No results found.");
 
-            console.log(imgurlarr[0].substring(9).slice(1, -1));
+            this.log.debug(imgurlarr[0].substring(9).slice(1, -1));
 
-            Util.downloadAndSaveTempResource("https:" + imgurlarr[0].substring(9).slice(1, -1), "jpg", imgpath => {
-            	return this.sendPhoto(message.chat.id, imgpath);
-            })
+            return this.sendMessage(message.chat.id, "https:" + imgurlarr[1]);
+
+            // Util.downloadAndSaveTempResource(, "jpg", imgpath => { })
         })
     }
 }

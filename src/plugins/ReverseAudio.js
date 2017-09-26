@@ -23,7 +23,7 @@ module.exports = class ReverseAudio extends Plugin {
         if (command !== "reverseaudio" && command !== "reverse") return;
         if (!message.hasOwnProperty('reply_to_message')) 
             return this.sendMessage(message.chat.id, "You need to reply to an audio with this command.");
-        console.log("it's reverseaudio!");
+        this.log.debug("received reverseaudio!");
         let target;
         let isVoice = false;
         if (message.reply_to_message.hasOwnProperty("voice")) {
@@ -36,12 +36,12 @@ module.exports = class ReverseAudio extends Plugin {
             return;
         }
 
-        console.log("target: ");
-        console.log(target);
+        this.log.debug("target: ");
+        this.log.debug(target);
 
         this.bot.getFile(target).then((file) => {
             const token = JSON.parse(require("fs").readFileSync("./config.json", "utf8")).TELEGRAM_TOKEN;
-            console.log(this.bot.config)
+            //this.log.debug(this.bot.config)
             const fileurl = `https://api.telegram.org/file/bot${token}/${file.file_path}`;
             Util.downloadAndSaveTempResource(fileurl, "ogg", (filepath) => {
                 const fn = `/tmp/${Util.makeUUID()}.ogg`;
