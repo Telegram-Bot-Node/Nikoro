@@ -1,15 +1,24 @@
+const fs = require("fs");
+const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
 const Log = require("./Log");
-const Config = JSON.parse(require("fs").readFileSync("./config.json", "utf8"));
+const Config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 const PluginManager = require("./PluginManager");
 const Auth = require("./helpers/Auth");
 const auth = new Auth(Config);
-const assert = require("assert");
+
+if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
+	console.log("You must provide a Telegram bot token in config.json. Try running \"npm run firstrun\".");
+	process.exit(1);
+}
 
 const log = Log.get("Bot", Config);
 
-assert(typeof Config.TELEGRAM_TOKEN === typeof "", "You must provide a Telegram bot token in Config.js.");
-assert(Config.TELEGRAM_TOKEN !== "", "Please provide a valid Telegram bot token.");
+// Version reporting, useful for bug reports
+let commit = "";
+if (fs.existsSync(path.join(__dirname, "../.git")))
+    commit = fs.readFileSync(path.join(__dirname, "../.git/refs/heads/es6"), "utf8").substr(0, 7);
+log.info(`Telegram-Bot-Node version ${require('../package.json').version}` + (commit ? `, commit ${commit}` : ""));
 
 log.verbose(`Creating a TelegramBot instance...`);
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
