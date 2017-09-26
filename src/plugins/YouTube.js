@@ -33,7 +33,7 @@ module.exports = class YouTubePlugin extends Plugin {
         YouTube.search.list({
             part: "snippet", // required by YT API
             q: query
-        }, function(err, data) {
+        }, (err, data) => {
             if (err) {
                 this.sendMessage(message.chat.id, "An error happened.");
                 return;
