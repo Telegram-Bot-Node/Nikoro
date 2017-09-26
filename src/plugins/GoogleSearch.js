@@ -1,5 +1,5 @@
 const Plugin = require("../Plugin");
-const GoogleSearch = require("this.google-search");
+const GoogleSearch = require("google-search");
 const assert = require("assert");
 
 module.exports = class Google extends Plugin {
