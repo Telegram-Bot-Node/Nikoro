@@ -8,7 +8,7 @@ module.exports = class Google extends Plugin {
         return {
             name: "Google",
             description: "Search on Google.",
-            help: "/this.google query",
+            help: "/google query",
             needs: {
                 config: {
                     GOOGLE_API_KEY: "Google API key",
