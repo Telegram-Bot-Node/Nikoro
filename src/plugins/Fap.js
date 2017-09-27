@@ -1,6 +1,10 @@
 const Plugin = require("../Plugin");
 const request = require("request");
 
+function sanitize(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 module.exports = class Porn extends Plugin {
     static get plugin() {
         return {
@@ -29,11 +33,12 @@ module.exports = class Porn extends Plugin {
             let seconds = String(item.duration % 60);
             if (String(seconds).length === 1)
                 seconds = '0' + seconds;
+
             this.sendMessage(
                 message.chat.id,
-                `[${item.title}](${item.url}) - ${minutes}:${seconds}`,
+                `<a href="${item.url}">${sanitize(item.title)}</a> - ${minutes}:${seconds}`,
                 {
-                    parse_mode: "markdown"
+                    parse_mode: "HTML"
                 }
             );
         });

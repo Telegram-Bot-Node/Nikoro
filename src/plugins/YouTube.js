@@ -2,6 +2,10 @@ const Plugin = require("../Plugin");
 const YouTube = require("youtube-api");
 const assert = require("assert");
 
+function sanitize(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 module.exports = class YouTubePlugin extends Plugin {
 
     static get plugin() {
@@ -35,18 +39,23 @@ module.exports = class YouTubePlugin extends Plugin {
             q: query
         }, (err, data) => {
             if (err) {
-                this.sendMessage(message.chat.id, "An error happened.");
+                this.sendMessage(message.chat.id, "An error occurred.");
+                return;
+            }
+            if (data.items.length === 0) {
+                this.sendMessage(message.chat.id, "No videos found!");
                 return;
             }
 
             const result = data.items[0];
+            const title = sanitize(result.snippet.title);
+            const description = sanitize(result.snippet.description);
+
             this.sendMessage(
                 message.chat.id,
-                `[${result.snippet.title}](https://youtube.com/watch?v=${result.id.videoId})
-
-${result.snippet.description}`,
+                `<a href="https://youtube.com/watch?v=${result.id.videoId}">${title}</a>\n\n${description}`,
                 {
-                    parse_mode: "Markdown"
+                    parse_mode: "HTML"
                 }
             );
         });
