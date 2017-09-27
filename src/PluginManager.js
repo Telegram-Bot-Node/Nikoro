@@ -114,7 +114,7 @@ module.exports = class PluginManager {
                     const outcome = this.removePlugin(pluginName);
                     response = outcome ? "Plugin disabled successfully." : "An error occurred.";
                 } else {
-                    response = "Plugin already enabled.";
+                    response = "Plugin already disabled.";
                 }
             }
             break;
