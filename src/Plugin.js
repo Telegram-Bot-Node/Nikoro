@@ -39,6 +39,7 @@ module.exports = class Plugin {
             _inline_command: "onInlineCommand",
 
             audio: "onAudio",
+            callback_query: "onCallbackQuery",
             contact: "onContact",
             document: "onDocument",
             inline_query: "onInline",
