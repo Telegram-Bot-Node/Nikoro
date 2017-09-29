@@ -23,12 +23,10 @@ module.exports = class PluginManager {
 
         this.config = config;
 
-        const events = [
-            "text", "audio", "document", "photo", "sticker", "video", "voice", "contact", "location",
-            "inline_query", "chosen_inline_request",
-            "new_chat_participant", "left_chat_participant", "group_chat_created",
-            "new_chat_title", "new_chat_photo", "delete_chat_photo"
-        ];
+        const events = Object.keys(Plugin.handlerNames)
+            // Events beginning with an underscore (eg. _command) are internal.
+            .filter(prop => prop[0] !== "_");
+
         // Registers a handler for every Telegram event.
         // It runs the message through the proxy and forwards it to the plugin manager.
         for (const eventName of events) {
