@@ -33,20 +33,23 @@ module.exports = class Plugin {
     static get handlerNames() {
         // This is the list of supported events, mapped to their handlers.
         return {
-            text: "onText",
-            inline_query: "onInline",
+            message: "onMessage",
+
             _command: "onCommand",
             _inline_command: "onInlineCommand",
+
             audio: "onAudio",
-            document: "onDocument",
-            photo: "onPhoto",
-            sticker: "onSticker",
-            video: "onVideo",
-            voice: "onVoice",
             contact: "onContact",
+            document: "onDocument",
+            inline_query: "onInline",
+            left_chat_participant: "onLeftChatParticipant",
             location: "onLocation",
             new_chat_participant: "onNewChatParticipant",
-            left_chat_participant: "onLeftChatParticipant"
+            photo: "onPhoto",
+            sticker: "onSticker",
+            text: "onText",
+            video: "onVideo",
+            voice: "onVoice",
         };
     }
 

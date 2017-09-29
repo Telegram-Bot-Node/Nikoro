@@ -24,6 +24,8 @@ module.exports = class PluginManager {
         this.config = config;
 
         const events = Object.keys(Plugin.handlerNames)
+            // We handle the message event by ourselves.
+            .filter(prop => prop !== "message")
             // Events beginning with an underscore (eg. _command) are internal.
             .filter(prop => prop[0] !== "_");
 
@@ -39,6 +41,10 @@ module.exports = class PluginManager {
                             .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
                             .map(plugin => plugin.proxy(eventName, message))
                         )
+                       .then(() => this.emit(
+                            "message",
+                            message
+                        ))
                        .then(() => this.emit(
                             eventName,
                             message
@@ -205,24 +211,26 @@ module.exports = class PluginManager {
     emit(event, message) {
         this.log.debug(`Triggered event ${event}`);
 
-        // Command emitter
-        if (message.text !== undefined && message.entities && message.entities[0].type === "bot_command") {
-            const entity = message.entities[0];
+        if (event !== "message") {
+            // Command emitter
+            if (message.text !== undefined && message.entities && message.entities[0].type === "bot_command") {
+                const entity = message.entities[0];
 
-            const rawCommand = message.text.slice(entity.offset + 1, entity.offset + entity.length);
-            const [command] = rawCommand.replace(/\//, "").split("@");
+                const rawCommand = message.text.slice(entity.offset + 1, entity.offset + entity.length);
+                const [command] = rawCommand.replace(/\//, "").split("@");
 
-            let args = [];
-            if (entity.offset + entity.length < message.text.length) {
-                args = message.text.slice(entity.offset + entity.length + 1).split(" ");
+                let args = [];
+                if (entity.offset + entity.length < message.text.length) {
+                    args = message.text.slice(entity.offset + entity.length + 1).split(" ");
+                }
+
+                this.emitter.emit("_command", {message, command, args});
+            } else if (message.query !== undefined) {
+                const parts = message.query.split(" ");
+                const command = parts[0].toLowerCase();
+                const args = parts.length > 1 ? parts.slice(1) : [];
+                this.emitter.emit("_inline_command", {message, command, args});
             }
-
-            this.emitter.emit("_command", {message, command, args});
-        } else if (message.query !== undefined) {
-            const parts = message.query.split(" ");
-            const command = parts[0].toLowerCase();
-            const args = parts.length > 1 ? parts.slice(1) : [];
-            this.emitter.emit("_inline_command", {message, command, args});
         }
 
         this.emitter.emit(event, {message});
