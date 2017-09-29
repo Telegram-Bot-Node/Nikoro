@@ -127,7 +127,16 @@ module.exports = class PluginManager {
     // Instantiates the plugin.
     // Returns the plugin itself.
     loadPlugin(pluginName) {
-        const ThisPlugin = require(__dirname + '/plugins/' + pluginName);
+        const pluginPath = __dirname + '/plugins/' + pluginName;
+        /* Invalidates the require() cache.
+         * This allows for "hot fixes" to plugins: just /disable it, make the
+         * required changes, and /enable it again.
+         * If the cache wasn't invalidated, the plugin would be loaded from
+         * cache rather than from disk, meaning that your changes wouldn't apply.
+         * Method: https://stackoverflow.com/a/16060619
+         */
+        delete require.cache[require.resolve(pluginPath)];
+        const ThisPlugin = require(pluginPath);
 
         this.log.debug(`Required ${pluginName}`);
 
