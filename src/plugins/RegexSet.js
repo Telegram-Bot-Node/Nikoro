@@ -1,6 +1,16 @@
 const Plugin = require("./../Plugin");
 const safe = require("safe-regex");
 
+function dashArgs(spaceArgs) {
+    return spaceArgs
+        // Get the original string
+        .join(" ")
+        // Split by dash
+        .split("-")
+        // Simply splitting will add spaces around the string. Fix that.
+        .map(token => token.trim(" "));
+}
+
 module.exports = class RegexSet extends Plugin {
 
     static get plugin() {
@@ -8,7 +18,6 @@ module.exports = class RegexSet extends Plugin {
             name: "RegexSet",
             description: "Regex-capable set command",
             help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar',
-            help: 'Examples:\n/set foo - bar\n/regexset fo+ - i - bar'
         };
     }
 
@@ -23,34 +32,39 @@ module.exports = class RegexSet extends Plugin {
 
         for (const item of this.db.replacements) {
             if (chatID !== item.chatID) continue;
-            const flags = "g" + item.flags;
-            const matches = message.text.match(new RegExp(item.regex, flags));
+            const matches = message.text.match(new RegExp(item.regex, item.flags));
             if (!matches) continue;
 
             let replacement = item.text;
-            replacement = replacement.replace(/$0/g, replacement);
+
             for (let i = 0; i < matches.length; i++)
                 replacement = replacement.replace(
-                    new RegExp("\\$" + String(i + 1), "g"),
+                    new RegExp("\\$" + i, "g"),
                     matches[i]
                 );
             replacement = replacement.replace(/\$name/g, message.from.first_name);
             replacement = replacement.replace(/\$username/g, message.from.username);
+            replacement = replacement.replace(/\$text/g, message.text);
+
             this.sendMessage(message.chat.id, replacement);
         }
     }
 
     get commands() { return {
         regexdelete: ({message, args}) => {
+            // Prevents users from spamming, eg. "/regexset .* - spam!"
             if (!this.auth.isMod(message.from.id, message.chat.id))
                 return "RegexSet is restricted to mods.";
-            return this.regexdelete(args, message.chat.id);
+            // RegexSet is split by dashes, not spaces
+            const _args = dashArgs(args);
+            return this.regexdelete(_args, message.chat.id);
         },
         regexlist: ({message}) => this.regexlist(message.chat.id),
         regexset: ({message, args}) => {
             if (!this.auth.isMod(message.from.id, message.chat.id))
                 return "RegexSet is restricted to mods.";
-            return this.regexset(args, message.chat.id);
+            const _args = dashArgs(args);
+            return this.regexset(_args, message.chat.id);
         }
     };}
 
@@ -59,18 +73,23 @@ module.exports = class RegexSet extends Plugin {
         let flags;
         let text;
 
-        if (args.length === 3) {
-            flags = "";
-            text = args[2];
-        } else if (args.length === 5) {
-            flags = args[2];
-            text = args[4];
-        } else return "Syntax: /regexset needle - flags - replacement";
+        switch (args.length) {
+            case 2:
+                flags = "";
+                text = args[1];
+                break;
+            case 3:
+                flags = args[1];
+                text = args[2];
+                break;
+            default:
+                return "Syntax: `/regexset needle - flags - replacement`, or `/regexset needle - replacement`"
+        }
 
         try {
-            RegExp(literalRegex, "g" + flags);
+            RegExp(literalRegex, flags);
         } catch (e) {
-            return "Cannot compile regular expression.";
+            return "Cannot compile regular expression: " + e;
         }
 
         if (!safe(literalRegex))
