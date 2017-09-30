@@ -236,3 +236,58 @@ describe("RateLimiter", function() {
         }, 2 * limit); // The bot shouldn't take longer than 2 ms avg per message
     });
 });
+
+describe("Scheduler", function() {
+    it("should initialize correctly", function() {
+        require("../helpers/Scheduler");
+    });
+    it.skip("should schedule events", function(done) {
+        this.slow(1500);
+        const scheduler = require("../helpers/Scheduler");
+        const delay = 1000;
+        const start = new Date();
+        scheduler.schedule(() => {
+            const end = new Date();
+            // Margin of error: +/- 100 ms
+            if ((start - end) > (delay + 100))
+                done(new Error(`Takes too long: ${start - end} ms`));
+            else if ((start - end) < (delay - 100))
+                done(new Error(`Takes too little: ${start - end} ms`));
+            else
+                done();
+        }, {}, delay);
+    });
+    it.skip("should cancel events", function(done) {
+        this.slow(1500);
+        const scheduler = require("../helpers/Scheduler");
+        const doneTimeout = setTimeout(() => done(), 1000);
+        const errorEvent = scheduler.schedule(() => {
+            clearTimeout(doneTimeout);
+            done(new Error("Event was not cancelled"));
+        }, {}, 500);
+        scheduler.cancel(errorEvent);
+    });
+    it.skip("should look up events by metadata", function(done) {
+        this.slow(1500);
+        let isFinished = false;
+        const scheduler = require("../helpers/Scheduler");
+        const doneTimeout = setTimeout(() => done(), 1000);
+        scheduler.schedule(() => {
+            if (isFinished)
+                return; // Prevents "done called twice" errors
+            clearTimeout(doneTimeout);
+            done(new Error("Event was not cancelled"));
+        }, {
+            name: "My test event",
+            color: "red"
+        }, 500);
+        const errorEvent = scheduler.search(event => event.name === "My test event" && event.color === "red");
+        if (!errorEvent) {
+            isFinished = true;
+            clearTimeout(doneTimeout);
+            done(new Error("Event not found"));
+            return;
+        }
+        scheduler.cancel(errorEvent);
+    });
+});
