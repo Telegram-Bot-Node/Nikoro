@@ -15,17 +15,16 @@ Array.prototype.unique = function() {
 
 module.exports = class Auth {
     constructor(config) {
-        fs.readFile("./db/helper_Auth.json", (err, data) => {
-            if (err) {
-                this.db = {
-                    auth: {},
-                    _globalAdmins: config.globalAdmins
-                };
-            } else {
-                this.db = JSON.parse(data);
-                this.db._globalAdmins = this.db._globalAdmins.concat(config.globalAdmins).unique();
-            }
-        });
+        try {
+            fs.readFileSync("./db/helper_Auth.json");
+            this.db = JSON.parse(data);
+            this.db._globalAdmins = this.db._globalAdmins.concat(config.globalAdmins).unique();
+        } catch (err) {
+            this.db = {
+                auth: {},
+                _globalAdmins: config.globalAdmins
+            };            
+        }
     }
 
     synchronize() {
