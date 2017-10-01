@@ -17,7 +17,7 @@ module.exports = class RegexSet extends Plugin {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",
-            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar',
+            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar'
         };
     }
 
@@ -74,16 +74,16 @@ module.exports = class RegexSet extends Plugin {
         let text;
 
         switch (args.length) {
-            case 2:
-                flags = "";
-                text = args[1];
-                break;
-            case 3:
-                flags = args[1];
-                text = args[2];
-                break;
-            default:
-                return "Syntax: `/regexset needle - flags - replacement`, or `/regexset needle - replacement`"
+        case 2:
+            flags = "";
+            text = args[1];
+            break;
+        case 3:
+            flags = args[1];
+            text = args[2];
+            break;
+        default:
+            return "Syntax: `/regexset needle - flags - replacement`, or `/regexset needle - replacement`";
         }
 
         try {

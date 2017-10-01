@@ -50,7 +50,7 @@ module.exports = class Plugin {
             sticker: "onSticker",
             text: "onText",
             video: "onVideo",
-            voice: "onVoice",
+            voice: "onVoice"
         };
     }
 

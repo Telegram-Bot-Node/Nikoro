@@ -30,11 +30,11 @@ module.exports = class Spoiler extends Plugin {
                 type: "article",
                 title: "Send spoiler",
                 message_text: spoilerRegex.test(text) ? text.replace(/\*[^\*]+\*/g, "SPOILER") : "SPOILER",
-                reply_markup: { inline_keyboard: [[{
+                reply_markup: {inline_keyboard: [[{
                     text: "Reveal spoiler",
                     callback_data: "spoiler " + text.replace(/\*/g, "")
                 }]]}
-            },
+            }
         ]);
     }
 

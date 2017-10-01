@@ -8,8 +8,8 @@ const Auth = require("./helpers/Auth");
 const auth = new Auth(Config);
 
 if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
-	console.log("You must provide a Telegram bot token in config.json. Try running \"npm run firstrun\".");
-	process.exit(1);
+	                                                                                                                                                                                                                                                console.log("You must provide a Telegram bot token in config.json. Try running \"npm run firstrun\".");
+	                                                                                                                                                                                                                                                process.exit(1);
 }
 
 const log = Log.get("Bot", Config);

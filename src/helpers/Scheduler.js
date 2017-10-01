@@ -2,9 +2,9 @@
 // class will be initialized only once.
 
 class Scheduler {
-	constructor() {
+	                                                                                                                                                                                                                                                constructor() {
 	}
-	schedule(callback, metadata, timeout) {
+	                                                                                                                                                                                                                                                schedule(callback, metadata, timeout) {
 	}
 }
 

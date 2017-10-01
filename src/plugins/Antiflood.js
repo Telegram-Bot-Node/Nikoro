@@ -36,7 +36,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
 
         // If we got this far, the ignoreLimiter says the user is spamming.
         this.log.verbose("Rejecting message from " + Util.buildPrettyUserName(message.from));
-        return Promise.reject();        
+        return Promise.reject();
     }
 
     processWarn(message) {
@@ -87,7 +87,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             const N = Number(args[0]);
             if (N === 0) {
                 delete this.ignoreLimiters[chatId];
-                return "Antiflood ignore disabled for this chat."
+                return "Antiflood ignore disabled for this chat.";
             }
             this.ignoreLimiters[chatId] = new RateLimiter(N, 5000);
             return `New rate limit: ${N} messages per 5 seconds`;
@@ -101,7 +101,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             const N = Number(args[0]);
             if (N === 0) {
                 delete this.warnLimiters[chatId];
-                return "Antiflood warn disabled for this chat."
+                return "Antiflood warn disabled for this chat.";
             }
             this.warnLimiters[chatId] = new RateLimiter(N, 5000);
             // Issue at most one warning every five seconds, so as not to help the user spam
@@ -117,10 +117,10 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             const N = Number(args[0]);
             if (N === 0) {
                 delete this.kickLimiters[chatId];
-                return "Antiflood kick disabled for this chat."
+                return "Antiflood kick disabled for this chat.";
             }
             this.kickLimiters[chatId] = new RateLimiter(N, 5000);
             return `New rate limit: ${N} messages per 5 seconds`;
-        },
+        }
     }; }
 };

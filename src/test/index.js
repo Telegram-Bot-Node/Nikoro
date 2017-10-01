@@ -11,7 +11,7 @@ const fixDone = done => {
         if (wasDoneCalled) return;
         wasDoneCalled = true;
         done(...args);
-    }
+    };
 };
 
 const EventEmitter = require("events");
