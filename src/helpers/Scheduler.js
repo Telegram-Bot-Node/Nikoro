@@ -2,10 +2,7 @@
 // class will be initialized only once.
 
 class Scheduler {
-	                                                                                                                                                                                                                                                constructor() {
-	}
-	                                                                                                                                                                                                                                                schedule(callback, metadata, timeout) {
-	}
+    schedule(callback, metadata, timeout) {}
 }
 
 module.exports = new Scheduler();

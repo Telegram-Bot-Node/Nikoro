@@ -32,7 +32,9 @@ module.exports = class The8Ball extends Plugin {
         };
     }
 
-    get commands() { return {
-        "8ball": () => this.choices[Math.floor(Math.random() * choices.length)]
-    }; }
+    get commands() {
+        return {
+            "8ball": () => this.choices[Math.floor(Math.random() * choices.length)]
+        };
+    }
 };

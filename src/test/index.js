@@ -1,8 +1,8 @@
 /* eslint-env node, es6, mocha */
 const PluginManager = require("../PluginManager");
-const config = JSON.parse(require("fs").readFileSync(__dirname + "/sample-config.json", "utf8"));
+const config = require("./sample-config.json");
 const Auth = require("../helpers/Auth");
-let auth = new Auth(config);
+const auth = new Auth(config);
 
 // Enables us to get around the "done called multiple times" without much repetition.
 const fixDone = done => {
@@ -180,7 +180,7 @@ describe("Ignore", function() {
     it("should ignore", function(done) {
         this.slow(200);
         auth.addAdmin(1, -123456789);
-        const callback = ({text}) => done(new Error("The bot replied to a ping"));
+        const callback = () => done(new Error("The bot replied to a ping"));
         bot.on("_debug_message", callback);
         setTimeout(function() {
             bot.removeListener("_debug_message", callback);

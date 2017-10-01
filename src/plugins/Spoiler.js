@@ -1,6 +1,4 @@
 const Plugin = require("./../Plugin");
-
-const PREFIX = "spoiler "; // So as not to pick up callback queries from another plugin
 const prefixRegex = /^spoiler /;
 
 module.exports = class Spoiler extends Plugin {

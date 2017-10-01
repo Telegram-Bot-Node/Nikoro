@@ -10,14 +10,16 @@ module.exports = class Karma extends Plugin {
         };
     }
 
-    get commands() { return {
-        karmachart: ({message}) => {
-            if (!this.db[message.chat.id]) return "No scores yet.";
-            const users = Object.keys(this.db[message.chat.id]);
-            if (users.length === 0) return "No scores yet.";
-            return users.map(user => `${user}: ${this.db[message.chat.id][user]} points`).join("\n");
-        }
-    };}
+    get commands() {
+        return {
+            karmachart: ({message}) => {
+                if (!this.db[message.chat.id]) return "No scores yet.";
+                const users = Object.keys(this.db[message.chat.id]);
+                if (users.length === 0) return "No scores yet.";
+                return users.map(user => `${user}: ${this.db[message.chat.id][user]} points`).join("\n");
+            }
+        };
+    }
 
     onText({message}) {
         // Telegram usernames are 5 or more characters long

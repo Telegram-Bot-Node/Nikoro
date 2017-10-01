@@ -21,14 +21,16 @@ module.exports = class Quote extends Plugin {
             this.db.quotes = [];
     }
 
-    get commands() { return {
-        addquote: ({message}) => this.addQuote(message),
-        quote: ({args}) => {
-            if (args[0])
-                return this.findQuote(args[0] - 1);
-            return this.randomQuote();
-        }
-    }; }
+    get commands() {
+        return {
+            addquote: ({message}) => this.addQuote(message),
+            quote: ({args}) => {
+                if (args[0])
+                    return this.findQuote(args[0] - 1);
+                return this.randomQuote();
+            }
+        };
+    }
 
     addQuote(message) {
         if (message.reply_to_message === undefined ||

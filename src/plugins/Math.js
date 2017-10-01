@@ -12,8 +12,10 @@ Check out math.js website for examples of supported stuff.`
         };
     }
 
-    get commands() { return {
-        calc: ({args}) => mathjs.eval(args.join(" ")),
-        math: ({args}) => mathjs.eval(args.join(" "))
-    };}
+    get commands() {
+        return {
+            calc: ({args}) => mathjs.eval(args.join(" ")),
+            math: ({args}) => mathjs.eval(args.join(" "))
+        };
+    }
 };

@@ -17,18 +17,19 @@ module.exports = class Ping extends Plugin {
         };
     }
 
-    get commands() { return {
-        version: () => ({
-            type: "text",
-            text: `*Telegram-Bot-Node* v${require("../../package.json").version} ${commit}
+    get commands() {
+        return {
+            version: () => ({
+                type: "text",
+                text: `*Telegram-Bot-Node* v${require("../../package.json").version} ${commit}
 An open source, plugin-based Telegram Bot written in Node.js. MIT licensed.
-
 [Fork me on GitHub!](${githubURL})`,
-            options: {
-                disable_web_page_preview: true,
-                parse_mode: "Markdown"
-            }
-        })
-    }; }
+                options: {
+                    disable_web_page_preview: true,
+                    parse_mode: "Markdown"
+                }
+            })
+        };
+    }
 
 };
