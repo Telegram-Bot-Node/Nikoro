@@ -56,31 +56,33 @@ module.exports = class UserStats extends Plugin {
         }
     }
 
-    get commands() { return {
-        userstats: ({message}) => {
-            const statsObject = this.db["stat" + message.chat.id];
-            const totalCount = statsObject.totalMessageCount;
-            const userList = Object.keys(statsObject)
-                .map(item => statsObject[item])
-                .filter(item => typeof item === "object")
-                .sort((a, b) => b.messageCount - a.messageCount);
+    get commands() {
+        return {
+            userstats: ({message}) => {
+                const statsObject = this.db["stat" + message.chat.id];
+                const totalCount = statsObject.totalMessageCount;
+                const userList = Object.keys(statsObject)
+                    .map(item => statsObject[item])
+                    .filter(item => typeof item === "object")
+                    .sort((a, b) => b.messageCount - a.messageCount);
 
-            return "Total messages:\n\n" + userList.map(user => {
-                const percentage = (user.messageCount / totalCount * 100).toFixed(4);
-                return `${user.username}: ${user.messageCount} (${percentage}%)`;
-            }).join("\n");
-        },
-        wordstats: ({message}) => {
-            const statsObject = this.db["stat" + message.chat.id];
-            const userList = Object.keys(statsObject)
-                .map(item => statsObject[item])
-                .filter(item => typeof item === "object")
-                .sort((a, b) => b.wordCount - a.wordCount);
+                return "Total messages:\n\n" + userList.map(user => {
+                    const percentage = (user.messageCount / totalCount * 100).toFixed(4);
+                    return `${user.username}: ${user.messageCount} (${percentage}%)`;
+                }).join("\n");
+            },
+            wordstats: ({message}) => {
+                const statsObject = this.db["stat" + message.chat.id];
+                const userList = Object.keys(statsObject)
+                    .map(item => statsObject[item])
+                    .filter(item => typeof item === "object")
+                    .sort((a, b) => b.wordCount - a.wordCount);
 
-            return "Total messages:\n\n" + userList.map(user => {
-                const averageWords = (user.wordCount / user.messageCount).toFixed(4);
-                return `${user.username}: ${user.wordCount} words (${averageWords} words/message)`;
-            }).join("\n");
-        }
-    };}
+                return "Total messages:\n\n" + userList.map(user => {
+                    const averageWords = (user.wordCount / user.messageCount).toFixed(4);
+                    return `${user.username}: ${user.wordCount} words (${averageWords} words/message)`;
+                }).join("\n");
+            }
+        };
+    }
 };

@@ -50,7 +50,7 @@ module.exports = class Plugin {
             sticker: "onSticker",
             text: "onText",
             video: "onVideo",
-            voice: "onVoice",
+            voice: "onVoice"
         };
     }
 
@@ -126,29 +126,43 @@ module.exports = class Plugin {
                 if (typeof ret === "undefined")
                     return;
                 switch (ret.type) {
-                case "text":
+                case "text": {
                     return this.sendMessage(message.chat.id, ret.text, ret.options);
+                }
 
-                case "audio":
+                case "audio": {
                     return this.sendAudio(message.chat.id, ret.audio, ret.options);
-                case "document":
+                }
+
+                case "document": {
                     return this.sendDocument(message.chat.id, ret.document, ret.options);
-                case "photo":
+                }
+
+                case "photo": {
                     return this.sendPhoto(message.chat.id, ret.photo, ret.options);
-                case "sticker":
+                }
+
+                case "sticker": {
                     return this.sendSticker(message.chat.id, ret.sticker, ret.options);
-                case "video":
+                }
+
+                case "video": {
                     return this.sendVideo(message.chat.id, ret.video, ret.options);
-                case "voice":
+                }
+
+                case "voice": {
                     return this.sendVoice(message.chat.id, ret.voice, ret.options);
+                }
 
-                case "status": case "chatAction":
+                case "status": case "chatAction": {
                     return this.sendChatAction(message.chat.id, ret.status, ret.options);
+                }
 
-                default:
+                default: {
                     const errorMessage = `Unrecognized reply type ${ret.type}`;
                     this.log.error(errorMessage);
                     return Promise.reject(errorMessage);
+                }
                 }
             }
         };

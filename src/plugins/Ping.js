@@ -10,9 +10,11 @@ module.exports = class Ping extends Plugin {
         };
     }
 
-    get commands() { return {
-        ping: () => "Pong pong!"
-    }; }
+    get commands() {
+        return {
+            ping: () => "Pong pong!"
+        };
+    }
 
     onText({message}) {
         if (message.text !== "ping") return;

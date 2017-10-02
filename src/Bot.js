@@ -1,3 +1,5 @@
+/* eslint no-console: 0 */
+
 const fs = require("fs");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
@@ -8,8 +10,8 @@ const Auth = require("./helpers/Auth");
 const auth = new Auth(Config);
 
 if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
-	console.log("You must provide a Telegram bot token in config.json. Try running \"npm run firstrun\".");
-	process.exit(1);
+    console.log("You must provide a Telegram bot token in config.json. Try running \"npm run firstrun\".");
+    process.exit(1);
 }
 
 const log = Log.get("Bot", Config);
@@ -40,7 +42,8 @@ process.on("SIGINT", handleShutdown("SIGINT received"));
 process.on("uncaughtException", handleShutdown("Uncaught exception"));
 
 function handleShutdown(reason) {
-    return (err) => {    	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                if (err) log.error(err);
+    return err => {
+        if (err) log.error(err);
         log.warn("Shutting down, reason: " + reason);
         log.info("Stopping safely all the plugins...");
         pluginManager.stopPlugins().then(function() {

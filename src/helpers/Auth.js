@@ -23,7 +23,7 @@ module.exports = class Auth {
             this.db = {
                 auth: {},
                 _globalAdmins: config.globalAdmins
-            };            
+            };
         }
     }
 

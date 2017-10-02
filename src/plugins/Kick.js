@@ -39,7 +39,7 @@ module.exports = class Kick extends Plugin {
             if (!this.auth.isMod(message.from.id)) return;
             if (!target) return this.sendMessage(message.chat.id, "Reply to a message sent by the kickee with /kick or /ban to remove him. Alternatively, use /kick or /ban followed by the user ID (eg. /kick 1234), which you can get with `/id username` if the UserInfo plugin is enabled.");
             if (this.auth.isMod(target)) return this.sendMessage(message.chat.id, "Can't kick mods or admins.");
-            this.kickChatMember(message.chat.id, target).catch((err) => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+            this.kickChatMember(message.chat.id, target).catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
             return;
         case "ban":
             if (!this.auth.isMod(message.from.id)) return;
@@ -48,7 +48,7 @@ module.exports = class Kick extends Plugin {
             if (!banned)
                 this.db[message.chat.id] = [];
             this.db[message.chat.id].push(target);
-            this.kickChatMember(message.chat.id, target).catch((err) => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+            this.kickChatMember(message.chat.id, target).catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
             return;
         case "pardon":
             if (!this.auth.isMod(message.from.id)) return;
@@ -71,6 +71,6 @@ module.exports = class Kick extends Plugin {
         if (this.db[message.chat.id].indexOf(target) === -1) return;
         if (this.auth.isMod(target)) return;
 
-        this.kickChatMember(message.chat.id, target).catch((err) => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+        this.kickChatMember(message.chat.id, target).catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
     }
 };

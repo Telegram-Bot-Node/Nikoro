@@ -1,3 +1,5 @@
+/* eslint no-warning-comments:0 */
+
 /*
     Util
     A module which collects a few useful functions

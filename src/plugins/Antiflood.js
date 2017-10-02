@@ -36,7 +36,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
 
         // If we got this far, the ignoreLimiter says the user is spamming.
         this.log.verbose("Rejecting message from " + Util.buildPrettyUserName(message.from));
-        return Promise.reject();        
+        return Promise.reject();
     }
 
     processWarn(message) {
@@ -59,7 +59,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
         this.log.verbose(`Kicking ${username} for flooding`);
         this.sendMessage(message.chat.id, `Kicking ${username} for flooding.`);
         this.kickChatMember(message.chat.id, message.from.id)
-            .catch((err) => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+            .catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
     }
 
     proxy(eventName, message) {
@@ -77,50 +77,52 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
         return this.processIgnore(message);
     }
 
-    get commands() { return {
-        floodignore: ({message, args}) => {
-            if (args.length != 1)
-                return "Syntax: /floodignore <N>";
-            if (!this.auth.isMod(message.from.id))
-                return "Mods only.";
-            const chatId = message.chat.id;
-            const N = Number(args[0]);
-            if (N === 0) {
-                delete this.ignoreLimiters[chatId];
-                return "Antiflood ignore disabled for this chat."
+    get commands() {
+        return {
+            floodignore: ({message, args}) => {
+                if (args.length !== 1)
+                    return "Syntax: /floodignore <N>";
+                if (!this.auth.isMod(message.from.id))
+                    return "Mods only.";
+                const chatId = message.chat.id;
+                const N = Number(args[0]);
+                if (N === 0) {
+                    delete this.ignoreLimiters[chatId];
+                    return "Antiflood ignore disabled for this chat.";
+                }
+                this.ignoreLimiters[chatId] = new RateLimiter(N, 5000);
+                return `New rate limit: ${N} messages per 5 seconds`;
+            },
+            floodwarn: ({message, args}) => {
+                if (args.length !== 1)
+                    return "Syntax: /floodwarn <N>";
+                if (!this.auth.isMod(message.from.id))
+                    return "Mods only.";
+                const chatId = message.chat.id;
+                const N = Number(args[0]);
+                if (N === 0) {
+                    delete this.warnLimiters[chatId];
+                    return "Antiflood warn disabled for this chat.";
+                }
+                this.warnLimiters[chatId] = new RateLimiter(N, 5000);
+                // Issue at most one warning every five seconds, so as not to help the user spam
+                this.warnMessageLimiters[chatId] = new RateLimiter(1, 5000);
+                return `New rate limit: ${N} messages per 5 seconds`;
+            },
+            floodkick: ({message, args}) => {
+                if (args.length !== 1)
+                    return "Syntax: /floodkick <N>";
+                if (!this.auth.isMod(message.from.id))
+                    return "Mods only.";
+                const chatId = message.chat.id;
+                const N = Number(args[0]);
+                if (N === 0) {
+                    delete this.kickLimiters[chatId];
+                    return "Antiflood kick disabled for this chat.";
+                }
+                this.kickLimiters[chatId] = new RateLimiter(N, 5000);
+                return `New rate limit: ${N} messages per 5 seconds`;
             }
-            this.ignoreLimiters[chatId] = new RateLimiter(N, 5000);
-            return `New rate limit: ${N} messages per 5 seconds`;
-        },
-        floodwarn: ({message, args}) => {
-            if (args.length != 1)
-                return "Syntax: /floodwarn <N>";
-            if (!this.auth.isMod(message.from.id))
-                return "Mods only.";
-            const chatId = message.chat.id;
-            const N = Number(args[0]);
-            if (N === 0) {
-                delete this.warnLimiters[chatId];
-                return "Antiflood warn disabled for this chat."
-            }
-            this.warnLimiters[chatId] = new RateLimiter(N, 5000);
-            // Issue at most one warning every five seconds, so as not to help the user spam
-            this.warnMessageLimiters[chatId] = new RateLimiter(1, 5000);
-            return `New rate limit: ${N} messages per 5 seconds`;
-        },
-        floodkick: ({message, args}) => {
-            if (args.length != 1)
-                return "Syntax: /floodkick <N>";
-            if (!this.auth.isMod(message.from.id))
-                return "Mods only.";
-            const chatId = message.chat.id;
-            const N = Number(args[0]);
-            if (N === 0) {
-                delete this.kickLimiters[chatId];
-                return "Antiflood kick disabled for this chat."
-            }
-            this.kickLimiters[chatId] = new RateLimiter(N, 5000);
-            return `New rate limit: ${N} messages per 5 seconds`;
-        },
-    }; }
+        };
+    }
 };

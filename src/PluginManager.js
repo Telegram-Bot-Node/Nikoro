@@ -1,3 +1,4 @@
+const path = require('path');
 const Log = require("./Log");
 const MasterPlugin = require("./MasterPlugin");
 const Plugin = require("./Plugin");
@@ -94,14 +95,12 @@ module.exports = class PluginManager {
                 } else {
                     response = "Couldn't load plugin.";
                 }
+            } else if (isGloballyEnabled) {
+                response = "Plugin already enabled.";
             } else {
-                if (isGloballyEnabled) {
-                    response = "Plugin already enabled.";
-                } else {
-                    this.log.info(`Enabling ${pluginName} from message interface`);
-                    const status = this.loadAndAdd(pluginName);
-                    response = status ? "Plugin enabled successfully." : "An error occurred.";
-                }
+                this.log.info(`Enabling ${pluginName} from message interface`);
+                const status = this.loadAndAdd(pluginName);
+                response = status ? "Plugin enabled successfully." : "An error occurred.";
             }
             break;
         case "disable":
@@ -113,13 +112,11 @@ module.exports = class PluginManager {
                 } else {
                     response = "Plugin isn't enabled.";
                 }
+            } else if (isGloballyEnabled) {
+                const outcome = this.removePlugin(pluginName);
+                response = outcome ? "Plugin disabled successfully." : "An error occurred.";
             } else {
-                if (isGloballyEnabled) {
-                    const outcome = this.removePlugin(pluginName);
-                    response = outcome ? "Plugin disabled successfully." : "An error occurred.";
-                } else {
-                    response = "Plugin already disabled.";
-                }
+                response = "Plugin already disabled.";
             }
             break;
         default:
@@ -131,7 +128,7 @@ module.exports = class PluginManager {
     // Instantiates the plugin.
     // Returns the plugin itself.
     loadPlugin(pluginName) {
-        const pluginPath = __dirname + '/plugins/' + pluginName;
+        const pluginPath = path.join(__dirname, 'plugins', pluginName);
         /* Invalidates the require() cache.
          * This allows for "hot fixes" to plugins: just /disable it, make the
          * required changes, and /enable it again.

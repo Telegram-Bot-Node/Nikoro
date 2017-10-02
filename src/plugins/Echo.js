@@ -13,7 +13,9 @@ module.exports = class Echo extends Plugin {
         };
     }
 
-    get commands() { return {
-        echo: ({args}) => args.join(" ")
-    };}
+    get commands() {
+        return {
+            echo: ({args}) => args.join(" ")
+        };
+    }
 };

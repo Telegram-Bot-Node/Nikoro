@@ -1,6 +1,4 @@
 const Plugin = require("./../Plugin");
-
-const PREFIX = "spoiler "; // So as not to pick up callback queries from another plugin
 const prefixRegex = /^spoiler /;
 
 module.exports = class Spoiler extends Plugin {
@@ -30,11 +28,11 @@ module.exports = class Spoiler extends Plugin {
                 type: "article",
                 title: "Send spoiler",
                 message_text: spoilerRegex.test(text) ? text.replace(/\*[^\*]+\*/g, "SPOILER") : "SPOILER",
-                reply_markup: { inline_keyboard: [[{
+                reply_markup: {inline_keyboard: [[{
                     text: "Reveal spoiler",
                     callback_data: "spoiler " + text.replace(/\*/g, "")
                 }]]}
-            },
+            }
         ]);
     }
 

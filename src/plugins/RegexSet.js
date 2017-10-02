@@ -17,7 +17,7 @@ module.exports = class RegexSet extends Plugin {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",
-            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar',
+            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar'
         };
     }
 
@@ -50,23 +50,25 @@ module.exports = class RegexSet extends Plugin {
         }
     }
 
-    get commands() { return {
-        regexdelete: ({message, args}) => {
-            // Prevents users from spamming, eg. "/regexset .* - spam!"
-            if (!this.auth.isMod(message.from.id, message.chat.id))
-                return "RegexSet is restricted to mods.";
-            // RegexSet is split by dashes, not spaces
-            const _args = dashArgs(args);
-            return this.regexdelete(_args, message.chat.id);
-        },
-        regexlist: ({message}) => this.regexlist(message.chat.id),
-        regexset: ({message, args}) => {
-            if (!this.auth.isMod(message.from.id, message.chat.id))
-                return "RegexSet is restricted to mods.";
-            const _args = dashArgs(args);
-            return this.regexset(_args, message.chat.id);
-        }
-    };}
+    get commands() {
+        return {
+            regexdelete: ({message, args}) => {
+                // Prevents users from spamming, eg. "/regexset .* - spam!"
+                if (!this.auth.isMod(message.from.id, message.chat.id))
+                    return "RegexSet is restricted to mods.";
+                // RegexSet is split by dashes, not spaces
+                const _args = dashArgs(args);
+                return this.regexdelete(_args, message.chat.id);
+            },
+            regexlist: ({message}) => this.regexlist(message.chat.id),
+            regexset: ({message, args}) => {
+                if (!this.auth.isMod(message.from.id, message.chat.id))
+                    return "RegexSet is restricted to mods.";
+                const _args = dashArgs(args);
+                return this.regexset(_args, message.chat.id);
+            }
+        };
+    }
 
     regexset(args, chatID) {
         const literalRegex = args[0];
@@ -74,16 +76,16 @@ module.exports = class RegexSet extends Plugin {
         let text;
 
         switch (args.length) {
-            case 2:
-                flags = "";
-                text = args[1];
-                break;
-            case 3:
-                flags = args[1];
-                text = args[2];
-                break;
-            default:
-                return "Syntax: `/regexset needle - flags - replacement`, or `/regexset needle - replacement`"
+        case 2:
+            flags = "";
+            text = args[1];
+            break;
+        case 3:
+            flags = args[1];
+            text = args[2];
+            break;
+        default:
+            return "Syntax: `/regexset needle - flags - replacement`, or `/regexset needle - replacement`";
         }
 
         try {
