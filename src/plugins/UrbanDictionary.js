@@ -41,7 +41,7 @@ module.exports = class UrbanDictionary extends Plugin {
                     })
                     .catch(err => {
                         this.sendMessage(message.chat.id, 'An error occured.');
-                        this.log.error(`An error occured. The returned error was: ${err}`);
+                        this.log.error(`An error occured. The returned error was: ${JSON.parse(err)}`);
                     });
             }
         };
