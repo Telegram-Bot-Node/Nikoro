@@ -6,7 +6,7 @@ module.exports = class UrbanDictionary extends Plugin {
         return {
             name: "UrbanDictionary",
             description: "Fetches the Urban Dictionary definition for a supplied word or phrase.",
-            help: `/ud <query> returns the definition for a given word or phrase`
+            help: "`/ud <query>` returns the definition for a given word or phrase"
         };
     }
 
