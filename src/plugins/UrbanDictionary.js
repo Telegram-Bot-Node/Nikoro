@@ -6,8 +6,7 @@ module.exports = class UrbanDictionary extends Plugin {
         return {
             name: "UrbanDictionary",
             description: "Fetches the Urban Dictionary definition for a supplied word or phrase.",
-            help: ` commands:
-                \`/ud <word>\` returns the definition for a given word or phrase`
+            help: `/ud <query>`
         };
     }
 
@@ -39,7 +38,8 @@ module.exports = class UrbanDictionary extends Plugin {
                         }
 
                         this.sendMessage(message.chat.id, msg, opts);
-                    });
+                    })
+                    .catch(err => this.sendMessage(message.chat.id, 'An error occured.'));
             }
         };
     }
