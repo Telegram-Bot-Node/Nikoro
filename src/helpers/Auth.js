@@ -16,7 +16,7 @@ Array.prototype.unique = function() {
 module.exports = class Auth {
     constructor(config) {
         try {
-            fs.readFileSync("./db/helper_Auth.json");
+            const data = fs.readFileSync("./db/helper_Auth.json", "utf-8");
             this.db = JSON.parse(data);
             this.db._globalAdmins = this.db._globalAdmins.concat(config.globalAdmins).unique();
         } catch (err) {
