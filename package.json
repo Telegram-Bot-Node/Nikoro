@@ -24,6 +24,7 @@
     "bot": "node src/Bot.js",
     "lint": "eslint src/",
     "test": "mocha tests/ --name '*Test.js' --recursive",
+    "test:watch": "npm run test -- --watch",
     "install-hooks": "cp hooks/* .git/hooks/"
   },
   "engines": {
