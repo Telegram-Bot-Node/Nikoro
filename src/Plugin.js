@@ -72,7 +72,7 @@ module.exports = class Plugin {
         );
     }
 
-    constructor(listener, config) {
+    constructor(listener, config, syncdb = true) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
@@ -82,11 +82,13 @@ module.exports = class Plugin {
 
         this.db = {};
         this.blacklist = new Set(); // Chats where the plugin is disabled
-        try {
-            const {db, blacklist} = JSON.parse(fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8"));
-            if (db) this.db = db;
-            if (blacklist) this.blacklist = new Set(blacklist);
-        } catch (e) {}
+        if (syncdb) {
+            try {
+                const {db, blacklist} = JSON.parse(fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8"));
+                if (db) this.db = db;
+                if (blacklist) this.blacklist = new Set(blacklist);
+            } catch (e) {}
+        }
 
         const syncInterval = 5000;
 
@@ -166,7 +168,9 @@ module.exports = class Plugin {
                 }
             }
         };
-        this.listener.on("_command", shortcutHandler);
+        if (this.listener) {
+            this.listener.on("_command", shortcutHandler);
+        }
         this.shortcutHandler = shortcutHandler;
     }
 
@@ -177,10 +181,12 @@ module.exports = class Plugin {
     stop() {
         clearInterval(this.syncTimer);
         const eventNames = Object.keys(this.handlers);
-        for (const eventName of eventNames) {
-            const handler = this.handlers[eventName];
-            this.listener.removeListener(eventName, handler);
+        if (this.listener) {
+            for (const eventName of eventNames) {
+                const handler = this.handlers[eventName];
+                this.listener.removeListener(eventName, handler);
+            }
+            this.listener.removeListener("_command", this.shortcutHandler);
         }
-        this.listener.removeListener("_command", this.shortcutHandler);
     }
 };
