@@ -165,7 +165,7 @@ describe("Ping", function() {
     });
 });
 
-describe("RateLimiter", function() {
+describe.skip("RateLimiter", function() {
     const bot = new TelegramBot();
     const pluginManager = new PluginManager(bot, config, auth);
     pluginManager.loadPlugins(["Ping"]);
