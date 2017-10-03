@@ -23,7 +23,7 @@
     "configure": "node src/Installer.js",
     "bot": "node src/Bot.js",
     "lint": "eslint src/",
-    "test": "mocha tests/**/*Test.js",
+    "test": "mocha tests/ --name '*Test.js' --recursive",
     "install-hooks": "cp hooks/* .git/hooks/"
   },
   "engines": {
