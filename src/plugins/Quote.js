@@ -58,7 +58,7 @@ module.exports = class Quote extends Plugin {
 
     randomQuote() {
         const id = Math.floor(Math.random() * this.db.quotes.length);
-        return this.findQuote(id, reply);
+        return this.findQuote(id);
     }
 
     getAuthor(obj) {
