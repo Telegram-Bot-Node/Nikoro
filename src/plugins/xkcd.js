@@ -6,7 +6,7 @@ module.exports = class xkcd extends Plugin {
         return {
             name: "xkcd",
             description: "Returns xkcd comics!",
-            help: "`/xkcd` to get the latest xkcd, `/xkcd <comic ID>` to get the xkcd w/ that ID."
+            help: "/xkcd to get the latest xkcd, `/xkcd <comic ID>` to get the xkcd w/ that ID."
         };
     }
 
