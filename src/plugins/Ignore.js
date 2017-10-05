@@ -2,9 +2,10 @@ const Plugin = require("../Plugin");
 
 module.exports = class Ignore extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(listener, bot, config, auth) {
+        super(listener, bot, config, auth);
 
+        this.auth = auth;
         if (!this.db.ignored) {
             this.db.ignored = [];
         }
@@ -19,10 +20,6 @@ module.exports = class Ignore extends Plugin {
             visibility: Plugin.Visibility.VISIBLE,
             type: Plugin.Type.NORMAL | Plugin.Type.PROXY
         };
-    }
-
-    start(config, auth) {
-        this.auth = auth;
     }
 
     proxy(eventName, message) {

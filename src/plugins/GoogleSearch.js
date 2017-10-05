@@ -3,6 +3,18 @@ const GoogleSearch = require("google-search");
 const assert = require("assert");
 
 module.exports = class Google extends Plugin {
+    constructor(listener, bot, config, auth) {
+        super(listener, bot, config, auth);
+
+        assert(typeof config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
+        assert(config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
+        assert(typeof config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
+        assert(config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
+        this.google = new GoogleSearch({
+            key: config.GOOGLE_API_KEY,
+            cx: config.GOOGLE_CX
+        });
+    }
 
     static get plugin() {
         return {
@@ -16,18 +28,6 @@ module.exports = class Google extends Plugin {
                 }
             }
         };
-    }
-
-    start(config) {
-        this.config = config;
-        assert(typeof this.config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
-        assert(this.config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
-        assert(typeof this.config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
-        assert(this.config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
-        this.google = new GoogleSearch({
-            key: this.config.GOOGLE_API_KEY,
-            cx: this.config.GOOGLE_CX
-        });
     }
 
     onCommand({message, command, args}) {

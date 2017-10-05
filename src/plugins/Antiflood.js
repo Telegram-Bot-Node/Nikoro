@@ -5,8 +5,10 @@ const RateLimiter = require("limiter").RateLimiter;
 const RATE_TIMEOUT = 5000;
 
 module.exports = class Antiflood extends Plugin {
-    constructor(...args) {
-        super(...args);
+    constructor(listener, bot, config, auth) {
+        super(listener, bot, config, auth);
+
+        this.auth = auth;
 
         this.lastMessages = {};
         this.ignoreLimiters = {};
@@ -27,10 +29,6 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
 
             type: Plugin.Type.PROXY
         };
-    }
-
-    start(config, auth) {
-        this.auth = auth;
     }
 
     processIgnore(message) {

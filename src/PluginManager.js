@@ -144,7 +144,7 @@ module.exports = class PluginManager {
 
         this.log.debug(`Required ${pluginName}`);
 
-        const loadedPlugin = new ThisPlugin(this.emitter, this.bot);
+        const loadedPlugin = new ThisPlugin(this.emitter, this.bot, this.config, this.auth);
 
         // Bind all the methods from the bot API
         for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(this.bot))) {
@@ -166,7 +166,6 @@ module.exports = class PluginManager {
         }
 
         this.log.debug(`Created ${pluginName}.`);
-        loadedPlugin.start(this.config, this.auth);
 
         return loadedPlugin;
     }

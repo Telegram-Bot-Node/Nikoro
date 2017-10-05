@@ -57,7 +57,7 @@ module.exports = class Plugin {
         return this.constructor.plugin;
     }
 
-    constructor(listener, config) {
+    constructor(listener, bot, config, auth) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
@@ -145,10 +145,6 @@ module.exports = class Plugin {
             this.listener.on("_command", shortcutHandler);
         }
         this.shortcutHandler = shortcutHandler;
-    }
-
-    start() {
-        return;
     }
 
     stop() {

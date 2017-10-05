@@ -13,9 +13,10 @@ function dashArgs(spaceArgs) {
 
 module.exports = class RegexSet extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(listener, bot, config, auth) {
+        super(listener, bot, config, auth);
 
+        this.auth = auth;
         if (!this.db.replacements) {
             this.db.replacements = [];
         }
@@ -27,10 +28,6 @@ module.exports = class RegexSet extends Plugin {
             description: "Regex-capable set command",
             help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar'
         };
-    }
-
-    start(config, auth) {
-        this.auth = auth;
     }
 
     onText({message}) {
