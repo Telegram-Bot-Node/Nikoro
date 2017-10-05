@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const Log = require("./Log");
 const MasterPlugin = require("./MasterPlugin");
@@ -7,6 +8,8 @@ const {EventEmitter} = require("events");
 
 // A small utility functor to find a plugin with a given name
 const nameMatches = targetName => pl => pl.plugin.name.toLowerCase() === targetName.toLowerCase();
+
+const SYNC_INTERVAL = 5000;
 
 module.exports = class PluginManager {
 
@@ -203,6 +206,45 @@ module.exports = class PluginManager {
 
     stopPlugins() {
         return Promise.all(this.plugins.map(pl => pl.stop()));
+    }
+
+    getDatabasePath(plugin) {
+        return path.join(__dirname, '..', 'db', 'plugin_' + plugin.plugin.name + '.json');
+    }
+
+    startSynchronization() {
+        this.plugins.forEach(plugin => {
+            const databasePath = this.getDatabasePath(plugin);
+
+            if (fs.existsSync(databasePath)) {
+                const {db, blacklist} = JSON.parse(fs.readFileSync(databasePath, "utf8"));
+
+                plugin.blacklist = new Set(blacklist);
+                plugin.db = db;
+            }
+        });
+
+        this.synchronizationInterval = setInterval(() => {
+            this.plugins.forEach(plugin => (
+                fs.writeFile(
+                    this.getDatabasePath(plugin),
+                    JSON.stringify({
+                        db: plugin.db,
+                        blacklist: Array.from(plugin.blacklist)
+                    })
+                , err => {
+                    if (err) {
+                        this.log.error("Error database sync", err);
+                    }
+                })
+            ));
+        }, SYNC_INTERVAL);
+    }
+
+    stopSynchronization() {
+        if (this.synchronizationInterval) {
+            clearInterval(this.synchronizationInterval);
+        }
     }
 
     emit(event, message) {

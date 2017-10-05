@@ -1,5 +1,4 @@
 const Log = require("./Log");
-const fs = require("fs");
 
 module.exports = class Plugin {
 
@@ -58,21 +57,7 @@ module.exports = class Plugin {
         return this.constructor.plugin;
     }
 
-    synchronize(cb = err => {
-        if (err) throw err;
-    }) {
-        if (!this.db) return;
-        fs.writeFile(
-            `./db/plugin_${this.plugin.name}.json`,
-            JSON.stringify({
-                db: this.db,
-                blacklist: Array.from(this.blacklist)
-            }, null, 2),
-            cb
-        );
-    }
-
-    constructor(listener, config, syncdb = true) {
+    constructor(listener, config) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
@@ -82,18 +67,6 @@ module.exports = class Plugin {
 
         this.db = {};
         this.blacklist = new Set(); // Chats where the plugin is disabled
-        if (syncdb) {
-            try {
-                const {db, blacklist} = JSON.parse(fs.readFileSync(`./db/plugin_${this.plugin.name}.json`, "utf8"));
-                if (db) this.db = db;
-                if (blacklist) this.blacklist = new Set(blacklist);
-            } catch (e) {}
-        }
-
-        const syncInterval = 5000;
-
-        this.syncTimer = setInterval(() => this.synchronize(), syncInterval);
-
         this.handlers = {};
 
         const eventNames = Object.keys(Plugin.handlerNames);
@@ -179,7 +152,6 @@ module.exports = class Plugin {
     }
 
     stop() {
-        clearInterval(this.syncTimer);
         const eventNames = Object.keys(this.handlers);
         if (this.listener) {
             for (const eventName of eventNames) {

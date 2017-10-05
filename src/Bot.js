@@ -29,6 +29,7 @@ log.info("Instance created.");
 log.verbose("Loading plugins...");
 const pluginManager = new PluginManager(bot, Config, auth);
 pluginManager.loadPlugins(Config.activePlugins);
+pluginManager.startSynchronization();
 log.info("Plugins loaded.");
 
 log.verbose("Configuring permissions...");
@@ -46,6 +47,7 @@ function handleShutdown(reason) {
         if (err) log.error(err);
         log.warn("Shutting down, reason: " + reason);
         log.info("Stopping safely all the plugins...");
+        pluginManager.stopSynchronization();
         pluginManager.stopPlugins().then(function() {
             log.info("All plugins stopped correctly.");
             process.exit();
