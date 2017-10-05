@@ -32,8 +32,6 @@ pluginManager.loadPlugins(Config.activePlugins);
 pluginManager.startSynchronization();
 log.info("Plugins loaded.");
 
-log.verbose("Configuring permissions...");
-log.info("Permissions configured.");
 log.info("The bot is online!");
 
 // If `CTRL+C` is pressed we stop the bot safely.
