@@ -1,5 +1,4 @@
 const Log = require("./Log");
-const fs = require("fs");
 
 const pluginBlacklist = Symbol('blacklist');
 const pluginDatabase = Symbol('database');
@@ -61,19 +60,19 @@ module.exports = class Plugin {
         return this.constructor.plugin;
     }
 
-    get db () {
+    get db() {
         return this[pluginDatabase];
     }
 
-    get blacklist () {
+    get blacklist() {
         return this[pluginBlacklist];
     }
 
-    set db (value) {
+    set db(value) {
         this[pluginDatabase] = value;
     }
-    
-    set blacklist (value) {
+
+    set blacklist(value) {
         this[pluginBlacklist] = value;
     }
 

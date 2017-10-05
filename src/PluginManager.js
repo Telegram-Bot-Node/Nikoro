@@ -208,13 +208,12 @@ module.exports = class PluginManager {
         return Promise.all(this.plugins.map(pl => pl.stop()));
     }
 
-
     getDatabasePath(plugin) {
-        return path.join(__dirname, '..', 'db', 'plugin_' + plugin.plugin.name + '.json')
+        return path.join(__dirname, '..', 'db', 'plugin_' + plugin.plugin.name + '.json');
     }
 
     startSynchronization() {
-        this.plugins.forEach((plugin) => {
+        this.plugins.forEach(plugin => {
             const databasePath = this.getDatabasePath(plugin);
 
             if (fs.existsSync(databasePath)) {
@@ -223,10 +222,10 @@ module.exports = class PluginManager {
                 plugin.blacklist = new Set(blacklist);
                 plugin.db = db;
             }
-        })
+        });
 
         this.synchronizationInterval = setInterval(() => {
-            this.plugins.forEach((plugin) => (
+            this.plugins.forEach(plugin => (
                 fs.writeFile(
                     this.getDatabasePath(plugin),
                     JSON.stringify({
@@ -234,7 +233,7 @@ module.exports = class PluginManager {
                         blacklist: Array.from(plugin.blacklist)
                     })
                 )
-            ))
+            ));
         }, SYNC_INTERVAL);
     }
 
