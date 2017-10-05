@@ -37,27 +37,6 @@ const questions = [
                 const string = " " + plugin.name + (plugin.description ? ` - ${plugin.description}` : "");
                 descriptionsToPathsMap[string] = path;
 
-                if (plugin.needs && plugin.needs.config) {
-                    // Iterate through the plugins.needs.config object
-                    Object.keys(plugin.needs.config)
-                        .map(key => ({
-                            name: key,
-                            description: plugin.needs.config[key]
-                        }))
-                        // Map every requirement to an Inquirer.js option
-                        .map(item => ({
-                            type: "input",
-                            name: item.name,
-                            message: `${plugin.name} needs: "${item.description}"`,
-                            // Ask the question only if:
-                            when: answers => (answers.activePlugins.indexOf(string) !== -1) && (Object.keys(answers).indexOf(item.name) === -1)
-                            //               /* the plugin is enabled                    */ and/* this parameter hasn't already been asked   */
-                        }))
-                        // Remove duplicates
-                        .filter(item => !pluginQuestions.some(q => q.name === item.name))
-                        .forEach(item => pluginQuestions.push(item));
-                }
-
                 return {name: string};
             })
     },
