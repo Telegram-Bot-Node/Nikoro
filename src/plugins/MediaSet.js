@@ -3,6 +3,18 @@ const Util = require("./../Util");
 
 module.exports = class MediaSet extends Plugin {
 
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.triggers) {
+            this.db.triggers = {};
+        }
+
+        if (!this.db.pendingRequests) {
+            this.db.pendingRequests = {};
+        }
+    }
+
     static get plugin() {
         return {
             name: "MediaSet",
@@ -11,13 +23,6 @@ module.exports = class MediaSet extends Plugin {
         };
     }
 
-    start() {
-        if (!this.db.triggers)
-            this.db.triggers = {};
-
-        if (!this.db.pendingRequests)
-            this.db.pendingRequests = {};
-    }
 
     onText({message}) {
         const text = message.text;

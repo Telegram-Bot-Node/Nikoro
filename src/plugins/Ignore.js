@@ -2,6 +2,14 @@ const Plugin = require("../Plugin");
 
 module.exports = class Ignore extends Plugin {
 
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.ignored) {
+            this.db.ignored = [];
+        }
+    }
+
     static get plugin() {
         return {
             name: "Ignore",
@@ -15,8 +23,6 @@ module.exports = class Ignore extends Plugin {
 
     start(config, auth) {
         this.auth = auth;
-        if (!this.db.ignored)
-            this.db.ignored = [];
     }
 
     proxy(eventName, message) {

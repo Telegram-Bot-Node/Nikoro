@@ -13,6 +13,14 @@ function dashArgs(spaceArgs) {
 
 module.exports = class RegexSet extends Plugin {
 
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.replacements) {
+            this.db.replacements = [];
+        }
+    }
+
     static get plugin() {
         return {
             name: "RegexSet",
@@ -23,8 +31,6 @@ module.exports = class RegexSet extends Plugin {
 
     start(config, auth) {
         this.auth = auth;
-        if (!this.db.replacements)
-            this.db.replacements = [];
     }
 
     onText({message}) {
