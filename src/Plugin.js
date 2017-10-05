@@ -1,8 +1,5 @@
 const Log = require("./Log");
 
-const pluginBlacklist = Symbol('blacklist');
-const pluginDatabase = Symbol('database');
-
 module.exports = class Plugin {
 
     static get Type() {
@@ -58,22 +55,6 @@ module.exports = class Plugin {
 
     get plugin() {
         return this.constructor.plugin;
-    }
-
-    get db() {
-        return this[pluginDatabase];
-    }
-
-    get blacklist() {
-        return this[pluginBlacklist];
-    }
-
-    set db(value) {
-        this[pluginDatabase] = value;
-    }
-
-    set blacklist(value) {
-        this[pluginBlacklist] = value;
     }
 
     constructor(listener, config) {
