@@ -163,4 +163,12 @@ Util.buildPrettyChatName = function(chat) {
     return name.trim();
 };
 
+Util.makeHTMLLink = function(title, url) {
+    const sanitize = str => str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    // We don't really care about other characters, but '"' may close the href string.
+    if (url.includes('"'))
+        throw new Error("Invalid link");
+    return `<a href="${url}">${sanitize(title)}</a>`;
+}
+
 module.exports = Util;
