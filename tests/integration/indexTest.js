@@ -1,7 +1,8 @@
 /* eslint-env node, es6, mocha */
-const PluginManager = require("../PluginManager");
+const PluginManager = require("../../src/PluginManager");
+const Auth = require("../../src/helpers/Auth");
+const TelegramBot = require('./helpers/TelegramBot')
 const config = require("./sample-config.json");
-const Auth = require("../helpers/Auth");
 const auth = new Auth(config);
 
 // Enables us to get around the "done called multiple times" without much repetition.
@@ -13,50 +14,6 @@ const fixDone = done => {
         done(...args);
     };
 };
-
-const EventEmitter = require("events");
-class TelegramBot extends EventEmitter {
-    constructor() {
-        super();
-        this.i = 0;
-        this.date = Math.floor(new Date() / 1000);
-    }
-
-    pushMessage(message, type = "text") {
-        if (!message.id)
-            message.message_id = this.i++;
-        if (!message.from)
-            message.from = {
-                id: 12345678,
-                first_name: 'Foobar',
-                username: 'foo_bar'
-            };
-        if (!message.chat)
-            message.chat = {
-                id: -123456789,
-                title: 'Test group',
-                type: 'group',
-                all_members_are_administrators: false
-            };
-        if (!message.date)
-            message.date = this.date++;
-        const cmdRegex = /\/[\w_]+/i;
-        if (cmdRegex.test(message.text))
-            message.entities = [{
-                type: "bot_command",
-                offset: 0,
-                length: message.text.match(cmdRegex)[0].length
-            }];
-        this.emit(type, message);
-    }
-    sendMessage(chatId, text, options) {
-        this.emit("_debug_message", {
-            chatId,
-            text,
-            options
-        });
-    }
-}
 
 describe("Bot", function() {
     let bot;
@@ -208,7 +165,7 @@ describe("Ping", function() {
     });
 });
 
-describe("RateLimiter", function() {
+describe.skip("RateLimiter", function() {
     const bot = new TelegramBot();
     const pluginManager = new PluginManager(bot, config, auth);
     pluginManager.loadPlugins(["Ping"]);
@@ -239,11 +196,11 @@ describe("RateLimiter", function() {
 
 describe("Scheduler", function() {
     it("should initialize correctly", function() {
-        require("../helpers/Scheduler");
+        require("../../src/helpers/Scheduler");
     });
     it.skip("should schedule events", function(done) {
         this.slow(1500);
-        const scheduler = require("../helpers/Scheduler");
+        const scheduler = require("../../src/helpers/Scheduler");
         const delay = 1000;
         const start = new Date();
         scheduler.schedule(() => {
@@ -259,7 +216,7 @@ describe("Scheduler", function() {
     });
     it.skip("should cancel events", function(done) {
         this.slow(1500);
-        const scheduler = require("../helpers/Scheduler");
+        const scheduler = require("../../src/helpers/Scheduler");
         const doneTimeout = setTimeout(() => done(), 1000);
         const errorEvent = scheduler.schedule(() => {
             clearTimeout(doneTimeout);
@@ -270,7 +227,7 @@ describe("Scheduler", function() {
     it.skip("should look up events by metadata", function(done) {
         this.slow(1500);
         let isFinished = false;
-        const scheduler = require("../helpers/Scheduler");
+        const scheduler = require("../../src/helpers/Scheduler");
         const doneTimeout = setTimeout(() => done(), 1000);
         scheduler.schedule(() => {
             if (isFinished)

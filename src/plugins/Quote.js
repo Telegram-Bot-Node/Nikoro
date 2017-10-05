@@ -5,6 +5,14 @@ const Plugin = require("../Plugin");
 
 module.exports = class Quote extends Plugin {
 
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.quotes) {
+            this.db.quotes = [];
+        }
+    }
+
     static get plugin() {
         return {
             name: 'Quote',
@@ -14,11 +22,6 @@ module.exports = class Quote extends Plugin {
                 \`/quote <id>\` returns the quote by ID
                 \`/quote\` returns a random quote`
         };
-    }
-
-    start() {
-        if (!this.db.quotes)
-            this.db.quotes = [];
     }
 
     get commands() {
@@ -45,7 +48,7 @@ module.exports = class Quote extends Plugin {
             text
         });
 
-        return `Quote added with ID ${this.db.quotes.length}`;
+        return `Quote added with ID ${this.db.quotes.length - 1}`;
     }
 
     findQuote(id) {
@@ -58,7 +61,7 @@ module.exports = class Quote extends Plugin {
 
     randomQuote() {
         const id = Math.floor(Math.random() * this.db.quotes.length);
-        return this.findQuote(id, reply);
+        return this.findQuote(id);
     }
 
     getAuthor(obj) {

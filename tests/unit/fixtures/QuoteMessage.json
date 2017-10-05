@@ -1,0 +1,47 @@
+{
+    "message_id": 22,
+    "from":{
+        "id": 108833532,
+        "is_bot": false,
+        "first_name":" Sergey",
+        "last_name":" Ufocoder",
+        "username":" ufocoder",
+        "language_code":" ru-RU"
+    },
+    "chat":{
+        "id": 108833532,
+        "first_name": "Sergey",
+        "last_name": "Ufocoder",
+        "username": "ufocoder",
+        "type": "private"
+    },
+    "date": 1507029332,
+    "reply_to_message": {
+        "message_id": 21,
+        "from":{
+            "id": 108833532,
+            "is_bot": false,
+            "first_name": "Sergey",
+            "last_name": "Ufocoder",
+            "username": "ufocoder",
+            "language_code": "ru-RU"
+        },
+        "chat": {
+            "id": 108833532,
+            "first_name": "Sergey",
+            "last_name": "Ufocoder",
+            "username": "ufocoder",
+            "type": "private"
+        },
+        "date": 1507029326,
+        "text": "Lorem ipsum"
+    },
+    "text": "/addquote",
+    "entities": [
+        {
+            "offset": 0,
+            "length": 9,
+            "type": "bot_command"
+        }
+    ]
+}
