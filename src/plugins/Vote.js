@@ -1,6 +1,15 @@
 const Plugin = require("../Plugin");
 
 module.exports = class Vote extends Plugin {
+
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.votes) {
+            this.db.votes = {};
+        }
+    }
+
     static get plugin() {
         return {
             name: "Vote",
@@ -10,11 +19,6 @@ module.exports = class Vote extends Plugin {
 \`/setvote <topic>\` to set the current topic for the vote
 \`/getvote\` or \`/voteresults\` to get info and results about the current vote.`
         };
-    }
-
-    start() {
-        if (!this.db.votes)
-            this.db.votes = {};
     }
 
     get commands() {

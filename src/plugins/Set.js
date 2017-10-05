@@ -3,17 +3,20 @@ const Util = require("../Util");
 
 module.exports = class Set extends Plugin {
 
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.replacements) {
+            this.db.replacements = [];
+        }
+    }
+
     static get plugin() {
         return {
             name: "Set",
             description: "Trigger bot responses whenever someone says a specific sentence.",
             help: "`/set <trigger> <response>` to set a trigger, `/unset <trigger>` to delete it."
         };
-    }
-
-    start() {
-        if (!this.db.replacements)
-            this.db.replacements = [];
     }
 
     onText({message}) {

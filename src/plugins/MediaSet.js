@@ -3,20 +3,24 @@ const Util = require("./../Util");
 
 module.exports = class MediaSet extends Plugin {
 
+    constructor(...args) {
+        super(...args);
+
+        if (!this.db.triggers) {
+            this.db.triggers = {};
+        }
+
+        if (!this.db.pendingRequests) {
+            this.db.pendingRequests = {};
+        }
+    }
+
     static get plugin() {
         return {
             name: "MediaSet",
             description: "Media-capable set command",
             help: '/mset `trigger`'
         };
-    }
-
-    start() {
-        if (!this.db.triggers)
-            this.db.triggers = {};
-
-        if (!this.db.pendingRequests)
-            this.db.pendingRequests = {};
     }
 
     onText({message}) {
