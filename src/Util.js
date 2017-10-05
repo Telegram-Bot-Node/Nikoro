@@ -96,7 +96,7 @@ module.exports = class Util {
     static parseInline(message, commandName, options = {}) {
         options.noRequireTrigger = true;
 
-        return this.parseCommand(message, commandName, options);
+        return Util.parseCommand(message, commandName, options);
     }
 
     static escapeRegExp(str) {
