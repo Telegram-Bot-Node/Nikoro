@@ -13,7 +13,7 @@ describe("Plugins", () => {
         it("has commands", () => {
             const plugin = new Plugin(undefined, undefined, false)
 
-            assert(typeof plugin.commands === "object")
+            assert.strictEqual(typeof plugin.commands, "object")
             assert(plugin.commands.addquote)
             assert(plugin.commands.quote)
         })
@@ -23,17 +23,17 @@ describe("Plugins", () => {
             const plugin = new Plugin(undefined, undefined, false)
             const quoteId = 0
 
-            assert(plugin.findQuote(quoteId) === "Quote not found")
-            assert(plugin.addQuote(message) === "Quote added with ID " + quoteId)
-            assert(plugin.findQuote(quoteId) === "<@ufocoder>: Lorem ipsum")
+            assert.strictEqual(plugin.findQuote(quoteId), "Quote not found")
+            assert.strictEqual(plugin.addQuote(message), "Quote added with ID " + quoteId)
+            assert.strictEqual(plugin.findQuote(quoteId), "<@ufocoder>: Lorem ipsum")
         })
 
         it("get random quote", () => {
             const plugin = new Plugin(undefined, undefined, false)
 
-            assert(plugin.randomQuote() === "Quote not found")
-            assert(plugin.addQuote(message) === "Quote added with ID 0")
-            assert(plugin.randomQuote() === "<@ufocoder>: Lorem ipsum")
+            assert.strictEqual(plugin.randomQuote(), "Quote not found")
+            assert.strictEqual(plugin.addQuote(message), "Quote added with ID 0")
+            assert.strictEqual(plugin.randomQuote(), "<@ufocoder>: Lorem ipsum")
         })
     })
 })
