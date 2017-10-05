@@ -146,12 +146,23 @@ module.exports = class PluginManager {
 
         const loadedPlugin = new ThisPlugin(this.emitter, this.bot);
 
+        // Bind all the methods from the bot API
         for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(this.bot))) {
             if (typeof this.bot[method] !== "function") continue;
             if (method === "constructor" || method === "on") continue;
             if (/^_/.test(method)) continue; // Do not expose internal methods
             this.log.debug(`Binding ${method}`);
             loadedPlugin[method] = this.bot[method].bind(this.bot);
+        }
+
+        // Load the blacklist and database from disk
+        const databasePath = PluginManager.getDatabasePath(loadedPlugin);
+
+        if (fs.existsSync(databasePath)) {
+            const {db, blacklist} = JSON.parse(fs.readFileSync(databasePath, "utf8"));
+
+            loadedPlugin.blacklist = new Set(blacklist);
+            loadedPlugin.db = db;
         }
 
         this.log.debug(`Created ${pluginName}.`);
@@ -208,36 +219,26 @@ module.exports = class PluginManager {
         return Promise.all(this.plugins.map(pl => pl.stop()));
     }
 
-    getDatabasePath(plugin) {
+    static getDatabasePath(plugin) {
         return path.join(__dirname, '..', 'db', 'plugin_' + plugin.plugin.name + '.json');
     }
 
     startSynchronization() {
-        this.plugins.forEach(plugin => {
-            const databasePath = this.getDatabasePath(plugin);
-
-            if (fs.existsSync(databasePath)) {
-                const {db, blacklist} = JSON.parse(fs.readFileSync(databasePath, "utf8"));
-
-                plugin.blacklist = new Set(blacklist);
-                plugin.db = db;
-            }
-        });
-
         this.synchronizationInterval = setInterval(() => {
-            this.plugins.forEach(plugin => (
+            this.plugins.forEach(plugin => {
                 fs.writeFile(
-                    this.getDatabasePath(plugin),
+                    PluginManager.getDatabasePath(plugin),
                     JSON.stringify({
                         db: plugin.db,
                         blacklist: Array.from(plugin.blacklist)
-                    })
-                , err => {
-                    if (err) {
-                        this.log.error("Error database sync", err);
+                    }),
+                    err => {
+                        if (err) {
+                            this.log.error("Error synchronizing the database", err);
+                        }
                     }
-                })
-            ));
+                );
+            });
         }, SYNC_INTERVAL);
     }
 
