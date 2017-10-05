@@ -2,7 +2,19 @@ const Plugin = require("./../Plugin");
 const Util = require("./../Util");
 const RateLimiter = require("limiter").RateLimiter;
 
+const RATE_TIMEOUT = 5000
+
 module.exports = class Antiflood extends Plugin {
+    constructor(...args) {
+        super(...args)
+
+        this.lastMessages = {};
+        this.ignoreLimiters = {};
+        this.warnLimiters = {};
+        this.warnMessageLimiters = {};
+        this.kickLimiters = {};
+    }
+
     static get plugin() {
         return {
             name: "Antiflood",
@@ -19,11 +31,6 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
 
     start(config, auth) {
         this.auth = auth;
-        this.lastMessages = {};
-        this.ignoreLimiters = {};
-        this.warnLimiters = {};
-        this.warnMessageLimiters = {};
-        this.kickLimiters = {};
     }
 
     processIgnore(message) {
@@ -90,7 +97,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                     delete this.ignoreLimiters[chatId];
                     return "Antiflood ignore disabled for this chat.";
                 }
-                this.ignoreLimiters[chatId] = new RateLimiter(N, 5000);
+                this.ignoreLimiters[chatId] = new RateLimiter(N, RATE_TIMEOUT);
                 return `New rate limit: ${N} messages per 5 seconds`;
             },
             floodwarn: ({message, args}) => {
@@ -104,9 +111,9 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                     delete this.warnLimiters[chatId];
                     return "Antiflood warn disabled for this chat.";
                 }
-                this.warnLimiters[chatId] = new RateLimiter(N, 5000);
+                this.warnLimiters[chatId] = new RateLimiter(N, RATE_TIMEOUT);
                 // Issue at most one warning every five seconds, so as not to help the user spam
-                this.warnMessageLimiters[chatId] = new RateLimiter(1, 5000);
+                this.warnMessageLimiters[chatId] = new RateLimiter(1, RATE_TIMEOUT);
                 return `New rate limit: ${N} messages per 5 seconds`;
             },
             floodkick: ({message, args}) => {
@@ -120,7 +127,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                     delete this.kickLimiters[chatId];
                     return "Antiflood kick disabled for this chat.";
                 }
-                this.kickLimiters[chatId] = new RateLimiter(N, 5000);
+                this.kickLimiters[chatId] = new RateLimiter(N, RATE_TIMEOUT);
                 return `New rate limit: ${N} messages per 5 seconds`;
             }
         };
