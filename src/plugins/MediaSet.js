@@ -23,7 +23,6 @@ module.exports = class MediaSet extends Plugin {
         };
     }
 
-
     onText({message}) {
         const text = message.text;
 

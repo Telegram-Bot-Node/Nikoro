@@ -2,11 +2,11 @@ const Plugin = require("./../Plugin");
 const Util = require("./../Util");
 const RateLimiter = require("limiter").RateLimiter;
 
-const RATE_TIMEOUT = 5000
+const RATE_TIMEOUT = 5000;
 
 module.exports = class Antiflood extends Plugin {
     constructor(...args) {
-        super(...args)
+        super(...args);
 
         this.lastMessages = {};
         this.ignoreLimiters = {};
