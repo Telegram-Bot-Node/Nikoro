@@ -232,7 +232,11 @@ module.exports = class PluginManager {
                         db: plugin.db,
                         blacklist: Array.from(plugin.blacklist)
                     })
-                )
+                , err => {
+                    if (err) {
+                        this.log.error("Error database sync", err);
+                    }
+                })
             ));
         }, SYNC_INTERVAL);
     }
