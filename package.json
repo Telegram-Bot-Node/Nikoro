@@ -19,10 +19,10 @@
     "mocha": "^3.1.2"
   },
   "scripts": {
-    "guided-setup": "bash guided-install.sh",
-    "guided-configure": "node setupBot.js",
-    "expert-setup": "bash expert-install.sh",
-    "expert-configure": "node src/Installer.js",
+    "setup:guided": "bash guided-install.sh",
+    "configure:guided": "node setupBot.js",
+    "setup:expert": "bash expert-install.sh",
+    "configure:expert": "node src/Installer.js",
     "bot": "node src/Bot.js",
     "lint": "eslint src/",
     "test": "mocha tests/ --name '*Test.js' --recursive",

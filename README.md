@@ -37,7 +37,7 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 
 * Clone the repository
 * Create a Telegram bot and get the bot token (https://core.telegram.org/bots/#botfather)
-* Run `npm run guided-setup` (or `npm run expert-setup` if you have more experience with Telegram and want to tweak your bot more)
+* Run `npm run setup:guided` (or `npm run setup:expert` if you have more experience with Telegram and want to tweak your bot more)
 * Run the bot with `npm run bot`
 >You can stop the bot at any time with Ctrl+C.
 
