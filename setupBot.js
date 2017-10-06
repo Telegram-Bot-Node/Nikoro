@@ -137,6 +137,7 @@ inquirer
         fs.writeFileSync(configPath, JSON.stringify(config, null, 4));
         const message = "You configured the bot successfully! The setup procedure will now end.";
         log.info(message);
+        log.info("You can now run 'npm run bot' to launch the bot.");
         return bot.sendMessage(adminChatId, message);
     })
     .then(() => new Promise(resolve => setTimeout(resolve, 1000)))

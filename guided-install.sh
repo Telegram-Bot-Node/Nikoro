@@ -16,10 +16,10 @@ fi
 echo "npm found."
 
 echo "Installing dependencies..."
-npm install
+npm install --production
 if [ $? -ne 0 ] ; then
 	exit 1
 fi
 echo "Dependencies installed."
 
-npm run configure
+npm run guided-configure
