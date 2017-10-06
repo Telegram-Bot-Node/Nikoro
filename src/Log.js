@@ -1,6 +1,6 @@
 const winston = require("winston");
 
-module.exports.get = (loggername, config, level) => {
+module.exports = function Logger(loggername, config, level) {
     if (!level && config) level = config.loggingLevel;
     if (!level) level = "info";
     if (loggername in winston.loggers)

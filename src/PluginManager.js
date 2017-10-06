@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Log = require("./Log");
+const Logger = require("./Log");
 const MasterPlugin = require("./MasterPlugin");
 const Plugin = require("./Plugin");
 const Util = require("./Util");
@@ -15,7 +15,7 @@ module.exports = class PluginManager {
 
     constructor(bot, config, auth) {
         this.bot = bot;
-        this.log = Log.get("PluginManager", config);
+        this.log = new Logger("PluginManager", config);
         this.auth = auth;
         this.plugins = [];
         this.emitter = new EventEmitter();

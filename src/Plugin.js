@@ -1,4 +1,4 @@
-const Log = require("./Log");
+const Logger = require("./Log");
 
 module.exports = class Plugin {
 
@@ -62,7 +62,7 @@ module.exports = class Plugin {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
-        this.log = Log.get(this.plugin.name, config);
+        this.log = new Logger(this.plugin.name, config);
         this.listener = listener;
 
         this.db = {};

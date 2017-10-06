@@ -8,8 +8,8 @@
 
 const request = require("request");
 const fs = require("fs");
-const Log = require("./Log");
-const log = Log.get("Util", {loggingLevel: "info"}); // todo: figure out how to manage this
+const Logger = require("./Log");
+const log = new Logger("Util", {loggingLevel: "info"}); // todo: figure out how to manage this
 const assert = require("assert");
 
 module.exports = class Util {

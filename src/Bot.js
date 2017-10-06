@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
-const Log = require("./Log");
+const Logger = require("./Log");
 const Config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
 const PluginManager = require("./PluginManager");
 const Auth = require("./helpers/Auth");
@@ -14,7 +14,7 @@ if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
     process.exit(1);
 }
 
-const log = Log.get("Bot", Config);
+const log = new Logger("Bot", Config);
 
 // Version reporting, useful for bug reports
 let commit = "";
