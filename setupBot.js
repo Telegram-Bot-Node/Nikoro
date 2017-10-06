@@ -96,13 +96,27 @@ inquirer
                 return `*${plugin.name}*: ${plugin.message}`;
             })
             .join("\n");
+        const buttons = plugins
+            .filter(p => !p.disabled)
+            .map(plugin => ({
+                text: plugin.name,
+                callback_data: plugin.path
+            }));
+        // We want to put the buttons in two columns.
+        const rows = buttons.reduce((rows, button) => {
+            const lastRow = rows[rows.length === 0 ? 0 : (rows.length - 1)];
+            // If there is space, add a new button
+            if (lastRow.length < 2)
+                lastRow.push(button);
+            // Otherwise, push a new row
+            else
+                rows.push([button]);
+            return rows;
+        }, [[]]);
         return bot.sendMessage(adminChatId, msg, {
             parse_mode: "markdown",
             reply_markup: {
-                inline_keyboard: plugins.filter(p => !p.disabled).map(plugin => [{
-                    text: plugin.name,
-                    callback_data: plugin.path
-                }])
+                inline_keyboard: rows
             }
         });
     })
