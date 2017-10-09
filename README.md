@@ -10,14 +10,18 @@ Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-###Table of Contents
+## Table of Contents
 
+- [Features](#features)
+- [Running the bot](#running-the-bot)
+- [Using the bot](#using-the-bot)
 - [Plugins](#plugins)
   - [Adding a plugin](#adding-a-plugin)
   - [Writing](#writing)
-    - [Responding to messages](#responding-to-messages)
-    - [Parsing messages](#parsing-messages)
-    - [Permanent storage, configuration](#permanent-storage-configuration)
+- [Contributing](#contributing)
+- [Contributors](#contributors)
+- [Need help?](#need-help)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
