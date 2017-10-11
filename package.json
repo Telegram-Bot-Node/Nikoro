@@ -19,9 +19,9 @@
     "mocha": "^3.1.2"
   },
   "scripts": {
-    "setup:guided": "bash guided-install.sh",
+    "setup:guided": "bash bin/guided-install.sh",
     "configure:guided": "node setupBot.js",
-    "setup:expert": "bash expert-install.sh",
+    "setup:expert": "bash bin/expert-install.sh",
     "configure:expert": "node src/Installer.js",
     "bot": "node src/Bot.js",
     "lint": "eslint src/",
