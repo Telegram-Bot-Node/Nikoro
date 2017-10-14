@@ -177,11 +177,15 @@ module.exports = class PluginManager {
     }
 
     // Returns true if the plugin was added successfully, false otherwise.
-    loadAndAdd(pluginName) {
+    loadAndAdd(pluginName, persist = true) {
         try {
             const plugin = this.loadPlugin(pluginName);
             this.log.debug(pluginName + " loaded correctly.");
             this.addPlugin(plugin);
+            if (persist) {
+                this.config.activePlugins.push(pluginName);
+                fs.writeFileSync("config.json", JSON.stringify(this.config,  null, 4));
+            }
             return true;
         } catch (e) {
             this.log.warn(e);
@@ -191,11 +195,11 @@ module.exports = class PluginManager {
     }
 
     // Load and add every plugin in the list.
-    loadPlugins(pluginNames) {
+    loadPlugins(pluginNames, persist = true) {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
         Error.stackTraceLimit = 5; // Avoid printing useless data in stack traces
 
-        const log = pluginNames.map(name => this.loadAndAdd(name));
+        const log = pluginNames.map(name => this.loadAndAdd(name, persist));
         if (log.some(result => result !== true)) {
             this.log.warn("Some plugins couldn't be loaded.");
         }
@@ -204,8 +208,12 @@ module.exports = class PluginManager {
     }
 
     // Returns true if at least one plugin was removed
-    removePlugin(pluginName) {
+    removePlugin(pluginName, persist = true) {
         this.log.verbose(`Removing plugin ${pluginName}`);
+        if (persist) {
+            this.config.activePlugins = this.config.activePlugins.filter(name => !nameMatches(pluginName));
+            fs.writeFileSync("config.json", JSON.stringify(this.config,  null, 4));
+        }
         const prevPluginNum = this.plugins.length;
         const isCurrentPlugin = nameMatches(pluginName);
         this.plugins.filter(isCurrentPlugin).forEach(pl => pl.stop());

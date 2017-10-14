@@ -28,7 +28,7 @@ log.info("Instance created.");
 
 log.verbose("Loading plugins...");
 const pluginManager = new PluginManager(bot, Config, auth);
-pluginManager.loadPlugins(Config.activePlugins);
+pluginManager.loadPlugins(Config.activePlugins, false);
 pluginManager.startSynchronization();
 log.info("Plugins loaded.");
 
