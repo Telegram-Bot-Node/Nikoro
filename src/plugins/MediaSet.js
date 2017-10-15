@@ -134,8 +134,6 @@ module.exports = class MediaSet extends Plugin {
             // delete pending request
             delete this.db.pendingRequests[message.chat.id][request];
 
-            this.synchronize();
-
             this.sendMessage(message.chat.id, "Done! Enjoy!");
             return;
         }
