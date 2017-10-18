@@ -17,8 +17,7 @@ module.exports = class Ignore extends Plugin {
             description: "Ignore users",
             help: "Syntax: /ignore <ID>",
 
-            visibility: Plugin.Visibility.VISIBLE,
-            type: Plugin.Type.NORMAL | Plugin.Type.PROXY
+            isProxy: true
         };
     }
 

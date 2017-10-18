@@ -1,31 +1,13 @@
 const Logger = require("./Log");
 
 module.exports = class Plugin {
-
-    static get Type() {
-        return {
-            NORMAL: 0x01,
-            INLINE: 0x02,
-            PROXY: 0x04,
-            SPECIAL: 0x08
-        };
-    }
-
-    static get Visibility() {
-        return {
-            VISIBLE: 0,
-            HIDDEN: 1
-        };
-    }
-
     static get plugin() {
         return {
             name: "Plugin",
             description: "Base Plugin",
             help: "There is no need to ask for help",
 
-            visibility: Plugin.Visibility.HIDDEN,
-            type: Plugin.Type.SPECIAL
+            isHidden: true
         };
     }
 

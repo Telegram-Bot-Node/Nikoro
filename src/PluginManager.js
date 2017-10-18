@@ -42,7 +42,7 @@ module.exports = class PluginManager {
                     this.parseEnableDisable(message);
                     Promise.all(
                         this.plugins
-                            .filter(plugin => (plugin.plugin.type & Plugin.Type.PROXY) === Plugin.Type.PROXY)
+                            .filter(plugin => plugin.plugin.isProxy)
                             .map(plugin => plugin.proxy(eventName, message))
                         )
                        .then(() => this.emit(

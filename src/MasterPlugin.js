@@ -8,8 +8,7 @@ module.exports = class MasterPlugin extends Plugin {
             description: "",
             help: "This plugin has access to PluginManager and will perform all the 'meta'/'super' actions.",
 
-            type: Plugin.Type.SPECIAL,
-            visibility: Plugin.Visibility.HIDDEN
+            isHidden: true
         };
     }
 
@@ -23,7 +22,7 @@ module.exports = class MasterPlugin extends Plugin {
         if (command !== "help") return;
         const availablePlugins = this.pluginManager.plugins
             .map(pl => pl.plugin)
-            .filter(pl => pl.visibility !== Plugin.Visibility.HIDDEN);
+            .filter(pl => !pl.isHidden);
         if (args.length === 0) {
             this.sendMessage(
                 message.chat.id,

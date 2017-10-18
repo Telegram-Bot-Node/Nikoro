@@ -5,10 +5,7 @@ module.exports = class AuthPlugin extends Plugin {
         return {
             name: "Auth",
             description: "Plugin to handle authentication",
-            help: "",
-
-            visibility: Plugin.Visibility.VISIBLE,
-            type: Plugin.Type.SPECIAL
+            help: ""
         };
     }
 

@@ -27,7 +27,7 @@ Use /floodkick <N> to kick users automatically after N messages every 5 seconds.
 
 A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kicking).`,
 
-            type: Plugin.Type.PROXY
+            isProxy: true
         };
     }
 

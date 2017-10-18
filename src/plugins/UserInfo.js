@@ -7,7 +7,7 @@ module.exports = class UserInfo extends Plugin {
             description: "Log information about users",
             help: "Syntax: `/id user`",
 
-            type: Plugin.Type.PROXY
+            isProxy: true
         };
     }
 
