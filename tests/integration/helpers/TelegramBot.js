@@ -41,4 +41,4 @@ module.exports = class TelegramBot extends EventEmitter {
             options
         });
     }
-}
+};

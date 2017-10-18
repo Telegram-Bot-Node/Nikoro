@@ -184,7 +184,7 @@ module.exports = class PluginManager {
             this.addPlugin(plugin);
             if (persist) {
                 this.config.activePlugins.push(pluginName);
-                fs.writeFileSync("config.json", JSON.stringify(this.config,  null, 4));
+                fs.writeFileSync("config.json", JSON.stringify(this.config, null, 4));
             }
             return true;
         } catch (e) {
@@ -211,8 +211,8 @@ module.exports = class PluginManager {
     removePlugin(pluginName, persist = true) {
         this.log.verbose(`Removing plugin ${pluginName}`);
         if (persist) {
-            this.config.activePlugins = this.config.activePlugins.filter(name => !nameMatches(pluginName));
-            fs.writeFileSync("config.json", JSON.stringify(this.config,  null, 4));
+            this.config.activePlugins = this.config.activePlugins.filter(name => !nameMatches(name));
+            fs.writeFileSync("config.json", JSON.stringify(this.config, null, 4));
         }
         const prevPluginNum = this.plugins.length;
         const isCurrentPlugin = nameMatches(pluginName);

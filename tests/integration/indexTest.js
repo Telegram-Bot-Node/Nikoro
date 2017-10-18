@@ -1,7 +1,7 @@
 /* eslint-env node, es6, mocha */
 const PluginManager = require("../../src/PluginManager");
 const Auth = require("../../src/helpers/Auth");
-const TelegramBot = require('./helpers/TelegramBot')
+const TelegramBot = require('./helpers/TelegramBot');
 const config = require("./sample-config.json");
 const auth = new Auth(config);
 

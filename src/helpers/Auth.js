@@ -39,7 +39,7 @@ module.exports = class Auth {
 
     isMod(_userId, _chatId) {
         const userId = Number(_userId);
-        const chatId = Number(userId);
+        const chatId = Number(_chatId);
         if (this.isAdmin(userId, chatId)) {
             return true;
         }
@@ -48,7 +48,7 @@ module.exports = class Auth {
 
     isAdmin(_userId, _chatId) {
         const userId = Number(_userId);
-        const chatId = Number(userId);
+        const chatId = Number(_chatId);
         if (this.isGlobalAdmin(userId)) {
             return true;
         }
@@ -62,7 +62,7 @@ module.exports = class Auth {
 
     addAdmin(_userId, _chatId) {
         const userId = Number(_userId);
-        const chatId = Number(userId);
+        const chatId = Number(_chatId);
         if (!this.db.auth[chatId])
             this.db.auth[chatId] = {};
 
@@ -75,7 +75,7 @@ module.exports = class Auth {
 
     removeAdmin(_userId, _chatId) {
         const userId = Number(_userId);
-        const chatId = Number(userId);
+        const chatId = Number(_chatId);
         if (!this.db.auth[chatId])
             this.db.auth[chatId] = {};
 
@@ -88,7 +88,7 @@ module.exports = class Auth {
 
     addMod(_userId, _chatId) {
         const userId = Number(_userId);
-        const chatId = Number(userId);
+        const chatId = Number(_chatId);
         if (!this.db.auth[chatId])
             this.db.auth[chatId] = {};
 
@@ -101,7 +101,7 @@ module.exports = class Auth {
 
     removeMod(_userId, _chatId) {
         const userId = Number(_userId);
-        const chatId = Number(userId);
+        const chatId = Number(_chatId);
         if (!this.db.auth[chatId])
             this.db.auth[chatId] = {};
 
