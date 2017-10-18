@@ -80,7 +80,7 @@ module.exports = class MediaSet extends Plugin {
         if (args.length !== 1)
             return this.sendMessage(
                 message.chat.id,
-                "Syntax: /mset `trigger`",
+                "Syntax: /mset `trigger`, /munset `trigger` (or /moonset `trigger`)",
                 {
                     parse_mode: "Markdown"
                 }
