@@ -19,7 +19,7 @@ module.exports = class MediaSet extends Plugin {
         return {
             name: "MediaSet",
             description: "Media-capable set command",
-            help: '/mset `trigger`'
+            help: '/mset `trigger`, /munset `trigger`'
         };
     }
 
@@ -76,25 +76,42 @@ module.exports = class MediaSet extends Plugin {
     }
 
     onCommand({message, command, args}) {
-        if (command !== "mset") return;
-        if (args.length !== 1)
-            return this.sendMessage(
-                message.chat.id,
-                "Syntax: /mset `trigger`",
-                {
-                    parse_mode: "Markdown"
-                }
-            );
+        switch (command) {
+            case "mset": 
+                if (args.length !== 1)
+                    return this.sendMessage(
+                        message.chat.id,
+                        "Syntax: /mset `trigger`",
+                        {
+                            parse_mode: "Markdown"
+                        }
+                    );
+                this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
+                if (!this.db.pendingRequests[message.chat.id])
+                    this.db.pendingRequests[message.chat.id] = {};
+                this.sendMessage(message.chat.id, "Perfect! Now send me the media as a reply to this message!")
+                .then(({message_id}) => {
+                    this.db.pendingRequests[message.chat.id][message_id] = args[0];
+                });
+                break;
+            case "munset":
+            case "moonset": 
+                if (args.length !== 1)
+                    return this.sendMessage(
+                        message.chat.id,
+                        "Syntax: /munset `trigger` (or /moonset `trigger`)",
+                        {
+                            parse_mode: "Markdown"
+                        }
+                    );
+                const chatID = message.chat.id;
+                const trigger = args[0];
+                delete this.db.triggers[chatID][trigger];
+                this.log.verbose("Removed trigger " + trigger + " on " + Util.buildPrettyChatName(message.chat));
+                this.sendMessage(message.chat.id, "Done!")
+                break;
 
-        this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
-
-        if (!this.db.pendingRequests[message.chat.id])
-            this.db.pendingRequests[message.chat.id] = {};
-
-        this.sendMessage(message.chat.id, "Perfect! Now send me the media as a reply to this message!")
-        .then(({message_id}) => {
-            this.db.pendingRequests[message.chat.id][message_id] = args[0];
-        });
+        }
     }
 
     setStepTwo(message, mediaType) {
