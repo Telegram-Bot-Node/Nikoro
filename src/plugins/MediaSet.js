@@ -76,18 +76,16 @@ module.exports = class MediaSet extends Plugin {
     }
 
     onCommand({message, command, args}) {
-        if (command !== "mset" && command !== "munset" && command !== "moonset") return;
-        if (args.length !== 1)
-            return this.sendMessage(
-                message.chat.id,
-                "Syntax: /mset `trigger`, /munset `trigger` (or /moonset `trigger`)",
-                {
-                    parse_mode: "Markdown"
-                }
-            );
-
         switch (command) {
             case "mset": 
+                if (args.length !== 1)
+                    return this.sendMessage(
+                        message.chat.id,
+                        "Syntax: /mset `trigger`",
+                        {
+                            parse_mode: "Markdown"
+                        }
+                    );
                 this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
                 if (!this.db.pendingRequests[message.chat.id])
                     this.db.pendingRequests[message.chat.id] = {};
@@ -98,6 +96,14 @@ module.exports = class MediaSet extends Plugin {
                 break;
             case "munset":
             case "moonset": 
+                if (args.length !== 1)
+                    return this.sendMessage(
+                        message.chat.id,
+                        "Syntax: /munset `trigger` (or /moonset `trigger`)",
+                        {
+                            parse_mode: "Markdown"
+                        }
+                    );
                 const chatID = message.chat.id;
                 const trigger = args[0];
                 delete this.db.triggers[chatID][trigger];
