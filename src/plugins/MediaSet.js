@@ -19,7 +19,7 @@ module.exports = class MediaSet extends Plugin {
         return {
             name: "MediaSet",
             description: "Media-capable set command",
-            help: '/mset `trigger`'
+            help: '/mset `trigger`, /munset `trigger`'
         };
     }
 
@@ -76,7 +76,7 @@ module.exports = class MediaSet extends Plugin {
     }
 
     onCommand({message, command, args}) {
-        if (command !== "mset") return;
+        if (command !== "mset" && command !== "munset" && command !== "moonset") return;
         if (args.length !== 1)
             return this.sendMessage(
                 message.chat.id,
@@ -86,15 +86,25 @@ module.exports = class MediaSet extends Plugin {
                 }
             );
 
-        this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
-
-        if (!this.db.pendingRequests[message.chat.id])
-            this.db.pendingRequests[message.chat.id] = {};
-
-        this.sendMessage(message.chat.id, "Perfect! Now send me the media as a reply to this message!")
-        .then(({message_id}) => {
-            this.db.pendingRequests[message.chat.id][message_id] = args[0];
-        });
+        if (command == "mset") {
+            this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
+            if (!this.db.pendingRequests[message.chat.id])
+                this.db.pendingRequests[message.chat.id] = {};
+    
+            this.sendMessage(message.chat.id, "Perfect! Now send me the media as a reply to this message!")
+            .then(({message_id}) => {
+                this.db.pendingRequests[message.chat.id][message_id] = args[0];
+            });
+        } else if (command == "munset" || command == "moonset") {
+            const chatID = message.chat.id;
+            const trigger = args[0];
+            // Take only replacements with either a different chat id or a different trigger
+            // this.db.triggers = this.db.triggers.filter(item => (item.chatID !== chatID) || (item.trigger !== trigger));
+            delete this.db.triggers[chatID][trigger];
+            this.log.verbose("Removed trigger " + trigger + " on " + Util.buildPrettyChatName(message.chat));
+            this.sendMessage(message.chat.id, "Done!")
+            return "Done.";
+        }
     }
 
     setStepTwo(message, mediaType) {
