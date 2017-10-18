@@ -76,4 +76,4 @@ In alphabetical order
     * Added automatic testing via Travis CI 
     
 ## Need help?
-Send me a mail or create an issue, I will answer ASAP. :+1:
+[Send me a mail](bld.cris.96@gmail.com) or [create an issue](https://github.com/crisbal/Telegram-Bot-Node/issues/new), I will answer ASAP. :+1:

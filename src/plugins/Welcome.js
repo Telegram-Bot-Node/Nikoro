@@ -5,7 +5,7 @@ module.exports = class Welcome extends Plugin {
     static get plugin() {
         return {
             name: "Welcome",
-            description: "Says welcome and goodbye."
+            description: "Says welcome and goodbye to users when they join or leave a group."
         };
     }
 
