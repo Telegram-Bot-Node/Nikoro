@@ -1,0 +1,18 @@
+{
+  "projectname": "Telegram-Bot-Node",
+  "projectdescription": "A plugin-based, all-in-one Telegram bot written in Node.js.",
+  "github": "https://github.com/crisbal/Telegram-Bot-Node",
+  "basedir": "./dev/views/",
+  "root": "",
+  "pages": {
+    "home": {
+      "title": "Telegram-Bot-Node",
+    },
+    "developer": {
+      "title": "Documentation"
+    },
+    "user": {
+      "title": "User's guide"
+    }
+  }
+}

@@ -1,0 +1,218 @@
+extends /layouts/default
+
+block vars
+  - var page = "user";
+
+block content
+  include /includes/navbar
+  .container
+    section.section
+      .columns
+        .column.is-3
+          aside.menu
+            p.menu-label User's guide
+            ul.menu-list
+              li
+                a(href="#installation") Installation
+              li
+                a(href="#plugins") Plugins
+                ul
+                  li: a(href="#moderation") Moderation
+                  li: a(href="#utility") Utility
+                  li: a(href="#fun") Fun
+                  li: a(href="#search") Search
+              li: a(href="#expert") Expert setup
+              li: a(href="#manual") Manual setup
+
+        .column.is-9
+          section#installation
+            h3.title Installation
+            p.
+              #{projectname} is written in Node.js, so you'll need to #[a(href="https://nodejs.org/en/download/") download] and install it together with npm. Take care to install Node.js 6.0 or higher.
+            p.
+              Clone the #[a(href=github) repository] to your computer and run the setup wizard:
+            
+            pre.terminal
+              span.command.bold git clone #{github}
+              br
+              span.command.bold cd #{github.split("/")[4]}
+              br
+              span.command.bold npm run setup:guided
+            
+            p.
+              The wizard will ask for the bot token, which you can get from #[a(href="https://t.me/BotFather") @BotFather], and then take control of the bot.
+            
+            figure.has-text-centered
+              a(href=root+"assets/images/cli-install.png", alt="CLI wizard", title="Open this image in a new tab", target="_blank")
+                img(src=root+"assets/images/cli-install.png")
+              figcaption The command-line wizard.
+
+            .columns
+              .column
+                figure.has-text-centered
+                  a(href=root+"assets/images/telegram-install-1.png", alt="Plugins list in wizard", title="Open this image in a new tab", target="_blank")
+                    img(src=root+"assets/images/telegram-install-1.png")
+                  figcaption The list of plugins in the bot wizard.
+              .column
+                figure.has-text-centered
+                  a(href=root+"assets/images/telegram-install-2.png", alt="Plugin selection in wizard", title="Open this image in a new tab", target="_blank")
+                    img(src=root+"assets/images/telegram-install-2.png")
+                  figcaption Plugin selection in the bot wizard.
+            p.
+              When you're done, just send #[kbd /done] to quit the wizard, and you're ready to launch the bot:
+            pre.terminal
+              span.command.bold npm start bot
+              br
+              span info: [Bot] Telegram-Bot-Node version 1.0.0, commit 72567d9
+              br
+              span info: [Bot] Instance created.
+              br
+              span info: [Bot] Plugins loaded.
+              br
+              span info: [Bot] The bot is online!
+          hr
+
+          section#plugins
+            h3.title Plugins
+            p.
+              #{pages[page].title} features many plugins for different use cases, from #[strong moderation tools] to #[strong word games]. Here are some highlights:
+            .columns
+              .column.is-6
+                .panel.red#moderation
+                  header.panel-heading Moderation
+                  .panel-block
+                    .plugin-title Kick
+                    | Provides basic kick/ban functionality.
+                  .panel-block
+                    .plugin-title ModTools
+                    | Implements warnings, banned words and reporting features.
+                  .panel-block
+                    .plugin-title Antiflood
+                    | Stops floods by ignoring, warning or kicking users.
+                  .panel-block
+                    .plugin-title Ignore
+                    | Prevents users from interacting with the bot.
+                .panel.green#fun
+                  header.panel-heading Fun
+                  .panel-block
+                    .plugin-title Markov
+                    | Sends random messages by learning from yours.
+                  .panel-block
+                    .plugin-title Wordgame
+                    | Test your typing speed, or your ability to solve anagrams.
+                  .panel-block
+                    .plugin-title Karma
+                    | Keeps scores about users.
+              .column.is-6
+                .panel.yellow#utility
+                  header.panel-heading Utility
+                  .panel-block
+                    .plugin-title Set/MediaSet
+                    | Replies to triggers with a configurable message, image, video...
+                  .panel-block
+                    .plugin-title Reminder
+                    | Reminds you of upcoming events.
+                  .panel-block
+                    .plugin-title Quote
+                    | Can save quotes and browse them.
+                  .panel-block
+                    .plugin-title Vote
+                    | Lets users vote on questions.
+                  .panel-block
+                    .plugin-title RegexSet
+                    | Like Set, but accepts regular expressions.
+                  .panel-block
+                    .plugin-title Spoiler
+                    | Hides spoilers with a button.
+                .panel.blue#search
+                  header.panel-heading Search
+                  .panel-block
+                    .plugin-title UrbanDictionary
+                  .panel-block
+                    .plugin-title Google
+                  .panel-block
+                    .plugin-title xkcd
+                  .panel-block
+                    .plugin-title Fap
+                  .panel-block
+                    .plugin-title Rule34
+          section#expert
+            h3.title Expert setup
+            p.
+              #{projectname} can also be configured via a command line interface, which provides more control and can be faster than the Telegram-based process. The command-line setup can be invoked with:
+            pre.terminal
+              span.command.bold npm run setup:expert
+            p.
+              This will install the dependencies and start the setup interface. The first prompt asks for the bot token, which you can get from #[a(href="https://telegram.me/BotFather") @BotFather].
+            - const repoName = github.split("/")[4];
+            pre.terminal.
+              #[span.command.bold npm run setup:expert]
+              &gt; telegram-bot-node@1.0.0 setup:expert /tmp/#{repoName}
+              &gt; bash bin/expert-install.sh
+              
+              Checking for Node.js...
+              Node.js found.
+              Checking for npm...
+              npm found.
+              Installing dependencies...
+              
+              added 371 packages in 5.646s
+              Dependencies installed.
+              
+              &gt; #{repoName}@1.0.0 configure:expert /tmp/#{repoName}
+              &gt; node src/Installer.js
+              
+              #[span.bold ? What's the bot token?]
+            p.
+              Then, you will select the plugins from a list. You can browse the list with the arrow keys, and select individual plugins with Space.
+            pre.terminal.
+              #[span.bold ? What plugins would you like to enable? (Press &lt;space&gt; to select, &lt;a&gt; to toggle all, &lt;i&gt; to inverse selection)]
+              ❯◯  The8Ball - Magic 8-Ball!
+               ◯  Antiflood - Automatically ignore or kick spamming users
+               ◯  Auth - Plugin to handle authentication
+               ◯  BoobsButts - Get boobs and butts.
+               ◯  Config - Configuration manager
+               ◯  Echo - Totally not a bot with an echo
+               ◯  Porn - Searches porn.com.
+            blockquote
+              | Some plugins may be disabled because they couldn't be initialized:
+              pre.terminal.
+                -  YouTube.js (Cannot find module 'youtube-api')
+              p.
+                The most common error is "Cannot find module 'x'", which means that you simply need to open a new terminal, navigate to the bot's directory, and install the module. For example, to use the plugin YouTube.js you would need to run the commands below, and then restart the setup:
+              pre.terminal
+                span.command.bold cd #{projectname}
+                br
+                span.command.bold npm install youtube-api
+            p.
+              Then, you will be asked for the list of administrators. The prompt specifically asks for an array of #[strong user IDs] surrounded by square braces. Getting your user ID can be difficult; you can get it from an existing Telegram-Bot-Node installation using the UserInfo plugin, or by #[tt console.log]-ging incoming messages in a node-telegram-bot-api instance, or from your profile page in #[a(href="https://play.google.com/store/apps/details?id=org.telegram.plus") Plus Messenger].
+            pre.terminal
+              span.bold ? Enter the list of global admins as an array of user IDs (eg. [1111, 1234])
+            p.
+              Finally, you can select the logging level.
+            ul
+              li "Error" logs only errors (fatal or not).
+              li "Warn" reduces logging to warnings you should be aware of;
+              li "Info" is recommended for normal usage;
+              li "Verbose" is a bit more moderate;
+              li "Debug" prints an insane amount of information;
+            pre.terminal.
+              #[span.bold ? What logging level is to be used?]
+                error
+                warn
+              ❯ info
+                verbose
+                debug
+          section#manual
+            h3.title Manual setup
+            p.
+              Both setup processes are a graphical frontend to create the configuration file; however, nothing stops you from creating your own. Here are the specifications:
+            ul.list
+              li Settings are stored in a JSON file called #[tt config.json] in the root folder of the project.
+              li
+                | The root element is an object with the following properties (case-sensitive):
+                ul.list
+                  li #[tt TELEGRAM_TOKEN] (string): the bot token
+                  li #[tt activePlugins] (array of strings): the list of plugins, as an array of file names without ".js" (eg. #[tt ["Set", "MediaSet", "Wordgame"]])
+                  li #[tt globalAdmins] (array of numbers): the list of user IDs that start as "global admins" (i.e. have maximum powers in every chat)
+                  li #[tt loggingLevel] (string): one of "error", "warn", "info", "verbose" or "debug"

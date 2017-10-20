@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - 'node' # Latest stable version
+  - '6'    # Latest "current" version
+cache:
+  directories:
+    - node_modules
+script:
+  - npm run lint
+  - npm test

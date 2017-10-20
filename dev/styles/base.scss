@@ -1,0 +1,159 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html, body {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  height: 100%;
+  width: 100%;
+  background-color: $color-bg;
+}
+
+figure {
+  margin: 2rem 0;
+  a {
+    display: block;
+  }
+}
+figcaption {
+  margin-top: 8px;
+  font-style: italic;
+}
+nav {
+  border-top: 4px solid $color-darkblue;
+  margin-bottom: 1rem;
+}
+.navbar-item.brand-text {
+  font-weight: 300;
+}
+.navbar-item, .navbar-link {
+  font-size: 14px;
+  font-weight: 700;
+}
+.menu-label {
+  color: $color-darkgrey;
+  letter-spacing: 1.3;
+  font-weight: 700;
+}
+.menu-list a {
+  color: #0F1D38;
+  font-size: 14px;
+  font-weight: 700;
+}
+.menu-list a:hover {
+  background-color: transparent;
+  color: $color-darkblue;
+}
+.menu-list a.is-active {
+  background-color: transparent;
+  color: $color-darkblue;
+  font-weight: 700;
+}
+.panel {
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.18);
+  margin-bottom: 2rem;
+}
+.hero.welcome {
+  background: $color-skyblue;
+  background: linear-gradient(to right, $color-darkblue, $color-skyblue);
+  color: white;
+}
+.hero.welcome .title, .hero.welcome .subtitle {
+  color: $color-lightgrey;
+}
+.bd-notification {
+  position: relative;
+  display: block;
+  padding: 1.25rem 0;
+  background-color: $color-lightblue;
+  text-transform: uppercase;
+  color: white;
+  border-radius: 3px;
+}
+
+.red {
+  background-color: #ffcdd2;
+}
+.red .panel-heading {
+  background-color: #ef9a9a;
+}
+
+.yellow {
+  background-color: #ffecb3;
+}
+.yellow .panel-heading {
+  background-color: #ffe082;
+}
+
+.green {
+  background-color: #dcedc8;
+}
+.green .panel-heading {
+  background-color: #c5e1a5;
+}
+
+.blue {
+  background-color: #b2dfdb;
+}
+.blue .panel-heading {
+  background-color: #80cbc4;
+}
+
+/*******************/
+
+.terminal {
+  background-color: #333;
+  border-radius: 5px;
+  color: white;
+  padding: 1.25rem 1.5rem;
+}
+.command:before {
+  content: "$ ";
+}
+.bold {
+  font-weight: bold;
+}
+.comment:before {
+  content: "# ";
+}
+.comment {
+  color: $color-lightgrey;
+}
+p, pre {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.section {
+  padding-top: 1rem;
+}
+.panel-block {
+  display: block;
+}
+.plugin-title {
+  font-weight: bold;
+}
+a.button {
+  background-color: $blue;
+  color: white;
+}
+blockquote {
+  background-color: #ddd;
+  border-left: 6px solid silver;
+  padding: 2em 1em;
+  margin: 2em 0em;
+}
+blockquote blockquote {
+  padding: 1em 1em;
+  margin: 1em 0em;
+}
+ul.list {
+  list-style-type: square;
+  padding-left: 1em;
+}

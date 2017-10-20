@@ -1,0 +1,5 @@
+digraph Bot {
+	Telegram [style=filled fillcolor="#ecf3fa" fontcolor="#179cde" color="#179cde"]
+	Telegram -> Core -> "Plugin manager" -> Proxies -> "Event emitter" -> Plugin -> Core -> Telegram
+	"Event emitter" -> "Command parser" -> Plugin
+}

@@ -1,0 +1,43 @@
+extends /layouts/default
+
+block vars
+  - var page = "home";
+
+block content
+  section.hero.is-info.welcome
+    .hero-body
+      h1.hero__title
+        = projectname
+      h2.hero__subtitle
+        = projectdescription
+  .container
+    section.section
+      .content.page__content
+        p
+          | #{projectname} is an extensible #[strong Telegram bot] written in Node.js. Its architecture is based on plugins, many of which are bundled by default. It features:
+          //- .content is needed for bullet lists
+        ul.list
+          li All bot API functions
+          li Advanced moderation tools
+          li An installation wizard
+          li Enabling, disabling and live-reloading plugins
+          li Importing custom plugins
+          li Inline messages
+    section.section
+      h3.title.has-text-centered Quick install
+      pre.terminal
+        span.command git clone #{github}
+        br
+        span.command cd #{github.split("/")[4]}
+        br
+        span.command npm run setup:guided
+    section.section
+      .columns
+        .column.has-text-centered
+          h2.title Are you a user?
+          a.button.button--full(href="user.html" alt= "Are you a user?" title="Are you a user?")
+            | Browse the usage guide
+        .column.has-text-centered
+          h2.title Are you a developer?
+          a.button.button--full(href="developer.html" alt= "Are you a developer?" title="Are you a developer?")
+            | Browse the documentation

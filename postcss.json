@@ -1,0 +1,7 @@
+{
+	"use": ["autoprefixer", "cssnano"],
+	"input": "./dist/assets/css/styles.css",
+	"output": "./dist/assets/css/styles.min.css",
+	"local-plugins": true,
+	"autoprefixer": "last 2 versions"
+}
