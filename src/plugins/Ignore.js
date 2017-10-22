@@ -1,4 +1,5 @@
 const Plugin = require("../Plugin");
+const Util = require("../Util.js");
 
 module.exports = class Ignore extends Plugin {
 
@@ -15,7 +16,7 @@ module.exports = class Ignore extends Plugin {
         return {
             name: "Ignore",
             description: "Ignore users",
-            help: "Syntax: /ignore <ID>",
+            help: "Syntax: /ignore <ID/username>",
 
             isProxy: true
         };
@@ -33,9 +34,19 @@ module.exports = class Ignore extends Plugin {
             ignore: ({args, message}) => {
                 let target;
                 if (args.length === 1) {
-                    target = args[0];
-                    if (/[@a-z_]/i.test(target)) // May not ignore usernames
-                        return "Syntax: `/ignore <ID>`";
+                    if (/^\d+$/.test(args[0])) {
+                        target = args[0];
+                    } else if (/^@[a-z0-9_]+$/i.test(args[0])) { // Attempt to resolve username
+                        try {
+                            target = Util.nameResolver.getUserIDFromUsername(args[0]);
+                        } catch (e) {
+                            return "Couldn't resolve username. Did you /enable UserInfo?";
+                        }
+                        if (!target)
+                            return "I've never seen that username.";
+                    } else {
+                        return "Syntax: `/ignore <ID/username>`";
+                    }
                     target = Number(target);
                 } else if (message.reply_to_message) {
                     if (message.reply_to_message.new_chat_participant)
@@ -44,7 +55,7 @@ module.exports = class Ignore extends Plugin {
                         target = message.reply_to_message.left_chat_participant.id;
                     else
                         target = message.reply_to_message.from.id;
-                } else return "No target found.";
+                } else return "Syntax: `/ignore <ID/username>`";
 
                 if (this.auth.isMod(target)) return "Can't ignore mods.";
 
@@ -55,9 +66,19 @@ module.exports = class Ignore extends Plugin {
             unignore: ({args, message}) => {
                 let target;
                 if (args.length === 1) {
-                    target = args[0];
-                    if (/[@a-z_]/i.test(target))
-                        return "Syntax: `/ignore <ID>`";
+                    if (/^\d+$/.test(args[0])) {
+                        target = args[0];
+                    } else if (/^@[a-z0-9_]+$/i.test(target)) { // Attempt to resolve username
+                        try {
+                            target = Util.nameResolver.getUserIDFromUsername(target);
+                        } catch (e) {
+                            return "Couldn't resolve username. Did you /enable UserInfo?";
+                        }
+                        if (!target)
+                            return "I've never seen that username.";
+                    } else {
+                        return "Syntax: `/unignore <ID/username>`";
+                    }
                     target = Number(target);
                 } else if (message.reply_to_message) {
                     if (message.reply_to_message.new_chat_participant)
@@ -66,10 +87,10 @@ module.exports = class Ignore extends Plugin {
                         target = message.reply_to_message.left_chat_participant.id;
                     else
                         target = message.reply_to_message.from.id;
-                } else return "No target found.";
+                } else return "Syntax: `/unignore <ID/username>`";
 
                 this.db.ignored = this.db.ignored.filter(id => id !== target);
-                return "Done.";
+                return "Unignored.";
             }
         };
     }

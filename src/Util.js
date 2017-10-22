@@ -16,9 +16,8 @@ const assert = require("assert");
 class NameResolver {
     // This function is called ONLY by the UserInfo plugin to pass its db
     setDb(db) {
-        log.verbose("Name resolution database initialized.")
+        log.verbose("Name resolution database initialized.");
         this.db = db;
-        console.log(db);
     }
 
     // For a given username, retrieve the user ID.
