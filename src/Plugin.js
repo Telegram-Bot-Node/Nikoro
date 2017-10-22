@@ -31,6 +31,7 @@ module.exports = class Plugin {
             sticker: "onSticker",
             text: "onText",
             video: "onVideo",
+            video_note: "onVideoNote",
             voice: "onVoice"
         };
     }
