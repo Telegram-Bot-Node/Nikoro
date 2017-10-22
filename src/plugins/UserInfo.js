@@ -18,6 +18,7 @@ module.exports = class UserInfo extends Plugin {
         if (!this.db)
             this.db = {};
         Util.nameResolver.setDb(this.db);
+        this.auth = obj.auth;
     }
 
     proxy(eventName, message) {
@@ -65,8 +66,13 @@ module.exports = class UserInfo extends Plugin {
 
                 const userId = Util.nameResolver.getUserIDFromUsername(username);
                 const aliases = Util.nameResolver.getUsernamesFromUserID(userId);
+                let tags = "";
+                if (this.auth.isAdmin(message.from.id, message.chat.id))
+                    tags += " [admin]";
+                else if (this.auth.isMod(message.from.id, message.chat.id))
+                    tags += " [mod]";
 
-                return `${username} - ${userId}
+                return `${username} - ${userId}${tags}
 
 Known aliases: ${aliases.join(", ")}`;
             }
