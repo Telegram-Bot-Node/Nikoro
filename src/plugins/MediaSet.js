@@ -53,6 +53,9 @@ module.exports = class MediaSet extends Plugin {
             case "video":
                 this.sendVideo(message.chat.id, media.fileId);
                 break;
+            case "video_note":
+                this.sendVideoNote(message.chat.id, media.fileId);
+                break;
             case "voice":
                 this.sendVoice(message.chat.id, media.fileId);
                 break;
@@ -76,6 +79,9 @@ module.exports = class MediaSet extends Plugin {
     }
     onVideo({message}) {
         this.setStepTwo(message, "video");
+    }
+    onVideoNote({message}) {
+        this.setStepTwo(message, "video_note");
     }
     onVoice({message}) {
         this.setStepTwo(message, "voice");
