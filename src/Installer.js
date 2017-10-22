@@ -28,9 +28,11 @@ const questions = [
                 try {
                     plugin = require(`${__dirname}/plugins/${path}`, false).plugin;
                 } catch (e) {
+                    let message = e.message;
+                    message = message.replace(/^Cannot find module '([^']+)'$/, "Must install \"$1\" first");
                     return {
                         name: ` ${path}.js`,
-                        disabled: e.message
+                        disabled: message
                     };
                 }
 

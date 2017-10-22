@@ -120,23 +120,39 @@ module.exports = class PluginManager {
         switch (command) {
         case "enable":
             if (targetChat) {
-                // Enable it if necessary
-                let status = true;
-                if (!isGloballyEnabled)
-                    status = this.loadAndAdd(pluginName);
-                if (status) {
-                    const plugin = this.plugins.find(nameMatches(pluginName));
-                    plugin.blacklist.delete(targetChat);
-                    response = `Plugin enabled successfully for chat ${targetChat}.`;
+                if (isGloballyEnabled) {
+                    response = "Plugin already enabled.";
                 } else {
-                    response = "Couldn't load plugin.";
+                    try {
+                        this.loadAndAdd(pluginName);
+                        const plugin = this.plugins.find(nameMatches(pluginName));
+                        plugin.blacklist.delete(targetChat);
+                        response = `Plugin enabled successfully for chat ${targetChat}.`;
+                    } catch (e) {
+                        this.log.warn(e);
+                        if (/^Cannot find module/.test(e.message))
+                            response = "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                        else
+                            response = "Couldn't load plugin: " + e.message;
+                    }
                 }
             } else if (isGloballyEnabled) {
                 response = "Plugin already enabled.";
             } else {
                 this.log.info(`Enabling ${pluginName} from message interface`);
-                const status = this.loadAndAdd(pluginName);
-                response = status ? "Plugin enabled successfully." : "An error occurred.";
+                try {
+                    this.loadAndAdd(pluginName);
+                    response = "Plugin enabled successfully.";
+                } catch (e) {
+                    this.log.warn(e);
+                    if (/^Cannot find module/.test(e.message))
+                        if (/src.plugins/.test(e.message))
+                            response = "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                        else
+                            response = e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
+                    else
+                        response = "Couldn't load plugin, check console for errors.";
+                }
             }
             break;
         case "disable":
@@ -227,11 +243,9 @@ module.exports = class PluginManager {
                 this.config.activePlugins.push(pluginName);
                 fs.writeFileSync("config.json", JSON.stringify(this.config, null, 4));
             }
-            return true;
         } catch (e) {
-            this.log.warn(e);
             this.log.warn(`Failed to initialize plugin ${pluginName}.`);
-            return false;
+            throw e;
         }
     }
 
@@ -240,7 +254,15 @@ module.exports = class PluginManager {
         this.log.verbose(`Loading and adding ${pluginNames.length} plugins...`);
         Error.stackTraceLimit = 5; // Avoid printing useless data in stack traces
 
-        const log = pluginNames.map(name => this.loadAndAdd(name, persist));
+        const log = pluginNames.map(name => {
+            try {
+                this.loadAndAdd(name, persist);
+                return true;
+            } catch (e) {
+                this.log.warn(e);
+                return false;
+            }
+        });
         if (log.some(result => result !== true)) {
             this.log.warn("Some plugins couldn't be loaded.");
         }
