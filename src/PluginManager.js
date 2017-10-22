@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const Logger = require("./Log");
-const MasterPlugin = require("./MasterPlugin");
 const Plugin = require("./Plugin");
 const Util = require("./Util");
 const {EventEmitter} = require("events");
@@ -21,10 +20,6 @@ module.exports = class PluginManager {
         this.emitter = new EventEmitter();
         this.emitter.setMaxListeners(Infinity);
 
-        this.masterPlugin = new MasterPlugin(this.emitter, this, config);
-        this.masterPlugin.sendMessage = this.bot.sendMessage.bind(this.bot); // Dirty patch
-        this.addPlugin(this.masterPlugin);
-
         this.config = config;
 
         const events = Object.keys(Plugin.handlerNames)
@@ -39,7 +34,7 @@ module.exports = class PluginManager {
             bot.on(
                 eventName,
                 message => {
-                    this.parseEnableDisable(message);
+                    this.parseHardcoded(message);
                     Promise.all(
                         this.plugins
                             .filter(plugin => plugin.plugin.isProxy)
@@ -61,20 +56,59 @@ module.exports = class PluginManager {
         }
     }
 
-    parseEnableDisable(message) {
-        // Hardcoded hot-swap plugin
+    parseHardcoded(message) {
+        // Hardcoded commands
         if (!message.text) return;
         const parts = Util.parseCommand(
             message.text,
             [
                 "enable",
-                "disable"
+                "disable",
+                "help"
             ],
             {
                 overrideDeprecation: true
             }
         );
         if (!parts) return;
+        let [command, pluginName, targetChat] = parts;
+
+        if (command === "help") {
+            const availablePlugins = this.plugins
+                .map(pl => pl.plugin)
+                .filter(pl => !pl.isHidden);
+            if (pluginName) {
+                pluginName = pluginName.toLowerCase();
+                const plugin = availablePlugins
+                    .filter(pl => pl.name.toLowerCase() === pluginName)[0];
+
+                if (plugin)
+                    this.bot.sendMessage(
+                        message.chat.id,
+                        `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
+                        {
+                            parse_mode: "markdown",
+                            disable_web_page_preview: true
+                        }
+                    );
+                else
+                    this.bot.sendMessage(message.chat.id, "No such plugin.");
+            } else {
+                this.bot.sendMessage(
+                    message.chat.id,
+                    availablePlugins
+                        .map(pl => `*${pl.name}*: ${pl.description}`)
+                        .join("\n"),
+                    {
+                        parse_mode: "markdown",
+                        disable_web_page_preview: true
+                    }
+                );
+            }
+
+            return;
+        }
+
         if (!this.auth.isAdmin(message.from.id)) return;
         // Syntax: /("enable"|"disable") pluginName [targetChat|"chat"]
         // The string "chat" will enable the plugin in the current chat.
