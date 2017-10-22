@@ -10,10 +10,10 @@ module.exports = class Kick extends Plugin {
         };
     }
 
-    constructor(listener, bot, config, auth) {
-        super(listener, bot, config, auth);
+    constructor(obj) {
+        super(obj);
 
-        this.auth = auth;
+        this.auth = obj.auth;
     }
 
     onCommand({message, command, args}) {

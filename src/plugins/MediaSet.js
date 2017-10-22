@@ -3,8 +3,8 @@ const Util = require("./../Util");
 
 module.exports = class MediaSet extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(obj) {
+        super(obj);
 
         if (!this.db.triggers) {
             this.db.triggers = {};

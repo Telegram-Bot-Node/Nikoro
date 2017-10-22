@@ -12,7 +12,7 @@ describe("Plugins", () => {
         });
 
         it("has commands", () => {
-            const plugin = new Plugin();
+            const plugin = new Plugin({db: {}});
 
             assert.strictEqual(typeof plugin.commands, "object");
             assert(plugin.commands.addquote);
@@ -20,7 +20,7 @@ describe("Plugins", () => {
         });
 
         it("add and find saved quote", () => {
-            const plugin = new Plugin();
+            const plugin = new Plugin({db: {}});
             const quoteId = 0;
 
             assert.strictEqual(plugin.findQuote(quoteId), "Quote not found");
@@ -29,7 +29,7 @@ describe("Plugins", () => {
         });
 
         it("get random quote", () => {
-            const plugin = new Plugin();
+            const plugin = new Plugin({db: {}});
 
             assert.strictEqual(plugin.randomQuote(), "Quote not found");
             assert.strictEqual(plugin.addQuote(message), "Quote added with ID 0");

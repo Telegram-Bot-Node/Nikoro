@@ -72,8 +72,8 @@ class Blather {
 
 module.exports = class Markov extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(obj) {
+        super(obj);
 
         if (this.db) {
             this.m = Blather.destringify(JSON.stringify(this.db));

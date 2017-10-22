@@ -112,7 +112,6 @@ module.exports = class PluginManager {
         if (!this.auth.isAdmin(message.from.id)) return;
         // Syntax: /("enable"|"disable") pluginName [targetChat|"chat"]
         // The string "chat" will enable the plugin in the current chat.
-        let [command, pluginName, targetChat] = parts;
         if (targetChat === "chat") targetChat = message.chat.id;
         targetChat = Number(targetChat);
         // Checks if it is already in this.plugins
@@ -178,7 +177,25 @@ module.exports = class PluginManager {
 
         this.log.debug(`Required ${pluginName}`);
 
-        const loadedPlugin = new ThisPlugin(this.emitter, this.bot, this.config, this.auth);
+        // Load the blacklist and database from disk
+        const databasePath = PluginManager.getDatabasePath(pluginName);
+        let db = {};
+        let blacklist = [];
+
+        if (fs.existsSync(databasePath)) {
+            const data = JSON.parse(fs.readFileSync(databasePath, "utf8"));
+            db = data.db;
+            blacklist = data.blacklist;
+        }
+
+        const loadedPlugin = new ThisPlugin({
+            db,
+            blacklist,
+            emitter: this.emitter,
+            bot: this.bot,
+            config: this.config,
+            auth: this.auth
+        });
 
         // Bind all the methods from the bot API
         for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(this.bot))) {
@@ -187,16 +204,6 @@ module.exports = class PluginManager {
             if (/^_/.test(method)) continue; // Do not expose internal methods
             this.log.debug(`Binding ${method}`);
             loadedPlugin[method] = this.bot[method].bind(this.bot);
-        }
-
-        // Load the blacklist and database from disk
-        const databasePath = PluginManager.getDatabasePath(loadedPlugin);
-
-        if (fs.existsSync(databasePath)) {
-            const {db, blacklist} = JSON.parse(fs.readFileSync(databasePath, "utf8"));
-
-            loadedPlugin.blacklist = new Set(blacklist);
-            loadedPlugin.db = db;
         }
 
         this.log.debug(`Created ${pluginName}.`);
@@ -260,15 +267,16 @@ module.exports = class PluginManager {
         return Promise.all(this.plugins.map(pl => pl.stop()));
     }
 
-    static getDatabasePath(plugin) {
-        return path.join(__dirname, '..', 'db', 'plugin_' + plugin.plugin.name + '.json');
+    static getDatabasePath(pluginName) {
+        return path.join(__dirname, '..', 'db', 'plugin_' + pluginName + '.json');
     }
 
     startSynchronization() {
         this.synchronizationInterval = setInterval(() => {
+            this.log.debug(`Starting synchronization`);
             this.plugins.forEach(plugin => {
                 fs.writeFile(
-                    PluginManager.getDatabasePath(plugin),
+                    PluginManager.getDatabasePath(plugin.plugin.name),
                     JSON.stringify({
                         db: plugin.db,
                         blacklist: Array.from(plugin.blacklist)

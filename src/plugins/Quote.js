@@ -5,8 +5,8 @@ const Plugin = require("../Plugin");
 
 module.exports = class Quote extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(obj) {
+        super(obj);
 
         if (!this.db.quotes) {
             this.db.quotes = [];

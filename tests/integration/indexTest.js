@@ -24,16 +24,12 @@ describe("Bot", function() {
         pluginManager.loadPlugins(["Ping"]); // [] = Active plugins
     });
     it("should reply to /help", function(done) {
+        bot.once("_debug_message", () => done());
         bot.pushMessage({text: "/help"});
-        bot.once("_debug_message", function() {
-            done();
-        });
     });
     it("should reply to /help Ping", function(done) {
+        bot.once("_debug_message", () => done());
         bot.pushMessage({text: "/help Ping"});
-        bot.once("_debug_message", function() {
-            done();
-        });
     });
     it("should enable plugins", function(done) {
         const sentinel = Math.random().toString();

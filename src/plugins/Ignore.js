@@ -2,10 +2,10 @@ const Plugin = require("../Plugin");
 
 module.exports = class Ignore extends Plugin {
 
-    constructor(listener, bot, config, auth) {
-        super(listener, bot, config, auth);
+    constructor(obj) {
+        super(obj);
 
-        this.auth = auth;
+        this.auth = obj.auth;
         if (!this.db.ignored) {
             this.db.ignored = [];
         }

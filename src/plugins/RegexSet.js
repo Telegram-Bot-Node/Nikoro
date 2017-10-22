@@ -13,10 +13,10 @@ function dashArgs(spaceArgs) {
 
 module.exports = class RegexSet extends Plugin {
 
-    constructor(listener, bot, config, auth) {
-        super(listener, bot, config, auth);
+    constructor(obj) {
+        super(obj);
 
-        this.auth = auth;
+        this.auth = obj.auth;
         if (!this.db.replacements) {
             this.db.replacements = [];
         }

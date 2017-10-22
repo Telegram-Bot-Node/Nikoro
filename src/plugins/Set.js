@@ -1,10 +1,9 @@
 const Plugin = require("./../Plugin");
-const Util = require("../Util");
 
 module.exports = class Set extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(obj) {
+        super(obj);
 
         if (!this.db.replacements) {
             this.db.replacements = [];
@@ -24,7 +23,7 @@ module.exports = class Set extends Plugin {
 
         for (const item of this.db.replacements) {
             if (chatID !== item.chatID) continue;
-            if (!Util.startsWith(message.text, item.trigger)) continue;
+            if (!message.text.startsWith(item.trigger)) continue;
             this.sendMessage(message.chat.id, item.replacement);
         }
     }

@@ -2,8 +2,8 @@ const Plugin = require("../Plugin");
 
 module.exports = class Vote extends Plugin {
 
-    constructor(...args) {
-        super(...args);
+    constructor(obj) {
+        super(obj);
 
         if (!this.db.votes) {
             this.db.votes = {};

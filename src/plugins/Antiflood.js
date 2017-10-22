@@ -5,10 +5,10 @@ const RateLimiter = require("limiter").RateLimiter;
 const RATE_TIMEOUT = 5000;
 
 module.exports = class Antiflood extends Plugin {
-    constructor(listener, bot, config, auth) {
-        super(listener, bot, config, auth);
+    constructor(obj) {
+        super(obj);
 
-        this.auth = auth;
+        this.auth = obj.auth;
 
         this.lastMessages = {};
         this.ignoreLimiters = {};

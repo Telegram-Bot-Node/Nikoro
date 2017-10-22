@@ -21,15 +21,15 @@ module.exports = class YouTubePlugin extends Plugin {
         };
     }
 
-    constructor(listener, bot, config, auth) {
-        super(listener, bot, config, auth);
+    constructor(obj) {
+        super(obj);
 
-        assert(typeof config.YOUTUBE_API_KEY === typeof "", "You must supply a YouTube API key.");
-        assert(config.YOUTUBE_API_KEY !== "", "Please supply a valid YouTube API key.");
+        assert(typeof obj.config.YOUTUBE_API_KEY === typeof "", "You must supply a YouTube API key.");
+        assert(obj.config.YOUTUBE_API_KEY !== "", "Please supply a valid YouTube API key.");
 
         YouTube.authenticate({
             type: "key",
-            key: config.YOUTUBE_API_KEY
+            key: obj.config.YOUTUBE_API_KEY
         });
     }
 

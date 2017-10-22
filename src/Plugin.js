@@ -39,16 +39,16 @@ module.exports = class Plugin {
         return this.constructor.plugin;
     }
 
-    constructor(listener, bot, config, auth) {
+    constructor({db, blacklist, emitter, bot, config, auth}) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
         this.log = new Logger(this.plugin.name, config);
-        this.listener = listener;
+        this.listener = emitter;
 
-        this.db = {};
-        this.blacklist = new Set(); // Chats where the plugin is disabled
+        this.db = db;
+        this.blacklist = new Set(blacklist); // Chats where the plugin is disabled
         this.handlers = {};
 
         const eventNames = Object.keys(Plugin.handlerNames);
