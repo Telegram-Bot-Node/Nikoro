@@ -1,14 +1,23 @@
 const Plugin = require("./../Plugin");
+const Util = require("./../Util");
 
 module.exports = class UserInfo extends Plugin {
     static get plugin() {
         return {
             name: "UserInfo",
-            description: "Log information about users",
+            description: "Log usernames and user IDs",
             help: "Syntax: `/id user`",
 
             isProxy: true
         };
+    }
+
+    constructor(obj) {
+        super(obj);
+
+        if (!this.db)
+            this.db = {};
+        Util.nameResolver.setDb(this.db);
     }
 
     proxy(eventName, message) {
@@ -16,7 +25,10 @@ module.exports = class UserInfo extends Plugin {
         if (!message.chat) return;
 
         if (message.from.username) {
-            this.db[message.from.username] = message.from.id;
+            const username = message.from.username;
+            const userId = message.from.id;
+            this.log.debug(`Username ${username} mapped to ID ${userId}`);
+            this.db[username] = userId;
         }
 
         // Register people who join or leave, too.
@@ -24,8 +36,11 @@ module.exports = class UserInfo extends Plugin {
             const source = message.new_chat_participant ?
                 message.new_chat_participant :
                 message.left_chat_participant;
+            this.log.debug(`Username ${source.username} mapped to ID ${source.id}`);
             this.db[source.username] = source.id;
         }
+
+        // Util.nameResolver.setDb(this.db);
         return Promise.resolve();
     }
 
@@ -45,15 +60,15 @@ module.exports = class UserInfo extends Plugin {
                 } else
                     return "Syntax: /id @username";
 
-                if (!(username in this.db))
+                if (!(username in Util.nameResolver.db))
                     return "I've never seen that user before.";
 
-                const userId = this.db[username];
-                const aliases = Object.keys(this.db).filter(username => this.db[username] === userId);
+                const userId = Util.nameResolver.getUserIDFromUsername(username);
+                const aliases = Util.nameResolver.getUsernamesFromUserID(userId);
 
-                return `${username} - ${this.db[username]}
+                return `${username} - ${userId}
 
-            Known aliases: ${aliases.join(", ")}`;
+Known aliases: ${aliases.join(", ")}`;
             }
         };
     }
