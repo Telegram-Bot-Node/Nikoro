@@ -24,9 +24,9 @@ module.exports = class MediaSet extends Plugin {
     }
 
     onText({message}) {
-        const text = message.text;
-
         if (!this.db.triggers[message.chat.id]) return;
+
+        const text = message.text;
         const triggers = this.db.triggers[message.chat.id];
 
         for (const trigger in triggers) {
@@ -39,19 +39,25 @@ module.exports = class MediaSet extends Plugin {
             this.log.verbose("Match on " + Util.buildPrettyChatName(message.chat));
             switch (media.type) {
             case "audio":
-                return this.sendAudio(message.chat.id, media.fileId);
+                this.sendAudio(message.chat.id, media.fileId);
+                break;
             case "document":
-                return this.sendDocument(message.chat.id, media.fileId);
+                this.sendDocument(message.chat.id, media.fileId);
+                break;
             case "photo":
-                return this.sendPhoto(message.chat.id, media.fileId);
+                this.sendPhoto(message.chat.id, media.fileId);
+                break;
             case "sticker":
-                return this.sendSticker(message.chat.id, media.fileId);
+                this.sendSticker(message.chat.id, media.fileId);
+                break;
             case "video":
-                return this.sendVideo(message.chat.id, media.fileId);
+                this.sendVideo(message.chat.id, media.fileId);
+                break;
             case "voice":
-                return this.sendVoice(message.chat.id, media.fileId);
+                this.sendVoice(message.chat.id, media.fileId);
+                break;
             default:
-                throw new Error("Unrecognized type");
+                this.log.error(`Unrecognized media type: ${media.type}`);
             }
         }
     }
