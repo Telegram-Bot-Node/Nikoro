@@ -7,7 +7,7 @@
     "google-images": "^1.0.0",
     "inquirer": "^1.2.2",
     "limiter": "^1.1.2",
-    "node-telegram-bot-api": "0.28.0",
+    "node-telegram-bot-api": "^0.29.0",
     "request": "^2.67.0",
     "safe-regex": "^1.1.0",
     "walk-sync": "^0.3.1",
