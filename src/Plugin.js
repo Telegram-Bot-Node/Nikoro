@@ -58,10 +58,10 @@ module.exports = class Plugin {
             if (typeof this[handlerName] !== 'function') continue;
             const isEnabled = id => !this.blacklist.has(id); // A function that says whether the plugin is enabled or not in a given chat.
             const eventHandler = this[handlerName].bind(this); // A function that refers to the appropriate handler (this.onText, this.onCommand, etc.)
-            const wrappedHandler = function({message}) {
-                if (("chat" in message) && !isEnabled(message.chat.id)) // If the plugin is disabled in this chat
+            const wrappedHandler = function(arg) {
+                if (("chat" in arg.message) && !isEnabled(arg.message.chat.id)) // If the plugin is disabled in this chat
                     return;
-                eventHandler.apply(null, arguments);
+                eventHandler(arg);
             }; // A function that receives the event, checks the message against the blacklist, and calls the appropriate handler
             this.listener.on(eventName, wrappedHandler);
             this.handlers[eventName] = wrappedHandler; // Keeps a reference to the handler so that it can be removed later
