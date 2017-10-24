@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const Logger = require("./Log");
 const Plugin = require("./Plugin");
-const Util = require("./Util");
 const {EventEmitter} = require("events");
 
 // A small utility functor to find a plugin with a given name
@@ -10,8 +9,33 @@ const nameMatches = targetName => pl => pl.plugin.name.toLowerCase() === targetN
 
 const SYNC_INTERVAL = 5000;
 
-module.exports = class PluginManager {
+function messageIsCommand(message) {
+    if (!message.entities) return;
+    const entity = message.entities[0];
+    return entity.offset === 0 && entity.type === "bot_command";
+}
 
+// Note: we only parse commands at the start of the message,
+// therefore we suppose entity.offset = 0
+function parseCommand(message) {
+    const entity = message.entities[0];
+
+    const rawCommand = message.text.substring(1, entity.length);
+    let command;
+    if (rawCommand.search("@") === -1)
+        command = rawCommand;
+    else
+        command = rawCommand.substring(0, rawCommand.search("@"));
+
+    let args = [];
+    if (message.text.length > entity.length) {
+        args = message.text.slice(entity.length + 1).split(" ");
+    }
+
+    return {args, command};
+}
+
+module.exports = class PluginManager {
     constructor(bot, config, auth) {
         this.bot = bot;
         this.log = new Logger("PluginManager", config);
@@ -58,20 +82,11 @@ module.exports = class PluginManager {
 
     parseHardcoded(message) {
         // Hardcoded commands
-        if (!message.text) return;
-        const parts = Util.parseCommand(
-            message.text,
-            [
-                "enable",
-                "disable",
-                "help"
-            ],
-            {
-                overrideDeprecation: true
-            }
-        );
-        if (!parts) return;
-        let [command, pluginName, targetChat] = parts;
+        if (!messageIsCommand(message)) return;
+        const {command, args} = parseCommand(message);
+        // Skip everything if we're not interested in this command
+        if (command !== "help" && command !== "enable" && command !== "disable") return;
+        let [pluginName, targetChat] = args;
 
         if (command === "help") {
             const availablePlugins = this.plugins
@@ -324,17 +339,8 @@ module.exports = class PluginManager {
 
         if (event !== "message") {
             // Command emitter
-            if (message.text !== undefined && message.entities && message.entities[0].type === "bot_command") {
-                const entity = message.entities[0];
-
-                const rawCommand = message.text.slice(entity.offset + 1, entity.offset + entity.length);
-                const [command] = rawCommand.replace(/\//, "").split("@");
-
-                let args = [];
-                if (entity.offset + entity.length < message.text.length) {
-                    args = message.text.slice(entity.offset + entity.length + 1).split(" ");
-                }
-
+            if (messageIsCommand(message)) {
+                const {command, args} = parseCommand(message);
                 this.emitter.emit("_command", {message, command, args});
             } else if (message.query !== undefined) {
                 const parts = message.query.split(" ");
