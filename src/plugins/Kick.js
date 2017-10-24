@@ -64,15 +64,19 @@ module.exports = class Kick extends Plugin {
         }
     }
 
-    onNewChatParticipant({message}) {
+    onNewChatMembers({message}) {
+        const chatID = message.chat.id;
         // If there is no database, nobody was ever banned so far. Return early.
-        if (!this.db[message.chat.id]) return;
+        if (!this.db[chatID]) return;
 
-        const target = message.new_chat_participant.id;
-
-        if (this.db[message.chat.id].indexOf(target) === -1) return;
-        if (this.auth.isMod(target)) return;
-
-        this.kickChatMember(message.chat.id, target).catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+        for (const member of message.new_chat_members) {
+            const target = member.id;
+            if (!this.db[chatID].includes(target))
+                continue;
+            if (this.auth.isMod(target))
+                continue;
+            this.kickChatMember(chatID, target)
+                .catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+        }
     }
 };

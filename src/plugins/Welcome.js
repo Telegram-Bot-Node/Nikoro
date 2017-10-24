@@ -9,19 +9,25 @@ module.exports = class Welcome extends Plugin {
         };
     }
 
-    onNewChatParticipant({message}) {
+    onNewChatMembers({message}) {
         if (!this.db[message.chat.id]) this.db[message.chat.id] = [];
-        const member = message.new_chat_member;
-        if (this.db[message.chat.id].indexOf(member.id) !== -1) return;
-        this.db[message.chat.id].push(member.id);
-        this.sendMessage(message.chat.id, "Welcome " + (member.username ? `@${member.username}!` : `${member.first_name}!`));
+        this.sendMessage(
+            message.chat.id,
+            "Welcome " +
+            message.new_chat_members
+                .map(m => m.username ? `@${m.username}` : `${m.first_name}`)
+                .join(", ") +
+            "!");
     }
 
-    onLeftChatParticipant({message}) {
+    onLeftChatMember({message}) {
         if (!this.db[message.chat.id]) this.db[message.chat.id] = [];
-        const member = message.new_chat_member;
-        if (this.db[message.chat.id].indexOf(member.id) !== -1) return;
-        this.db[message.chat.id].push(member.id);
-        this.sendMessage(message.chat.id, "Goodbye " + (member.username ? `@${member.username}!` : `${member.first_name}!`));
+        this.sendMessage(
+            message.chat.id,
+            "Goodbye " +
+            (message.left_chat_member.username ?
+                `@${message.left_chat_member.username}` :
+                `${message.left_chat_member.first_name}`) +
+            "!");
     }
 };

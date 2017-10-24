@@ -1,5 +1,8 @@
 /* eslint no-console: 0 */
 
+// Automatic cancellation in node-telegram-bot-api is deprecated, disable it
+process.env.NTBA_FIX_319 = 1;
+
 const fs = require("fs");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
