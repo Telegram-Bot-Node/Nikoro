@@ -342,50 +342,55 @@ module.exports = class PluginManager {
                 this.rawEmit("_command", {message, command, args});
                 // Loop through all shortcuts...
                 for (const plugin of this.plugins) {
-                    for (const trigger of Object.keys(plugin.commands)) {
-                        // Until you find one that matches
-                        if (command !== trigger)
-                            continue;
-                        // Call the shortcut, and deal appropriately with the return value
-                        const ret = plugin.commands[trigger]({message, args});
-                        if (typeof ret === "string" || typeof ret === "number") {
-                            this.bot.sendMessage(message.chat.id, ret);
-                            break;
-                        }
-                        if (typeof ret === "undefined")
-                            break;
-                        switch (ret.type) {
-                        case "text":
-                            this.bot.sendMessage(message.chat.id, ret.text, ret.options);
-                            break;
-                        case "audio":
-                            this.bot.sendAudio(message.chat.id, ret.audio, ret.options);
-                            break;
-                        case "document":
-                            this.bot.sendDocument(message.chat.id, ret.document, ret.options);
-                            break;
-                        case "photo":
-                            this.bot.sendPhoto(message.chat.id, ret.photo, ret.options);
-                            break;
-                        case "sticker":
-                            this.bot.sendSticker(message.chat.id, ret.sticker, ret.options);
-                            break;
-                        case "video":
-                            this.bot.sendVideo(message.chat.id, ret.video, ret.options);
-                            break;
-                        case "voice":
-                            this.bot.sendVoice(message.chat.id, ret.voice, ret.options);
-                            break;
-                        case "status":
-                        case "chatAction":
-                            this.bot.sendChatAction(message.chat.id, ret.status, ret.options);
-                            break;
+                    try {
+                        for (const trigger of Object.keys(plugin.commands)) {
+                            // Until you find one that matches
+                            if (command !== trigger)
+                                continue;
+                            // Call the shortcut, and deal appropriately with the return value
+                            const ret = plugin.commands[trigger]({message, args});
+                            if (typeof ret === "string" || typeof ret === "number") {
+                                this.bot.sendMessage(message.chat.id, ret);
+                                break;
+                            }
+                            if (typeof ret === "undefined")
+                                break;
+                            switch (ret.type) {
+                            case "text":
+                                this.bot.sendMessage(message.chat.id, ret.text, ret.options);
+                                break;
+                            case "audio":
+                                this.bot.sendAudio(message.chat.id, ret.audio, ret.options);
+                                break;
+                            case "document":
+                                this.bot.sendDocument(message.chat.id, ret.document, ret.options);
+                                break;
+                            case "photo":
+                                this.bot.sendPhoto(message.chat.id, ret.photo, ret.options);
+                                break;
+                            case "sticker":
+                                this.bot.sendSticker(message.chat.id, ret.sticker, ret.options);
+                                break;
+                            case "video":
+                                this.bot.sendVideo(message.chat.id, ret.video, ret.options);
+                                break;
+                            case "voice":
+                                this.bot.sendVoice(message.chat.id, ret.voice, ret.options);
+                                break;
+                            case "status":
+                            case "chatAction":
+                                this.bot.sendChatAction(message.chat.id, ret.status, ret.options);
+                                break;
 
-                        default:
-                            this.log.error(`Unrecognized reply type ${ret.type}`);
+                            default:
+                                this.log.error(`Unrecognized reply type ${ret.type}`);
+                                break;
+                            }
                             break;
                         }
-                        break;
+                    } catch (e) {
+                        this.log.error(`Plugin ${plugin.plugin.name} threw an exception while handling command shortcuts`);
+                        this.log.error(e);
                     }
                 }
             } else if (message.query !== undefined) {
@@ -404,7 +409,12 @@ module.exports = class PluginManager {
         for (const plugin of this.plugins) {
             if (!(handlerName in plugin))
                 return;
-            plugin[handlerName](message);
+            try {
+                plugin[handlerName](message);
+            } catch (e) {
+                this.log.error(`Plugin ${plugin.plugin.name} threw an exception while receiving '${event}'`);
+                this.log.error(e);
+            }
         }
     }
 };
