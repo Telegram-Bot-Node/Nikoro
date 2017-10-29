@@ -231,7 +231,7 @@ module.exports = class PluginManager {
         // Bind all the methods from the bot API
         for (const method of Object.getOwnPropertyNames(Object.getPrototypeOf(this.bot))) {
             if (typeof this.bot[method] !== "function") continue;
-            if (method === "constructor" || method === "on") continue;
+            if (method === "constructor" || method === "on" || method === "onText") continue;
             if (/^_/.test(method)) continue; // Do not expose internal methods
             this.log.debug(`Binding ${method}`);
             loadedPlugin[method] = this.bot[method].bind(this.bot);
