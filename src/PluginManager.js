@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const Logger = require("./Log");
 const Plugin = require("./Plugin");
-const {EventEmitter} = require("events");
 
 // A small utility functor to find a plugin with a given name
 const nameMatches = targetName => pl => pl.plugin.name.toLowerCase() === targetName.toLowerCase();
@@ -41,8 +40,6 @@ module.exports = class PluginManager {
         this.log = new Logger("PluginManager", config);
         this.auth = auth;
         this.plugins = [];
-        this.emitter = new EventEmitter();
-        this.emitter.setMaxListeners(Infinity);
 
         this.config = config;
 
@@ -222,7 +219,6 @@ module.exports = class PluginManager {
         const loadedPlugin = new ThisPlugin({
             db,
             blacklist,
-            emitter: this.emitter,
             bot: this.bot,
             config: this.config,
             auth: this.auth
@@ -337,19 +333,78 @@ module.exports = class PluginManager {
     emit(event, message) {
         this.log.debug(`Triggered event ${event}`);
 
+        // Skip the "message" event in order to avoid duplicates
         if (event !== "message") {
-            // Command emitter
+            // If the current message is a command, fire an additional _command event
+            // and also deal with the `get commands()` shortcut
             if (messageIsCommand(message)) {
                 const {command, args} = parseCommand(message);
-                this.emitter.emit("_command", {message, command, args});
+                this.rawEmit("_command", {message, command, args});
+                // Loop through all shortcuts...
+                for (const plugin of this.plugins) {
+                    for (const trigger of Object.keys(plugin.commands)) {
+                        // Until you find one that matches
+                        if (command !== trigger)
+                            continue;
+                        // Call the shortcut, and deal appropriately with the return value
+                        const ret = plugin.commands[trigger]({message, args});
+                        if (typeof ret === "string" || typeof ret === "number") {
+                            this.bot.sendMessage(message.chat.id, ret);
+                            break;
+                        }
+                        if (typeof ret === "undefined")
+                            break;
+                        switch (ret.type) {
+                        case "text":
+                            this.bot.sendMessage(message.chat.id, ret.text, ret.options);
+                            break;
+                        case "audio":
+                            this.bot.sendAudio(message.chat.id, ret.audio, ret.options);
+                            break;
+                        case "document":
+                            this.bot.sendDocument(message.chat.id, ret.document, ret.options);
+                            break;
+                        case "photo":
+                            this.bot.sendPhoto(message.chat.id, ret.photo, ret.options);
+                            break;
+                        case "sticker":
+                            this.bot.sendSticker(message.chat.id, ret.sticker, ret.options);
+                            break;
+                        case "video":
+                            this.bot.sendVideo(message.chat.id, ret.video, ret.options);
+                            break;
+                        case "voice":
+                            this.bot.sendVoice(message.chat.id, ret.voice, ret.options);
+                            break;
+                        case "status":
+                        case "chatAction":
+                            this.bot.sendChatAction(message.chat.id, ret.status, ret.options);
+                            break;
+
+                        default:
+                            this.log.error(`Unrecognized reply type ${ret.type}`);
+                            break;
+                        }
+                        break;
+                    }
+                }
             } else if (message.query !== undefined) {
                 const parts = message.query.split(" ");
                 const command = parts[0].toLowerCase();
                 const args = parts.length > 1 ? parts.slice(1) : [];
-                this.emitter.emit("_inline_command", {message, command, args});
+                this.rawEmit("_inline_command", {message, command, args});
             }
         }
 
-        this.emitter.emit(event, {message});
+        this.rawEmit(event, {message});
+    }
+
+    rawEmit(event, message) {
+        const handlerName = Plugin.handlerNames[event];
+        for (const plugin of this.plugins) {
+            if (!(handlerName in plugin))
+                return;
+            plugin[handlerName](message);
+        }
     }
 };
