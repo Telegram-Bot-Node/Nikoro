@@ -197,9 +197,10 @@ describe("Scheduler", function() {
     it.skip("should schedule events", function(done) {
         this.slow(1500);
         const scheduler = require("../../src/helpers/Scheduler");
+        const sentinel = Math.random().toString();
         const delay = 1000;
         const start = new Date();
-        scheduler.schedule(() => {
+        scheduler.on(sentinel, () => {
             const end = new Date();
             // Margin of error: +/- 100 ms
             if ((start - end) > (delay + 100))
@@ -208,32 +209,37 @@ describe("Scheduler", function() {
                 done(new Error(`Takes too little: ${start - end} ms`));
             else
                 done();
-        }, {}, delay);
+        });
+        scheduler.schedule(sentinel, {}, new Date(start + delay));
     });
     it.skip("should cancel events", function(done) {
         this.slow(1500);
         const scheduler = require("../../src/helpers/Scheduler");
+        const sentinel = Math.random().toString();
         const doneTimeout = setTimeout(() => done(), 1000);
-        const errorEvent = scheduler.schedule(() => {
+        sentinel.on(sentinel, () => {
             clearTimeout(doneTimeout);
             done(new Error("Event was not cancelled"));
-        }, {}, 500);
+        }, {}, new Date(new Date() + 500));
+        const errorEvent = scheduler.schedule(sentinel, {});
         scheduler.cancel(errorEvent);
     });
     it.skip("should look up events by metadata", function(done) {
         this.slow(1500);
-        let isFinished = false;
         const scheduler = require("../../src/helpers/Scheduler");
+        const sentinel = Math.random().toString();
+        let isFinished = false;
         const doneTimeout = setTimeout(() => done(), 1000);
-        scheduler.schedule(() => {
+        scheduler.on(sentinel, () => {
             if (isFinished)
                 return; // Prevents "done called twice" errors
             clearTimeout(doneTimeout);
             done(new Error("Event was not cancelled"));
-        }, {
+        });
+        scheduler.schedule(sentinel, {
             name: "My test event",
             color: "red"
-        }, 500);
+        }, new Date(new Date() + 500));
         const errorEvent = scheduler.search(event => event.name === "My test event" && event.color === "red");
         if (!errorEvent) {
             isFinished = true;
