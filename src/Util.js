@@ -39,6 +39,38 @@ class NameResolver {
     }
 }
 
+const nameResolver = new NameResolver();
+
+/* Makes it possible to run commands (eg. /ignore) both as "/ignore username", "/ignore ID",
+ * or replying "/ignore" to a message sent by @username.
+ */
+function getTargetID(message, args, commandName = "command") {
+    if (args.length === 1) {
+        if (/^\d+$/.test(args[0])) {
+            return Number(args[0]);
+        }
+        if (/^@[a-z0-9_]+$/i.test(args[0])) { // Attempt to resolve username
+            try {
+                const target = Number(nameResolver.getUserIDFromUsername(args[0]));
+                if (!target)
+                    return "I've never seen that username.";
+                return target;
+            } catch (e) {
+                return "Couldn't resolve username. Did you /enable UserInfo?";
+            }
+        }
+        return "Syntax: `/" + commandName + " <ID/username>`";
+    }
+    if (message.reply_to_message) {
+        if (message.reply_to_message.new_chat_participant)
+            return message.reply_to_message.new_chat_participant.id;
+        if (message.reply_to_message.left_chat_participant)
+            return message.reply_to_message.left_chat_participant.id;
+        return message.reply_to_message.from.id;
+    }
+    return "Syntax: `/" + commandName + " <ID/username>`";
+}
+
 function escapeRegExp(str) {
     log.debug(`Escaping RegExp: ${str}`);
     return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
@@ -113,7 +145,8 @@ function makeHTMLLink(title, url) {
 }
 
 module.exports = {
-    nameResolver: new NameResolver(),
+    nameResolver,
+    getTargetID,
     escapeRegExp,
     makeUUID,
     downloadAndSaveTempResource,
