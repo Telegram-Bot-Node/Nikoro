@@ -83,45 +83,34 @@ module.exports = class PluginManager {
     parseHardcoded(message) {
         // Hardcoded commands
         if (!messageIsCommand(message)) return;
-        const {command, args} = parseCommand(message);
+        const {command, args: [pluginName, targetChat]} = parseCommand(message);
         // Skip everything if we're not interested in this command
         if (command !== "help" && command !== "enable" && command !== "disable") return;
-        let [pluginName, targetChat] = args;
 
+        const response = this.processHardcoded(command, pluginName, targetChat, message);
+        this.bot.sendMessage(message.chat.id, response, {
+            parse_mode: "markdown",
+            disable_web_page_preview: true
+        });
+    }
+
+    processHardcoded(command, pluginName, targetChat, message) {
         if (command === "help") {
             const availablePlugins = this.plugins
                 .map(pl => pl.plugin)
                 .filter(pl => !pl.isHidden);
-            if (pluginName) {
-                pluginName = pluginName.toLowerCase();
-                const plugin = availablePlugins
-                    .filter(pl => pl.name.toLowerCase() === pluginName)[0];
 
-                if (plugin)
-                    this.bot.sendMessage(
-                        message.chat.id,
-                        `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`,
-                        {
-                            parse_mode: "markdown",
-                            disable_web_page_preview: true
-                        }
-                    );
-                else
-                    this.bot.sendMessage(message.chat.id, "No such plugin.");
-            } else {
-                this.bot.sendMessage(
-                    message.chat.id,
-                    availablePlugins
-                        .map(pl => `*${pl.name}*: ${pl.description}`)
-                        .join("\n"),
-                    {
-                        parse_mode: "markdown",
-                        disable_web_page_preview: true
-                    }
-                );
-            }
+            if (!pluginName)
+                return availablePlugins
+                    .map(pl => `*${pl.name}*: ${pl.description}`)
+                    .join("\n");
 
-            return;
+            const plugin = availablePlugins
+                .find(pl => pl.name.toLowerCase() === pluginName.toLowerCase());
+
+            if (!plugin)
+                return "No such plugin.";
+            return `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`;
         }
 
         if (!this.auth.isAdmin(message.from.id)) return;
@@ -131,65 +120,51 @@ module.exports = class PluginManager {
         targetChat = Number(targetChat);
         // Checks if it is already in this.plugins
         const isGloballyEnabled = this.plugins.some(nameMatches(pluginName));
-        let response;
         switch (command) {
         case "enable":
+            if (isGloballyEnabled)
+                return "Plugin already enabled.";
             if (targetChat) {
-                if (isGloballyEnabled) {
-                    response = "Plugin already enabled.";
-                } else {
-                    try {
-                        this.loadAndAdd(pluginName);
-                        const plugin = this.plugins.find(nameMatches(pluginName));
-                        plugin.blacklist.delete(targetChat);
-                        response = `Plugin enabled successfully for chat ${targetChat}.`;
-                    } catch (e) {
-                        this.log.warn(e);
-                        if (/^Cannot find module/.test(e.message))
-                            response = "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
-                        else
-                            response = "Couldn't load plugin: " + e.message;
-                    }
-                }
-            } else if (isGloballyEnabled) {
-                response = "Plugin already enabled.";
-            } else {
-                this.log.info(`Enabling ${pluginName} from message interface`);
                 try {
                     this.loadAndAdd(pluginName);
-                    response = "Plugin enabled successfully.";
+                    const plugin = this.plugins.find(nameMatches(pluginName));
+                    plugin.blacklist.delete(targetChat);
+                    return `Plugin enabled successfully for chat ${targetChat}.`;
                 } catch (e) {
                     this.log.warn(e);
                     if (/^Cannot find module/.test(e.message))
-                        if (/src.plugins/.test(e.message))
-                            response = "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
-                        else
-                            response = e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
-                    else
-                        response = "Couldn't load plugin, check console for errors.";
+                        return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                    return "Couldn't load plugin: " + e.message;
                 }
             }
-            break;
+
+            this.log.info(`Enabling ${pluginName} from message interface`);
+            try {
+                this.loadAndAdd(pluginName);
+                return "Plugin enabled successfully.";
+            } catch (e) {
+                this.log.warn(e);
+                if (!/^Cannot find module/.test(e.message))
+                    return "Couldn't load plugin, check console for errors.";
+                if (/src.plugins/.test(e.message))
+                    return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                return e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
+            }
+
         case "disable":
             if (targetChat) {
-                if (isGloballyEnabled) {
-                    const plugin = this.plugins.find(nameMatches(pluginName));
-                    plugin.blacklist.add(targetChat);
-                    response = `Plugin disabled successfully for chat ${targetChat}.`;
-                } else {
-                    response = "Plugin isn't enabled.";
-                }
-            } else if (isGloballyEnabled) {
-                const outcome = this.removePlugin(pluginName);
-                response = outcome ? "Plugin disabled successfully." : "An error occurred.";
-            } else {
-                response = "Plugin already disabled.";
+                if (!isGloballyEnabled)
+                    return "Plugin isn't enabled.";
+                const plugin = this.plugins.find(nameMatches(pluginName));
+                plugin.blacklist.add(targetChat);
+                return `Plugin disabled successfully for chat ${targetChat}.`;
             }
-            break;
-        default:
-            break;
+            if (isGloballyEnabled) {
+                const outcome = this.removePlugin(pluginName);
+                return outcome ? "Plugin disabled successfully." : "An error occurred.";
+            }
+            return "Plugin already disabled.";
         }
-        this.bot.sendMessage(message.chat.id, response);
     }
 
     // Instantiates the plugin.
