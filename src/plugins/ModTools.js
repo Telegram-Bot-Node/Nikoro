@@ -1,4 +1,5 @@
 const Plugin = require("./../Plugin");
+const Util = require("../Util");
 
 module.exports = class ModTools extends Plugin {
     static get plugin() {
@@ -7,7 +8,7 @@ module.exports = class ModTools extends Plugin {
             description: "Moderation tools",
             help: `- Warnings: use /warn to warn a user and delete the message (gets kicked after 3 warnings)
 - Blacklist: words that will get you kicked and your message removed. /blacklist shows the blacklist, \`/blacklist add <word>\` adds a word, \`/blacklist delete <word>\` removes it.
-- #admin: use #admin to notify all admins.`
+- #mod, #admin: use #mod to notify all mods, #admin to notify all admins.`
         };
     }
 
@@ -59,7 +60,6 @@ module.exports = class ModTools extends Plugin {
                     this.db.blacklist[chatID] = [];
                 switch (args[0]) {
                 case "add":
-                    console.log(args);
                     if (args.length === 1)
                         return "Syntax: `/blacklist add <word>";
                     this.db.blacklist[chatID].push(word);
@@ -78,6 +78,19 @@ module.exports = class ModTools extends Plugin {
 
     onText({message}) {
         const chatID = message.chat.id;
+        if (message.text.includes("#admin")) {
+            for (const admin of this.auth.getAdmins(chatID)) {
+                this.sendMessage(admin, `Message from ${Util.buildPrettyChatName(message.chat)}:\n\n${message.text}`)
+                    .catch(() => this.sendMessage(chatID, `Couldn't send message to admin ${admin} (${Util.nameResolver.getUsernamesFromUserID(admin).join(", ")}). Perhaps they need to initiate a conversation with the bot?`));
+            }
+        }
+        if (message.text.includes("#mod")) {
+            for (const mod of this.auth.getMods(chatID)) {
+                this.sendMessage(mod, `Message from ${Util.buildPrettyChatName(message.chat)}:\n\n${message.text}`)
+                    .catch(() => this.sendMessage(chatID, `Couldn't send message to mod ${mod} (${Util.nameResolver.getUsernamesFromUserID(mod).join(", ")}). Perhaps they need to initiate a conversation with the bot?`));
+            }
+        }
+
         if (this.auth.isMod(message.from.id, message.chat.id))
             return;
         for (const word of this.db.blacklist[chatID]) {
