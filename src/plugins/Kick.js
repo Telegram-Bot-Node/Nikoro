@@ -25,7 +25,7 @@ module.exports = class Kick extends Plugin {
                 return JSON.stringify(this.db[chatID]);
             },
             kick: ({message, args}) => {
-                if (!this.auth.isMod(message.from.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 const target = Util.getTargetID(message, args, "kick");
                 if (typeof target === "string") return target;
@@ -35,7 +35,7 @@ module.exports = class Kick extends Plugin {
                 return "Kicked.";
             },
             ban: ({message, args}) => {
-                if (!this.auth.isMod(message.from.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 const target = Util.getTargetID(message, args, "ban");
                 if (typeof target === "string") return target;
@@ -46,7 +46,7 @@ module.exports = class Kick extends Plugin {
                 return "Banned.";
             },
             pardon: ({message, args}) => {
-                if (!this.auth.isMod(message.from.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 const target = Util.getTargetID(message, args, "pardon");
                 if (typeof target === "string") return target;

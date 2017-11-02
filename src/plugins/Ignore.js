@@ -35,7 +35,7 @@ module.exports = class Ignore extends Plugin {
                 const target = Util.getTargetID(message, args, "ignore");
                 if (typeof target === "string") // Error messages
                     return target;
-                if (this.auth.isMod(target))
+                if (this.auth.isMod(target, message.chat.id))
                     return "Can't ignore mods.";
 
                 this.db.ignored.push(target);

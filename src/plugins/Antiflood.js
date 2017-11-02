@@ -87,7 +87,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             floodignore: ({message, args}) => {
                 if (args.length !== 1)
                     return "Syntax: /floodignore <N>";
-                if (!this.auth.isMod(message.from.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Mods only.";
                 const chatId = message.chat.id;
                 const N = Number(args[0]);
@@ -101,7 +101,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             floodwarn: ({message, args}) => {
                 if (args.length !== 1)
                     return "Syntax: /floodwarn <N>";
-                if (!this.auth.isMod(message.from.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Mods only.";
                 const chatId = message.chat.id;
                 const N = Number(args[0]);
@@ -117,7 +117,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             floodkick: ({message, args}) => {
                 if (args.length !== 1)
                     return "Syntax: /floodkick <N>";
-                if (!this.auth.isMod(message.from.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Mods only.";
                 const chatId = message.chat.id;
                 const N = Number(args[0]);
