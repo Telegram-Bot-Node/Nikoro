@@ -10,35 +10,29 @@ module.exports = class Forward extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
-        const chatID = message.chat.id;
-        switch (command) {
-        case "fwdset":
-            if (args.length !== 1) {
-                this.sendMessage(message.chat.id, "Syntax: /fwdset <ID>");
-                return;
+    get commands() {
+        return {
+            fwdset: ({message, args}) => {
+                const chatID = message.chat.id;
+                if (args.length !== 1)
+                    return "Syntax: /fwdset <ID>";
+                if (!this.db[chatID])
+                    this.db[chatID] = {};
+                this.db[chatID].target = args[0];
+                return "Done.";
+            },
+            fwd: ({message}) => {
+                const chatID = message.chat.id;
+                if (!this.db[chatID])
+                    return "Use /fwdset to set the target channel/group.";
+                if (!message.reply_to_message)
+                    return "Reply to a message with /fwd to forward it.";
+                this.forwardMessage(
+                    this.db[chatID].target,
+                    message.reply_to_message.chat.id,
+                    message.reply_to_message.message_id
+                );
             }
-            if (!this.db[chatID]) this.db[chatID] = {};
-            this.db[chatID].target = args[0];
-            this.sendMessage(message.chat.id, "Done.");
-            return;
-        case "fwd":
-            if (!this.db[chatID]) {
-                this.sendMessage(message.chat.id, "Use /fwdset to set the target channel/group.");
-                return;
-            }
-            if (!message.reply_to_message) {
-                this.sendMessage(message.chat.id, "Reply to a message with /fwd to forward it.");
-                return;
-            }
-            this.forwardMessage(
-                this.db[chatID].target,
-                message.reply_to_message.chat.id,
-                message.reply_to_message.message_id
-            );
-            return;
-        default:
-            return;
-        }
+        };
     }
 };
