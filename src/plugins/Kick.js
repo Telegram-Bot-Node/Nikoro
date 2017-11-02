@@ -1,22 +1,7 @@
 const Plugin = require("./../Plugin");
-
-function getTarget(message, args) {
-    if (args.length > 1)
-        return "Please specify at most one username/ID.";
-    if (args.length === 1)
-        return Number(args[0]);
-    if (message.reply_to_message) {
-        if (message.reply_to_message.new_chat_participant)
-            return message.reply_to_message.new_chat_participant.id;
-        if (message.reply_to_message.left_chat_participant)
-            return message.reply_to_message.left_chat_participant.id;
-        return message.reply_to_message.from.id;
-    }
-    return "Please specify an username/ID, or reply to a message with /kick or /ban.";
-}
+const Util = require("../Util");
 
 module.exports = class Kick extends Plugin {
-
     static get plugin() {
         return {
             name: "Kick",
@@ -37,12 +22,12 @@ module.exports = class Kick extends Plugin {
                 const chatID = message.chat.id;
                 if (!this.db[chatID])
                     return "Empty.";
-                return JSON.stringify(this.db[message.chat.id]);
+                return JSON.stringify(this.db[chatID]);
             },
             kick: ({message, args}) => {
                 if (!this.auth.isMod(message.from.id))
                     return "Insufficient privileges.";
-                const target = getTarget(message, args);
+                const target = Util.getTargetID(message, args, "kick");
                 if (typeof target === "string") return target;
                 if (this.auth.isMod(target, message.chat.id))
                     return "Can't kick mods or admins (demote the target first).";
@@ -52,7 +37,7 @@ module.exports = class Kick extends Plugin {
             ban: ({message, args}) => {
                 if (!this.auth.isMod(message.from.id))
                     return "Insufficient privileges.";
-                const target = getTarget(message, args);
+                const target = Util.getTargetID(message, args, "ban");
                 if (typeof target === "string") return target;
                 if (this.auth.isMod(target, message.chat.id))
                     return "Can't ban mods or admins (demote the target first).";
@@ -63,7 +48,7 @@ module.exports = class Kick extends Plugin {
             pardon: ({message, args}) => {
                 if (!this.auth.isMod(message.from.id))
                     return "Insufficient privileges.";
-                const target = getTarget(message, args);
+                const target = Util.getTargetID(message, args, "pardon");
                 if (typeof target === "string") return target;
                 if (!this.db[message.chat.id])
                     return "It seems that there are no banned users.";
