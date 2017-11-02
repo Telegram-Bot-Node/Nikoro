@@ -6,7 +6,7 @@ module.exports = class ModTools extends Plugin {
             name: "ModTools",
             description: "Moderation tools",
             help: `- Warnings: use /warn to warn a user and delete the message (gets kicked after 3 warnings)
-- Blacklist: words that will get you kicked and your message removed. /blacklist shows the blacklist, \`/blacklist add <word>\` adds a word, \`/blacklist remove <word>\` removes it.
+- Blacklist: words that will get you kicked and your message removed. /blacklist shows the blacklist, \`/blacklist add <word>\` adds a word, \`/blacklist delete <word>\` removes it.
 - #admin: use #admin to notify all admins.`
         };
     }
@@ -37,14 +37,56 @@ module.exports = class ModTools extends Plugin {
                 if (!this.db.warnings[chatID][target])
                     this.db.warnings[chatID][target] = 0;
                 this.db.warnings[chatID][target]++;
-                if (this.db.warnings[chatID][target] === 3) {
-                    this.kick(message, target);
+                if (this.db.warnings[chatID][target] < 3) {
                     this.db.warnings[chatID][target] = 0;
+                    this.kick(message, target);
+                    this.deleteMessage(message.chat.id, message.message_id);
                     return "User warned. Kicked after 3 warnings.";
                 }
                 return `User warned. Number of warnings: ${this.db.warnings[chatID][target]}/3.`;
+            },
+            blacklist: ({message, args}) => {
+                const chatID = message.chat.id;
+                if (args.length === 0) {
+                    if (!this.db.blacklist[chatID])
+                        return "The blacklist is empty.";
+                    return this.db.blacklist[chatID].map(word => `- ${word}`).join("\n");
+                }
+                if (!this.auth.isMod(message.from.id, chatID))
+                    return "Insufficient privileges.";
+                const word = args.slice(1).join(" ");
+                if (!this.db.blacklist[chatID])
+                    this.db.blacklist[chatID] = [];
+                switch (args[0]) {
+                case "add":
+                    console.log(args);
+                    if (args.length === 1)
+                        return "Syntax: `/blacklist add <word>";
+                    this.db.blacklist[chatID].push(word);
+                    return "Done!";
+                case "delete":
+                    if (args.length === 1)
+                        return "Syntax: `/blacklist delete <word>";
+                    this.db.blacklist[chatID] = this.db.blacklist[chatID].filter(val => val !== word);
+                    return "Done!";
+                default:
+                    return "Syntax: `/blacklist <add/delete> <word>`";
+                }
             }
         };
+    }
+
+    onText({message}) {
+        const chatID = message.chat.id;
+        if (this.auth.isMod(message.from.id, message.chat.id))
+            return;
+        for (const word of this.db.blacklist[chatID]) {
+            if (!message.text.includes(word))
+                continue;
+            this.deleteMessage(message.chat.id, message.message_id);
+            this.kick(message, message.from.id);
+            break;
+        }
     }
 
     kick(message, target) {
