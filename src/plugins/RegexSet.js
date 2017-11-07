@@ -6,9 +6,7 @@ function dashArgs(spaceArgs) {
         // Get the original string
         .join(" ")
         // Split by dash
-        .split("-")
-        // Simply splitting will add spaces around the string. Fix that.
-        .map(token => token.trim(" "));
+        .split(" - ");
 }
 
 module.exports = class RegexSet extends Plugin {
