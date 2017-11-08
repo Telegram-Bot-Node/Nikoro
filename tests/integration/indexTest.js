@@ -34,7 +34,7 @@ describe("Bot", function() {
     it("should enable plugins", function(done) {
         const sentinel = Math.random().toString();
         bot.on("_debug_message", function({text}) {
-            if (text.includes(sentinel)) done();
+            if (text && text.includes(sentinel)) done();
         });
         bot.pushMessage({
             text: "/enable Echo",
@@ -74,7 +74,7 @@ describe("Bot", function() {
         const done = fixDone(_done);
         const sentinel = Math.random().toString();
         const callback = ({text}) => {
-            if (text.includes(sentinel)) done(new Error("Echo was enabled"));
+            if (text && text.includes(sentinel)) done(new Error("Echo was enabled"));
         };
         bot.on("_debug_message", callback);
         setTimeout(function() {
@@ -98,7 +98,7 @@ describe("Bot", function() {
         pluginManager.loadPlugins(["Echo"]);
         const sentinel = Math.random().toString();
         const callback = ({text}) => {
-            if (text.includes(sentinel)) done();
+            if (text && text.includes(sentinel)) done();
         };
         bot.on("_debug_message", callback);
 
