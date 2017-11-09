@@ -34,6 +34,25 @@ module.exports = class TelegramBot extends EventEmitter {
             }];
         this.emit(type, message);
     }
+
+    pushRootMessage(message, type = "text") {
+        message.from = {
+            id: 1,
+            first_name: 'Root',
+            username: 'root'
+        };
+        this.pushMessage(message, type);
+    }
+
+    pushEvilMessage(message, type = "text") {
+        message.from = {
+            id: 1000,
+            first_name: 'Evil Eve',
+            username: 'eve'
+        };
+        this.pushMessage(message, type);
+    }
+
     sendMessage(chatId, text, options) {
         this.emit("_debug_message", {
             chatId,
