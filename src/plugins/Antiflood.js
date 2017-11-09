@@ -1,6 +1,6 @@
 const Plugin = require("./../Plugin");
 const Util = require("./../Util");
-const RateLimiter = require("limiter").RateLimiter;
+const LeakyBucket = require("leaky-bucket");
 
 const RATE_TIMEOUT = 5000;
 
@@ -35,36 +35,37 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
         // Approve messages if no ignoreLimiter is present
         const ignoreLimiter = this.ignoreLimiters[message.chat.id];
         if (!ignoreLimiter) return Promise.resolve();
-
         // Approve messages if the ignoreLimiter says it's fine
-        if (ignoreLimiter.tryRemoveTokens(1)) return Promise.resolve();
-
-        // If we got this far, the ignoreLimiter says the user is spamming.
-        this.log.verbose("Rejecting message from " + Util.buildPrettyUserName(message.from));
-        return Promise.reject();
+        return ignoreLimiter.throttle().catch(() => {
+            this.log.verbose("Rejecting message from " + Util.buildPrettyUserName(message.from));
+            // Re-reject, so the rejection bubbles up
+            return Promise.reject();
+        });
     }
 
     processWarn(message) {
         const warnLimiter = this.warnLimiters[message.chat.id];
         if (!warnLimiter) return;
-        if (warnLimiter.tryRemoveTokens(1)) return;
-        const warnMessageLimiter = this.warnMessageLimiters[message.chat.id];
-        // Do not help the user spam: apply another limiter to our messages.
-        if (!warnMessageLimiter.tryRemoveTokens(1)) return;
-        const username = Util.buildPrettyUserName(message.from);
-        this.log.verbose(`Warning ${username} for flooding`);
-        this.sendMessage(message.chat.id, `User ${username} is flooding!`);
+        warnLimiter.throttle().catch(() => {
+            const warnMessageLimiter = this.warnMessageLimiters[message.chat.id];
+            // Do not help the user spam: apply another limiter to our messages.
+            return warnMessageLimiter.throttle();
+        }).catch(() => {
+            const username = Util.buildPrettyUserName(message.from);
+            this.log.verbose(`Warning ${username} for flooding`);
+            this.sendMessage(message.chat.id, `User ${username} is flooding!`);
+        });
     }
 
     processKick(message) {
         const kickLimiter = this.kickLimiters[message.chat.id];
         if (!kickLimiter) return;
-        if (kickLimiter.tryRemoveTokens(1)) return;
-        const username = Util.buildPrettyUserName(message.from);
-        this.log.verbose(`Kicking ${username} for flooding`);
-        this.sendMessage(message.chat.id, `Kicking ${username} for flooding.`);
-        this.kickChatMember(message.chat.id, message.from.id)
-            .catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+        kickLimiter.throttle().catch(() => {
+            const username = Util.buildPrettyUserName(message.from);
+            this.log.verbose(`Kicking ${username} for flooding`);
+            this.sendMessage(message.chat.id, `Kicking ${username} for flooding.`);
+            return this.kickChatMember(message.chat.id, message.from.id);
+        }).catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
     }
 
     proxy(eventName, message) {
@@ -95,7 +96,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                     delete this.ignoreLimiters[chatId];
                     return "Antiflood ignore disabled for this chat.";
                 }
-                this.ignoreLimiters[chatId] = new RateLimiter(N, RATE_TIMEOUT);
+                this.ignoreLimiters[chatId] = new LeakyBucket(N, RATE_TIMEOUT, 0);
                 return `New rate limit: ${N} messages per 5 seconds`;
             },
             floodwarn: ({message, args}) => {
@@ -109,9 +110,9 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                     delete this.warnLimiters[chatId];
                     return "Antiflood warn disabled for this chat.";
                 }
-                this.warnLimiters[chatId] = new RateLimiter(N, RATE_TIMEOUT);
+                this.warnLimiters[chatId] = new LeakyBucket(N, RATE_TIMEOUT, 0);
                 // Issue at most one warning every five seconds, so as not to help the user spam
-                this.warnMessageLimiters[chatId] = new RateLimiter(1, RATE_TIMEOUT);
+                this.warnMessageLimiters[chatId] = new LeakyBucket(1, RATE_TIMEOUT, 0);
                 return `New rate limit: ${N} messages per 5 seconds`;
             },
             floodkick: ({message, args}) => {
@@ -125,7 +126,7 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                     delete this.kickLimiters[chatId];
                     return "Antiflood kick disabled for this chat.";
                 }
-                this.kickLimiters[chatId] = new RateLimiter(N, RATE_TIMEOUT);
+                this.kickLimiters[chatId] = new LeakyBucket(N, RATE_TIMEOUT, 0);
                 return `New rate limit: ${N} messages per 5 seconds`;
             }
         };
