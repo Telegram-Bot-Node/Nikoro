@@ -13,14 +13,14 @@ module.exports = class TelegramBot extends EventEmitter {
         if (!message.from)
             message.from = {
                 id: 12345678,
-                first_name: 'Foobar',
-                username: 'foo_bar'
+                first_name: "Foobar",
+                username: "foo_bar"
             };
         if (!message.chat)
             message.chat = {
                 id: -123456789,
-                title: 'Test group',
-                type: 'group',
+                title: "Test group",
+                type: "group",
                 all_members_are_administrators: false
             };
         if (!message.date)
@@ -38,8 +38,8 @@ module.exports = class TelegramBot extends EventEmitter {
     pushRootMessage(message, type = "text") {
         message.from = {
             id: 1,
-            first_name: 'Root',
-            username: 'root'
+            first_name: "Root",
+            username: "root"
         };
         this.pushMessage(message, type);
     }
@@ -47,8 +47,8 @@ module.exports = class TelegramBot extends EventEmitter {
     pushEvilMessage(message, type = "text") {
         message.from = {
             id: 1000,
-            first_name: 'Evil Eve',
-            username: 'eve'
+            first_name: "Evil Eve",
+            username: "eve"
         };
         this.pushMessage(message, type);
     }

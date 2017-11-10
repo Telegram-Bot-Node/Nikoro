@@ -1,19 +1,9 @@
 /* eslint-env node, es6, mocha */
 const PluginManager = require("../../src/PluginManager");
 const Auth = require("../../src/helpers/Auth");
-const TelegramBot = require('./helpers/TelegramBot');
+const TelegramBot = require("./helpers/TelegramBot");
 const config = require("./sample-config.json");
 const auth = new Auth(config);
-
-// Enables us to get around the "done called multiple times" without much repetition.
-const fixDone = done => {
-    let wasDoneCalled = false;
-    return (...args) => {
-        if (wasDoneCalled) return;
-        wasDoneCalled = true;
-        done(...args);
-    };
-};
 
 let i = 0;
 function makeSentinel() {
@@ -41,7 +31,7 @@ function notExpectsMessage(bot, target, errorText = "Should not have received me
             clearTimeout(timeout);
             reject(new Error(errorText));
         });
-    })
+    });
 }
 
 describe("Bot", function() {
@@ -119,8 +109,8 @@ describe("Ignore", function() {
             text: `/echo ${sentinel}`,
             from: {
                 id: 123,
-                first_name: 'Foo Bar',
-                username: 'foobar'
+                first_name: "Foo Bar",
+                username: "foobar"
             }
         }), 50);
         return p;
@@ -146,7 +136,8 @@ describe("Antiflood", function() {
         this.timeout(4000);
         this.slow(3000);
         const sentinel = makeSentinel();
-        const spamAmount = 50, spamLimit = 5;
+        const spamAmount = 50;
+        const spamLimit = 5;
         let replies = 0;
 
         const callback = ({text}) => {
@@ -180,7 +171,7 @@ describe("Scheduler", function() {
     it.skip("should schedule events", function(done) {
         this.slow(1500);
         const scheduler = require("../../src/helpers/Scheduler");
-        const sentinel = Math.random().toString();
+        const sentinel = makeSentinel();
         const delay = 1000;
         const start = new Date();
         scheduler.on(sentinel, () => {
@@ -198,7 +189,7 @@ describe("Scheduler", function() {
     it.skip("should cancel events", function(done) {
         this.slow(1500);
         const scheduler = require("../../src/helpers/Scheduler");
-        const sentinel = Math.random().toString();
+        const sentinel = makeSentinel();
         const doneTimeout = setTimeout(() => done(), 1000);
         sentinel.on(sentinel, () => {
             clearTimeout(doneTimeout);
@@ -210,7 +201,7 @@ describe("Scheduler", function() {
     it.skip("should look up events by metadata", function(done) {
         this.slow(1500);
         const scheduler = require("../../src/helpers/Scheduler");
-        const sentinel = Math.random().toString();
+        const sentinel = makeSentinel();
         let isFinished = false;
         const doneTimeout = setTimeout(() => done(), 1000);
         scheduler.on(sentinel, () => {

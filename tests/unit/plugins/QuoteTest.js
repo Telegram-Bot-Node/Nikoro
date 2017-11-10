@@ -1,7 +1,7 @@
 /* eslint-env mocha*/
-const assert = require('assert');
-const Plugin = require('../../../src/plugins/Quote');
-const message = require('../fixtures/QuoteMessage');
+const assert = require("assert");
+const Plugin = require("../../../src/plugins/Quote");
+const message = require("../fixtures/QuoteMessage");
 
 describe("Plugins", () => {
     describe("Quote", () => {
