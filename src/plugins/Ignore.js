@@ -2,7 +2,6 @@ const Plugin = require("../Plugin");
 const Util = require("../Util.js");
 
 module.exports = class Ignore extends Plugin {
-
     constructor(obj) {
         super(obj);
 

@@ -4,11 +4,10 @@
 const Plugin = require("../Plugin");
 
 module.exports = class Roll extends Plugin {
-
     static get plugin() {
         return {
-            name: 'Roll',
-            description: 'Test your luck with this fancy plugin',
+            name: "Roll",
+            description: "Test your luck with this fancy plugin",
             help: ` command: 
                 \`/roll NdM\` rolls \`N\` dices of \`M\` faces
                 example: ^/roll 1d6^`

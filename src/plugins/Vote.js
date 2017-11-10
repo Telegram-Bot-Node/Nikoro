@@ -1,7 +1,6 @@
 const Plugin = require("../Plugin");
 
 module.exports = class Vote extends Plugin {
-
     constructor(obj) {
         super(obj);
 

@@ -1,7 +1,6 @@
 const Plugin = require("./../Plugin");
 
 module.exports = class Karma extends Plugin {
-
     static get plugin() {
         return {
             name: "Karma",

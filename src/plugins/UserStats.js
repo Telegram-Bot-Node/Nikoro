@@ -10,7 +10,7 @@ module.exports = class UserStats extends Plugin {
     }
 
     wordCount(text) {
-        const words = text.trim().replace(/\s+/gi, ' ').split(' ');
+        const words = text.trim().replace(/\s+/gi, " ").split(" ");
         // This checks if the first element of the `words` array is there, and
         // if it is truthy (an empty string, which is the case when `text` is
         // empty or contains only spaces, will not trigger this, returning 0).

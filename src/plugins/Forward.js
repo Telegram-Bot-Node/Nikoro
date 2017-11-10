@@ -1,7 +1,6 @@
 const Plugin = require("./../Plugin");
 
 module.exports = class Forward extends Plugin {
-
     static get plugin() {
         return {
             name: "Forward",

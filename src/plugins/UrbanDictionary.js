@@ -1,5 +1,5 @@
-const Plugin = require('../Plugin');
-const request = require('request-promise');
+const Plugin = require("../Plugin");
+const request = require("request-promise");
 
 module.exports = class UrbanDictionary extends Plugin {
     static get plugin() {
@@ -18,7 +18,7 @@ module.exports = class UrbanDictionary extends Plugin {
                     return;
                 }
 
-                const query = args.join(' ');
+                const query = args.join(" ");
 
                 request(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(query)}`)
                     .then(response => {
@@ -27,11 +27,11 @@ module.exports = class UrbanDictionary extends Plugin {
                            the most popular defintion is at the zero index though.
                         */
                         const def = data.list[0];
-                        const opts = {parse_mode: 'Markdown'};
+                        const opts = {parse_mode: "Markdown"};
                         let msg;
 
-                        if (data.result_type === 'no_results') {
-                            msg = `Sorry, I was unable to find results for: ${args.join(' ')}.`;
+                        if (data.result_type === "no_results") {
+                            msg = `Sorry, I was unable to find results for: ${args.join(" ")}.`;
                         } else {
                             msg =
                                 `*${def.word}*: ${def.definition}\n\n_${def.example}_`;
@@ -40,7 +40,7 @@ module.exports = class UrbanDictionary extends Plugin {
                         this.sendMessage(message.chat.id, msg, opts);
                     })
                     .catch(err => {
-                        this.sendMessage(message.chat.id, 'An error occured.');
+                        this.sendMessage(message.chat.id, "An error occured.");
                         this.log.error(`An error occured. The returned error was: ${JSON.parse(err)}`);
                     });
             }

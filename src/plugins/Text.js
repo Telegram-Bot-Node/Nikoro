@@ -14,7 +14,6 @@ function translateText(text, dict) {
 }
 
 module.exports = class Text extends Plugin {
-
     static get plugin() {
         return {
             name: "Text",
@@ -33,11 +32,11 @@ module.exports = class Text extends Plugin {
         const textUpsideDown = translateText(text, upsideDown);
 
         this.answerInlineQuery(message.id, [
-                {id: "0", type: 'article', message_text: textSmallCaps, title: textSmallCaps},
-                {id: "1", type: 'article', message_text: textCircled, title: textCircled},
-                {id: "2", type: 'article', message_text: textFullWidth, title: textFullWidth},
-                {id: "3", type: 'article', message_text: textLetterSmall, title: textLetterSmall},
-                {id: "4", type: 'article', message_text: textUpsideDown, title: textUpsideDown}
+            {id: "0", type: "article", message_text: textSmallCaps, title: textSmallCaps},
+            {id: "1", type: "article", message_text: textCircled, title: textCircled},
+            {id: "2", type: "article", message_text: textFullWidth, title: textFullWidth},
+            {id: "3", type: "article", message_text: textLetterSmall, title: textLetterSmall},
+            {id: "4", type: "article", message_text: textUpsideDown, title: textUpsideDown}
         ]);
     }
 };

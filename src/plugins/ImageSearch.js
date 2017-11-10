@@ -4,7 +4,6 @@ const GoogleImages = require("google-images");
 const assert = require("assert");
 
 module.exports = class ImageSearch extends Plugin {
-
     constructor(obj) {
         super(obj);
 

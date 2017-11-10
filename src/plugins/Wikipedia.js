@@ -1,5 +1,5 @@
 const Plugin = require("../Plugin");
-const wiki = require('wikijs').default();
+const wiki = require("wikijs").default();
 
 function sanitize(str) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");

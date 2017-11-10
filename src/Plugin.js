@@ -55,7 +55,7 @@ module.exports = class Plugin {
         const eventNames = Object.keys(Plugin.handlerNames);
         for (const eventName of eventNames) {
             const handlerName = Plugin.handlerNames[eventName];
-            if (typeof this[handlerName] !== 'function') continue;
+            if (typeof this[handlerName] !== "function") continue;
             const isEnabled = id => !this.blacklist.has(id); // A function that says whether the plugin is enabled or not in a given chat.
             const eventHandler = this[handlerName].bind(this); // A function that refers to the appropriate handler (this.onText, this.onCommand, etc.)
             const wrappedHandler = function(arg) {

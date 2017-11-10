@@ -23,9 +23,9 @@ const log = new Logger("Bot", Config);
 let commit = "";
 if (fs.existsSync(path.join(__dirname, "../.git")))
     commit = fs.readFileSync(path.join(__dirname, "../.git/refs/heads/es6"), "utf8").substr(0, 7);
-log.info(`Telegram-Bot-Node version ${require('../package.json').version}` + (commit ? `, commit ${commit}` : ""));
+log.info(`Telegram-Bot-Node version ${require("../package.json").version}` + (commit ? `, commit ${commit}` : ""));
 
-log.verbose(`Creating a TelegramBot instance...`);
+log.verbose("Creating a TelegramBot instance...");
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.info("Instance created.");
 
@@ -56,6 +56,6 @@ function handleShutdown(reason) {
     };
 }
 
-process.on('unhandledRejection', (reason, p) => {
+process.on("unhandledRejection", (reason, p) => {
     log.error("Unhandled rejection at Promise ", p, " with reason ", reason);
 });

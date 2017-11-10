@@ -7,7 +7,7 @@ function arraySample(arr) {
 class Blather {
     constructor({
         isStart = (key, index) => index === 0,
-        clean = textArray => textArray.join(' '),
+        clean = textArray => textArray.join(" "),
         split = text => text.split(/\s+/),
         depth = 2,
         joiner = "<|>",
@@ -71,7 +71,6 @@ class Blather {
 }
 
 module.exports = class Markov extends Plugin {
-
     constructor(obj) {
         super(obj);
 

@@ -23,7 +23,7 @@ module.exports = class Imgur extends Plugin {
 
         const url = Imgur.generateUrl(6);
         const options = {
-            method: 'HEAD',
+            method: "HEAD",
             uri: `http://i.imgur.com/${url}.png`
         };
 

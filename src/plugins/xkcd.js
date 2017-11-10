@@ -33,5 +33,4 @@ module.exports = class xkcd extends Plugin {
             return this.sendPhoto(message.chat.id, jsondata.img);
         });
     }
-
 };

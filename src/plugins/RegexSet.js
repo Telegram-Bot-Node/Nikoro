@@ -10,7 +10,6 @@ function dashArgs(spaceArgs) {
 }
 
 module.exports = class RegexSet extends Plugin {
-
     constructor(obj) {
         super(obj);
 
@@ -24,7 +23,7 @@ module.exports = class RegexSet extends Plugin {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",
-            help: 'Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar'
+            help: "Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar"
         };
     }
 

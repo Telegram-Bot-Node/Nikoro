@@ -1,7 +1,6 @@
 const Plugin = require("./../Plugin");
 
 module.exports = class Config extends Plugin {
-
     static get plugin() {
         return {
             name: "Config",
@@ -25,7 +24,7 @@ module.exports = class Config extends Plugin {
                 case "get":
                     config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
                     if (jsonValueString)
-                        config = property.split('.').reduce((x, d) => x[d], config);
+                        config = property.split(".").reduce((x, d) => x[d], config);
                     return JSON.stringify(config);
                 case "set":
                     let value;
@@ -35,7 +34,7 @@ module.exports = class Config extends Plugin {
                         return "Couldn't parse the JSON value.";
                     }
                     config = JSON.parse(JSON.stringify(this.db["plugin_" + pluginName].config));
-                    editTree(config, property.split('.'), value);
+                    editTree(config, property.split("."), value);
                     this.db["plugin_" + pluginName].config = config;
                     return "Done.";
                 default:

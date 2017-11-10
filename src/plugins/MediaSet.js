@@ -2,7 +2,6 @@ const Plugin = require("./../Plugin");
 const Util = require("./../Util");
 
 module.exports = class MediaSet extends Plugin {
-
     constructor(obj) {
         super(obj);
 
@@ -19,7 +18,7 @@ module.exports = class MediaSet extends Plugin {
         return {
             name: "MediaSet",
             description: "Media-capable set command",
-            help: '/mset `trigger`, /munset `trigger`'
+            help: "/mset `trigger`, /munset `trigger`"
         };
     }
 
@@ -115,7 +114,7 @@ module.exports = class MediaSet extends Plugin {
 
     setStepTwo(message, mediaType) {
         // is this a reply for a "now send media" message?
-        if (!message.hasOwnProperty('reply_to_message')) return;
+        if (!message.hasOwnProperty("reply_to_message")) return;
         // are there pending requests for this chat?
         if (!this.db.pendingRequests[message.chat.id]) return;
 

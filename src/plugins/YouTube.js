@@ -7,7 +7,6 @@ function sanitize(str) {
 }
 
 module.exports = class YouTubePlugin extends Plugin {
-
     static get plugin() {
         return {
             name: "YouTube",

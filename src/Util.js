@@ -78,11 +78,11 @@ function escapeRegExp(str) {
 
 // http://stackoverflow.com/a/2117523
 function makeUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
         /[xy]/g,
         c => {
             const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            const v = c === "x" ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         }
     );
@@ -100,8 +100,8 @@ function downloadAndSaveTempResource(url, extension, callback) {
             "User-Agent": "stagefright/1.2 (Linux;Android 5.0)"
         }
     })
-    .pipe(fs.createWriteStream(fn))
-    .on("close", () => callback(fn));
+        .pipe(fs.createWriteStream(fn))
+        .on("close", () => callback(fn));
 }
 
 function buildPrettyUserName(user) {
@@ -139,7 +139,7 @@ function buildPrettyChatName(chat) {
 function makeHTMLLink(title, url) {
     const sanitize = str => str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     // We don't really care about other characters, but '"' may close the href string.
-    if (url.includes('"'))
+    if (url.includes("\""))
         throw new Error("Invalid link");
     return `<a href="${url}">${sanitize(title)}</a>`;
 }

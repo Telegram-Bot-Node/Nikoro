@@ -60,5 +60,6 @@ module.exports = class Reddit extends Plugin {
         const item = results[Math.floor(Math.random() * results.length)];
 
         this.sendPhoto(message.chat.id, item.url, {caption: `${item.title}\n\n${item.url}`});
-    }};
+    }
+};
 

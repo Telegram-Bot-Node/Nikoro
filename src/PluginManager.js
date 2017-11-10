@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const Logger = require("./Log");
 const Plugin = require("./Plugin");
 const {EventEmitter} = require("events");
@@ -63,12 +63,12 @@ module.exports = class PluginManager {
                         this.plugins
                             .filter(plugin => plugin.plugin.isProxy)
                             .map(plugin => plugin.proxy(eventName, message))
-                        )
-                       .then(() => this.emit(
+                    )
+                        .then(() => this.emit(
                             "message",
                             message
                         ))
-                       .then(() => this.emit(
+                        .then(() => this.emit(
                             eventName,
                             message
                         ))
@@ -170,7 +170,7 @@ module.exports = class PluginManager {
     // Instantiates the plugin.
     // Returns the plugin itself.
     loadPlugin(pluginName) {
-        const pluginPath = path.join(__dirname, 'plugins', pluginName);
+        const pluginPath = path.join(__dirname, "plugins", pluginName);
         /* Invalidates the require() cache.
          * This allows for "hot fixes" to plugins: just /disable it, make the
          * required changes, and /enable it again.
@@ -280,12 +280,12 @@ module.exports = class PluginManager {
     }
 
     static getDatabasePath(pluginName) {
-        return path.join(__dirname, '..', 'db', 'plugin_' + pluginName + '.json');
+        return path.join(__dirname, "..", "db", "plugin_" + pluginName + ".json");
     }
 
     startSynchronization() {
         this.synchronizationInterval = setInterval(() => {
-            this.log.debug(`Starting synchronization`);
+            this.log.debug("Starting synchronization");
             this.plugins.forEach(plugin => {
                 fs.writeFile(
                     PluginManager.getDatabasePath(plugin.plugin.name),

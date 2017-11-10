@@ -32,7 +32,7 @@ module.exports = class Porn extends Plugin {
             const minutes = String(Math.floor(item.duration / 60));
             let seconds = String(item.duration % 60);
             if (String(seconds).length === 1)
-                seconds = '0' + seconds;
+                seconds = "0" + seconds;
 
             this.sendMessage(
                 message.chat.id,

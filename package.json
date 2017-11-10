@@ -14,16 +14,16 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "eslint": "^2.9.0",
-    "eslint-config-google": "^0.5.0",
-    "mocha": "^3.1.2"
+    "eslint": "^4.10.0",
+    "eslint-config-google": "^0.9.1",
+    "mocha": "^4.0.1"
   },
   "scripts": {
     "firstrun": "bash install.sh",
     "configure": "node src/Installer.js",
     "bot": "node src/Bot.js",
     "lint": "eslint src/",
-    "test": "mocha tests/ --name '*Test.js' --recursive",
+    "test": "mocha tests/ --name '*Test.js' --recursive --exit",
     "test:watch": "npm run test -- --watch",
     "install-hooks": "cp hooks/* .git/hooks/"
   },

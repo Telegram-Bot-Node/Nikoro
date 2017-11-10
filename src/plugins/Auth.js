@@ -2,7 +2,6 @@ const Plugin = require("./../Plugin");
 const Util = require("./../Util");
 
 module.exports = class AuthPlugin extends Plugin {
-
     static get plugin() {
         return {
             name: "Auth",

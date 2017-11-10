@@ -4,7 +4,6 @@
 const Plugin = require("./../Plugin");
 
 module.exports = class Echo extends Plugin {
-
     static get plugin() {
         return {
             name: "Echo",

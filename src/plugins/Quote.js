@@ -4,7 +4,6 @@
 const Plugin = require("../Plugin");
 
 module.exports = class Quote extends Plugin {
-
     constructor(obj) {
         super(obj);
 
@@ -15,8 +14,8 @@ module.exports = class Quote extends Plugin {
 
     static get plugin() {
         return {
-            name: 'Quote',
-            description: 'A classic quote system',
+            name: "Quote",
+            description: "A classic quote system",
             help: ` commands: 
                 \`/addquote\` adds the replied message 
                 \`/quote <id>\` returns the quote by ID

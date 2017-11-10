@@ -1,7 +1,6 @@
 const Plugin = require("./../Plugin");
 
 module.exports = class Set extends Plugin {
-
     constructor(obj) {
         super(obj);
 
