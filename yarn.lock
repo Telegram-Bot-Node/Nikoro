@@ -1455,7 +1455,7 @@ concat-stream@^1.4.6, concat-stream@^1.4.7:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concurrently@3.5.0:
+concurrently@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/concurrently/-/concurrently-3.5.0.tgz#8cf1b7707a6916a78a4ff5b77bb04dec54b379b2"
   dependencies:

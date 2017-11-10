@@ -1,6 +1,7 @@
 {
   "projectname": "Telegram-Bot-Node",
   "projectdescription": "A plugin-based, all-in-one Telegram bot written in Node.js.",
+  "projectbranch": "es6",
   "github": "https://github.com/crisbal/Telegram-Bot-Node",
   "basedir": "./dev/views/",
   "root": "",

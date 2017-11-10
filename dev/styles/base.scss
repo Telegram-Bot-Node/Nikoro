@@ -155,5 +155,7 @@ blockquote blockquote {
 }
 ul.list {
   list-style-type: square;
+}
+ul.list, ol.list {
   padding-left: 1em;
 }
