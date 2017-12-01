@@ -22,4 +22,4 @@ if [ $? -ne 0 ] ; then
 fi
 echo "Dependencies installed."
 
-npm run configure
+npm run configure:expert

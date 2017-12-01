@@ -19,8 +19,10 @@
     "mocha": "^4.0.1"
   },
   "scripts": {
-    "firstrun": "bash install.sh",
-    "configure": "node src/Installer.js",
+    "setup:guided": "bash bin/guided-install.sh",
+    "configure:guided": "node setupBot.js",
+    "setup:expert": "bash bin/expert-install.sh",
+    "configure:expert": "node src/Installer.js",
     "bot": "node src/Bot.js",
     "lint": "eslint src/",
     "test": "mocha tests/ --name '*Test.js' --recursive --exit",
