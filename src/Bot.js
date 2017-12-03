@@ -13,7 +13,7 @@ const Auth = require("./helpers/Auth");
 const auth = new Auth(Config);
 
 if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
-    console.log("You must provide a Telegram bot token in config.json. Try running \"npm run firstrun\".");
+    console.log("You must provide a Telegram bot token in config.json. Try running \"npm run configure:guided\" or \"npm run configure:expert\".");
     process.exit(1);
 }
 
