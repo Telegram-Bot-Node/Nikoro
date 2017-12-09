@@ -18,7 +18,7 @@ module.exports = class SetTitle extends Plugin {
     get commands() {
         return {
             settitle: ({args, message}) => {
-                if (this.auth.isMod(message.from.id, message.chat.id))
+                if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 if (args.length === 0)
                     return "Syntax: /settitle <title>";
