@@ -90,6 +90,7 @@ function makeUUID() {
 
 // `callback` receives the temporary path (eg. /tmp/notavirus.exe).
 function downloadAndSaveTempResource(url, extension, callback) {
+    log.warn("Using deprecated function Util.downloadAndSaveTempResource; can you use this.sendPhoto directly?");
     log.info(`Downloading and saving resource from ${url}`);
 
     const fn = `/tmp/${makeUUID()}.${extension}`;

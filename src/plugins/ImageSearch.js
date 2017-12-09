@@ -1,5 +1,4 @@
 const Plugin = require("../Plugin");
-const Util = require("../Util");
 const GoogleImages = require("google-images");
 const assert = require("assert");
 
@@ -32,13 +31,8 @@ module.exports = class ImageSearch extends Plugin {
     onCommand({message, command, args}) {
         if (command !== "images") return;
         const query = args.join(" ");
-        this.client.search(query).then(images => {
-            const url = images[0].url;
-            Util.downloadAndSaveTempResource(
-                url,
-                url.match(/\.([\w]+)$/)[1],
-                path => this.sendPhoto(message.chat.id, path)
-            );
-        }).catch(err => this.sendMessage(message.chat.id, JSON.stringify(err, null, 4)));
+        this.client.search(query)
+            .then(images => this.sendPhoto(message.chat.id, images[0].url))
+            .catch(err => this.sendMessage(message.chat.id, JSON.stringify(err, null, 4)));
     }
 };

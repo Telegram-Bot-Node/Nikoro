@@ -1,14 +1,12 @@
 const Plugin = require("../Plugin");
 const request = require("request");
-const Util = require("../Util");
 
 module.exports = class Rule34 extends Plugin {
     static get plugin() {
         return {
             name: "Rule34",
             description: "If it exists, there's porn of it.",
-            help: "/rule34 <query>",
-            needs: { }
+            help: "/rule34 <query>"
         };
     }
 
@@ -40,9 +38,7 @@ module.exports = class Rule34 extends Plugin {
 
             this.log.debug(`Target URL: ${target}`);
 
-            Util.downloadAndSaveTempResource(target, "jpg", imgpath => {
-                this.sendPhoto(message.chat.id, imgpath);
-            });
+            this.sendPhoto(message.chat.id, target);
         });
     }
 };
