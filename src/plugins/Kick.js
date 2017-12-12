@@ -45,15 +45,15 @@ module.exports = class Kick extends Plugin {
                 this.kick(message, target);
                 return "Banned.";
             },
-            pardon: ({message, args}) => {
+            unban: ({message, args}) => {
                 if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
-                const target = Util.getTargetID(message, args, "pardon");
+                const target = Util.getTargetID(message, args, "unban");
                 if (typeof target === "string") return target;
                 if (!this.db[message.chat.id])
                     return "It seems that there are no banned users.";
                 this.db[message.chat.id] = this.db[message.chat.id].filter(id => id !== target);
-                return "Pardoned.";
+                return "Unbanned.";
             }
         };
     }
