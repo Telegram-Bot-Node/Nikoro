@@ -82,7 +82,7 @@ function makeUUID() {
         /[xy]/g,
         c => {
             const r = Math.random() * 16 | 0;
-            const v = c === "x" ? r : (r & 0x3 | 0x8);
+            const v = c === "x" ? r : r & 0x3 | 0x8;
             return v.toString(16);
         }
     );
@@ -137,18 +137,20 @@ function buildPrettyChatName(chat) {
     return name.trim();
 }
 
+const escapeHTML = str => str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
 function makeHTMLLink(title, url) {
-    const sanitize = str => str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     // We don't really care about other characters, but '"' may close the href string.
     if (url.includes("\""))
         throw new Error("Invalid link");
-    return `<a href="${url}">${sanitize(title)}</a>`;
+    return `<a href="${url}">${escapeHTML(title)}</a>`;
 }
 
 module.exports = {
     nameResolver,
     getTargetID,
     escapeRegExp,
+    escapeHTML,
     makeUUID,
     downloadAndSaveTempResource,
     buildPrettyUserName,

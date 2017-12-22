@@ -1,4 +1,5 @@
 const Plugin = require("../Plugin");
+const Util = require("./../Util");
 const request = require("request");
 
 module.exports = class Reddit extends Plugin {
@@ -45,9 +46,9 @@ module.exports = class Reddit extends Plugin {
         const item = results[Math.floor(Math.random() * results.length)].data;
         this.sendMessage(
             message.chat.id,
-            `[${item.title}](https://reddit.com${item.permalink}) - r/${item.subreddit}`,
+            `${Util.makeHTMLLink(item.title, "https://reddit.com" + item.permalink)} - r/${item.subreddit}`,
             {
-                parse_mode: "Markdown"
+                parse_mode: "HTML"
             }
         );
     }

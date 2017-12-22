@@ -1,4 +1,5 @@
 const Plugin = require("../Plugin");
+const Util = require("./../Util");
 const request = require("request-promise");
 
 module.exports = class UrbanDictionary extends Plugin {
@@ -34,7 +35,9 @@ module.exports = class UrbanDictionary extends Plugin {
                             msg = `Sorry, I was unable to find results for: ${args.join(" ")}.`;
                         } else {
                             msg =
-                                `*${def.word}*: ${def.definition}\n\n_${def.example}_`;
+                                `<b>${Util.escapeHTML(def.word)}</b>: `
+                                + `${Util.escapeHTML(def.definition)}\n\n`
+                                + `<i>${Util.escapeHTML(def.example)}</i>`;
                         }
 
                         this.sendMessage(message.chat.id, msg, opts);
