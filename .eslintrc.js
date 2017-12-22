@@ -3,6 +3,10 @@ module.exports = {
         "ecmaVersion": 8
     },
     "extends": "google",
+    "env": {
+        "node": true,
+        "es6": true
+    },
     "rules": {
         "arrow-parens": ["warn", "as-needed"],
         "camelcase": [1, {
@@ -18,6 +22,7 @@ module.exports = {
         "no-console": 2,
         "no-extend-native": 0,
         "no-loop-func": 1,
+        "no-undef": "error",
         "no-unused-vars": 1,
         "no-var": 2,
         "no-warning-comments": 1,
