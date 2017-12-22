@@ -19,11 +19,11 @@ module.exports = class Auth {
         try {
             const data = fs.readFileSync("./db/helper_Auth.json", "utf-8");
             this.db = JSON.parse(data);
-            this.db._globalAdmins = this.db._globalAdmins.concat(config.globalAdmins).unique();
+            this.db._owners = this.db._owners.concat(config.owners).unique();
         } catch (err) {
             this.db = {
                 auth: {},
-                _globalAdmins: config.globalAdmins
+                _owners: config.owners
             };
         }
     }
@@ -59,14 +59,14 @@ module.exports = class Auth {
         assert(isFinite(chatId));
         assert(!isNaN(chatId));
 
-        return this.isGlobalAdmin(userId) || this.getAdmins(chatId).includes(userId);
+        return this.isOwner(userId) || this.getAdmins(chatId).includes(userId);
     }
 
-    isGlobalAdmin(_userId) {
+    isOwner(_userId) {
         const userId = Number(_userId);
         assert(isFinite(userId));
         assert(!isNaN(userId));
-        return this.getGlobalAdmins().includes(userId);
+        return this.getOwners().includes(userId);
     }
 
     addAdmin(_userId, _chatId) {
@@ -137,14 +137,14 @@ module.exports = class Auth {
         this.synchronize();
     }
 
-    addGlobalAdmin(_userId) {
+    addOwner(_userId) {
         const userId = Number(_userId);
         assert(isFinite(userId));
         assert(!isNaN(userId));
-        if (!this.db._globalAdmins)
-            this.db._globalAdmins = [];
+        if (!this.db._owners)
+            this.db._owners = [];
 
-        this.db._globalAdmins.push(userId);
+        this.db._owners.push(userId);
         this.synchronize();
     }
 
@@ -168,9 +168,9 @@ module.exports = class Auth {
         return [];
     }
 
-    getGlobalAdmins() {
-        if (this.db._globalAdmins) {
-            return this.db._globalAdmins;
+    getOwners() {
+        if (this.db._owners) {
+            return this.db._owners;
         }
         return [];
     }

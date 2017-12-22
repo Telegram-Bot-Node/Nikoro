@@ -44,8 +44,8 @@ const questions = [
     },
     {
         type: "input",
-        name: "globalAdmins",
-        message: "Enter the list of global admins as an array of user IDs (eg. [1111, 1234])",
+        name: "owners",
+        message: "Enter the list of owners as an array of user IDs (eg. [1111, 1234])",
         filter: JSON.parse,
         validate: array => {
             try {

@@ -145,7 +145,7 @@ inquirer
     .then(() => {
         const config = {
             TELEGRAM_TOKEN: token,
-            globalAdmins: [admin.id],
+            owners: [admin.id],
             activePlugins: Array.from(enabledPlugins)
         };
         fs.writeFileSync(configPath, JSON.stringify(config, null, 4));

@@ -5,6 +5,6 @@
 	],
 
     "activePlugins": ["Ping"],
-    "globalAdmins": [1],
+    "owners": [1],
     "loggingLevel": "warn"
 }

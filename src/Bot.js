@@ -25,6 +25,13 @@ if (fs.existsSync(path.join(__dirname, "../.git")))
     commit = fs.readFileSync(path.join(__dirname, "../.git/refs/heads/es6"), "utf8").substr(0, 7);
 log.info(`Telegram-Bot-Node version ${require("../package.json").version}` + (commit ? `, commit ${commit}` : ""));
 
+if (Config.globalAdmins) {
+    log.warn("Config contains deprecated key 'globalAdmins', replacing with 'owners'");
+    Config.owners = Config.globalAdmins;
+    delete Config.globalAdmins;
+    fs.writeFileSync("./config.json", JSON.stringify(Config, null, 4));
+}
+
 log.verbose("Creating a TelegramBot instance...");
 const bot = new TelegramBot(Config.TELEGRAM_TOKEN, {polling: true});
 log.info("Instance created.");
