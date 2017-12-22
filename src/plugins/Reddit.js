@@ -25,14 +25,12 @@ module.exports = class Reddit extends Plugin {
             }
             try {
                 switch (command) {
-                case "reddit":
-                    this.reddit(message, body);
-                    break;
-                case "redimg":
-                    this.redimg(message, body);
-                    break;
-                default:
-                    return;
+                    case "reddit":
+                        this.reddit(message, body);
+                        break;
+                    case "redimg":
+                        this.redimg(message, body);
+                        break;
                 }
             } catch (e) {
                 return this.sendMessage(message.chat.id, "An error occurred.");

@@ -1,4 +1,4 @@
-/* eslint no-console: 0 */
+/* eslint no-console: 0 no-sync: 0 */
 
 // Automatic cancellation in node-telegram-bot-api is deprecated, disable it
 process.env.NTBA_FIX_319 = 1;
@@ -44,15 +44,9 @@ log.info("Plugins loaded.");
 
 log.info("The bot is online!");
 
-// If `CTRL+C` is pressed we stop the bot safely.
-process.on("SIGINT", handleShutdown("SIGINT received"));
-
-// Stop safely in case of `uncaughtException`.
-process.on("uncaughtException", handleShutdown("Uncaught exception"));
-
 function handleShutdown(reason) {
     return err => {
-        if (err) log.error(err);
+        if (err && (err != "SIGINT")) log.error(err);
         log.warn("Shutting down, reason: " + reason);
         log.info("Stopping safely all the plugins...");
         pluginManager.stopSynchronization();
@@ -62,6 +56,12 @@ function handleShutdown(reason) {
         });
     };
 }
+
+// If `CTRL+C` is pressed we stop the bot safely.
+process.on("SIGINT", handleShutdown("Terminated by user"));
+
+// Stop safely in case of `uncaughtException`.
+process.on("uncaughtException", handleShutdown("Uncaught exception"));
 
 process.on("unhandledRejection", (reason, p) => {
     log.error("Unhandled rejection at Promise ", p, " with reason ", reason);

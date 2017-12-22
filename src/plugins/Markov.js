@@ -39,7 +39,7 @@ class Blather {
 
     // start is an array of words with which to start
     generateFragment(chat, start = arraySample(this.dictionary[chat].starts).split(this.joiner)) {
-        return this.fill(start, chat, this.shouldStopFragment);
+        return this.fill(start, chat, Blather.shouldStopFragment);
     }
 
     fill(chain, chat, stopCondition) {
@@ -61,7 +61,7 @@ class Blather {
         });
     }
 
-    shouldStopFragment(chain) {
+    static shouldStopFragment(chain) {
         return chain.length >= 1000;
     }
 

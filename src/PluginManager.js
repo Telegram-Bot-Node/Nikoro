@@ -1,3 +1,4 @@
+/* eslint no-sync: 0 */
 const fs = require("fs");
 const path = require("path");
 const Logger = require("./Log");
@@ -121,49 +122,49 @@ module.exports = class PluginManager {
         // Checks if it is already in this.plugins
         const isGloballyEnabled = this.plugins.some(nameMatches(pluginName));
         switch (command) {
-        case "enable":
-            if (isGloballyEnabled)
-                return "Plugin already enabled.";
-            if (targetChat) {
+            case "enable":
+                if (isGloballyEnabled)
+                    return "Plugin already enabled.";
+                if (targetChat) {
+                    try {
+                        this.loadAndAdd(pluginName);
+                        const plugin = this.plugins.find(nameMatches(pluginName));
+                        plugin.blacklist.delete(targetChat);
+                        return `Plugin enabled successfully for chat ${targetChat}.`;
+                    } catch (e) {
+                        this.log.warn(e);
+                        if (/^Cannot find module/.test(e.message))
+                            return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                        return "Couldn't load plugin: " + e.message;
+                    }
+                }
+
+                this.log.info(`Enabling ${pluginName} from message interface`);
                 try {
                     this.loadAndAdd(pluginName);
-                    const plugin = this.plugins.find(nameMatches(pluginName));
-                    plugin.blacklist.delete(targetChat);
-                    return `Plugin enabled successfully for chat ${targetChat}.`;
+                    return "Plugin enabled successfully.";
                 } catch (e) {
                     this.log.warn(e);
-                    if (/^Cannot find module/.test(e.message))
+                    if (!/^Cannot find module/.test(e.message))
+                        return "Couldn't load plugin, check console for errors.";
+                    if (/src.plugins/.test(e.message))
                         return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
-                    return "Couldn't load plugin: " + e.message;
+                    return e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
                 }
-            }
 
-            this.log.info(`Enabling ${pluginName} from message interface`);
-            try {
-                this.loadAndAdd(pluginName);
-                return "Plugin enabled successfully.";
-            } catch (e) {
-                this.log.warn(e);
-                if (!/^Cannot find module/.test(e.message))
-                    return "Couldn't load plugin, check console for errors.";
-                if (/src.plugins/.test(e.message))
-                    return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
-                return e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
-            }
-
-        case "disable":
-            if (targetChat) {
-                if (!isGloballyEnabled)
-                    return "Plugin isn't enabled.";
-                const plugin = this.plugins.find(nameMatches(pluginName));
-                plugin.blacklist.add(targetChat);
-                return `Plugin disabled successfully for chat ${targetChat}.`;
-            }
-            if (isGloballyEnabled) {
-                const outcome = this.removePlugin(pluginName);
-                return outcome ? "Plugin disabled successfully." : "An error occurred.";
-            }
-            return "Plugin already disabled.";
+            case "disable":
+                if (targetChat) {
+                    if (!isGloballyEnabled)
+                        return "Plugin isn't enabled.";
+                    const plugin = this.plugins.find(nameMatches(pluginName));
+                    plugin.blacklist.add(targetChat);
+                    return `Plugin disabled successfully for chat ${targetChat}.`;
+                }
+                if (isGloballyEnabled) {
+                    const outcome = this.removePlugin(pluginName);
+                    return outcome ? "Plugin disabled successfully." : "An error occurred.";
+                }
+                return "Plugin already disabled.";
         }
     }
 

@@ -1,3 +1,4 @@
+/* eslint no-sync: 0 */
 const fs = require("fs");
 const path = require("path");
 const Plugin = require("./../Plugin");

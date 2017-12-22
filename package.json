@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "An all-in-one, plugin-based, Telegram Bot.",
   "dependencies": {
-    "blather": "^2.0.0",
     "google-images": "^1.0.0",
     "inquirer": "^1.2.2",
     "leaky-bucket": "^2.1.1",
@@ -14,8 +13,7 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "eslint": "^4.10.0",
-    "eslint-config-google": "^0.9.1",
+    "eslint": "^4.13.1",
     "mocha": "^4.0.1"
   },
   "scripts": {

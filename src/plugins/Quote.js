@@ -16,10 +16,10 @@ module.exports = class Quote extends Plugin {
         return {
             name: "Quote",
             description: "A classic quote system",
-            help: ` commands: 
-                \`/addquote\` adds the replied message 
-                \`/quote <id>\` returns the quote by ID
-                \`/quote\` returns a random quote`
+            help: `Commands:
+/addquote adds the message you replied to 
+/quote returns a random quote
+\`/quote <id>\` returns the quote with the given ID`
         };
     }
 
@@ -35,11 +35,10 @@ module.exports = class Quote extends Plugin {
     }
 
     addQuote(message) {
-        if (message.reply_to_message === undefined ||
-                message.reply_to_message.text === undefined)
-            return "Please reply to a text message first";
+        if (!message.reply_to_message || !message.reply_to_message.text)
+            return "Reply to a text message to add it to the quotes database.";
 
-        const author = this.getAuthor(message.reply_to_message);
+        const author = Quote.getAuthor(message.reply_to_message);
         const text = message.reply_to_message.text;
 
         this.db.quotes.push({
@@ -47,13 +46,13 @@ module.exports = class Quote extends Plugin {
             text
         });
 
-        return `Quote added with ID ${this.db.quotes.length - 1}`;
+        return `Quote added with ID ${this.db.quotes.length - 1}.`;
     }
 
     findQuote(id) {
         const quote = this.db.quotes[id];
         if (!quote)
-            return "Quote not found";
+            return "Quote not found!";
 
         return `<${quote.author}>: ${quote.text}`;
     }
@@ -63,7 +62,7 @@ module.exports = class Quote extends Plugin {
         return this.findQuote(id);
     }
 
-    getAuthor(obj) {
+    static getAuthor(obj) {
         let author = obj.from.username;
         const forward = obj.forward_from;
         if (author)

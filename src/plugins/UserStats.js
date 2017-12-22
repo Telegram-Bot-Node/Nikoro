@@ -1,5 +1,15 @@
 const Plugin = require("./../Plugin");
 
+function wordCount(text) {
+    const words = text.trim().replace(/\s+/gi, " ").split(" ");
+    // This checks if the first element of the `words` array is there, and
+    // if it is truthy (an empty string, which is the case when `text` is
+    // empty or contains only spaces, will not trigger this, returning 0).
+    if (words[0])
+        return words.length;
+    return 0;
+}
+
 module.exports = class UserStats extends Plugin {
     static get plugin() {
         return {
@@ -7,16 +17,6 @@ module.exports = class UserStats extends Plugin {
             description: "Get user stats on message count.",
             help: "Enter /userstats to get statistics."
         };
-    }
-
-    wordCount(text) {
-        const words = text.trim().replace(/\s+/gi, " ").split(" ");
-        // This checks if the first element of the `words` array is there, and
-        // if it is truthy (an empty string, which is the case when `text` is
-        // empty or contains only spaces, will not trigger this, returning 0).
-        if (words[0])
-            return words.length;
-        return 0;
     }
 
     onText({message}) {
@@ -44,7 +44,7 @@ module.exports = class UserStats extends Plugin {
         this.db["stat" + chatId].totalMessageCount++;
 
         if (message.text) {
-            const wc = this.wordCount(message.text);
+            const wc = wordCount(message.text);
             if (!this.db["stat" + chatId].totalWordCount) {
                 this.db["stat" + chatId].totalWordCount = 0;
             }

@@ -23,7 +23,7 @@ describe("Plugins", () => {
             const plugin = new Plugin({db: {}});
             const quoteId = 0;
 
-            assert.strictEqual(plugin.findQuote(quoteId), "Quote not found");
+            assert.strictEqual(plugin.findQuote(quoteId), "Quote not found!");
             assert.strictEqual(plugin.addQuote(message), "Quote added with ID " + quoteId);
             assert.strictEqual(plugin.findQuote(quoteId), "<@ufocoder>: Lorem ipsum");
         });
@@ -31,7 +31,7 @@ describe("Plugins", () => {
         it("get random quote", () => {
             const plugin = new Plugin({db: {}});
 
-            assert.strictEqual(plugin.randomQuote(), "Quote not found");
+            assert.strictEqual(plugin.randomQuote(), "Quote not found!");
             assert.strictEqual(plugin.addQuote(message), "Quote added with ID 0");
             assert.strictEqual(plugin.randomQuote(), "<@ufocoder>: Lorem ipsum");
         });

@@ -59,18 +59,18 @@ module.exports = class ModTools extends Plugin {
                 if (!this.db.blacklist[chatID])
                     this.db.blacklist[chatID] = [];
                 switch (args[0]) {
-                case "add":
-                    if (args.length === 1)
-                        return "Syntax: `/blacklist add <word>";
-                    this.db.blacklist[chatID].push(word);
-                    return "Done!";
-                case "delete":
-                    if (args.length === 1)
-                        return "Syntax: `/blacklist delete <word>";
-                    this.db.blacklist[chatID] = this.db.blacklist[chatID].filter(val => val !== word);
-                    return "Done!";
-                default:
-                    return "Syntax: `/blacklist <add/delete> <word>`";
+                    case "add":
+                        if (args.length === 1)
+                            return "Syntax: `/blacklist add <word>";
+                        this.db.blacklist[chatID].push(word);
+                        return "Done!";
+                    case "delete":
+                        if (args.length === 1)
+                            return "Syntax: `/blacklist delete <word>";
+                        this.db.blacklist[chatID] = this.db.blacklist[chatID].filter(val => val !== word);
+                        return "Done!";
+                    default:
+                        return "Syntax: `/blacklist <add/delete> <word>`";
                 }
             }
         };

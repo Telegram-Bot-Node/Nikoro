@@ -76,6 +76,7 @@ module.exports = class Vote extends Plugin {
 
                 // Sort the map (https://stackoverflow.com/a/31159284) by user array length
                 const sortedMap = new Map([...answerToUsersMap.entries()]
+                    // eslint-disable-next-line no-unused-vars
                     .sort(([[answerA, usersA], [answerB, usersB]]) => usersA.length - usersB.length));
 
                 sortedMap.forEach((users, answer) => {

@@ -1,3 +1,4 @@
+/* eslint no-sync: 0 */
 const fs = require("fs");
 const walk = require("walk-sync");
 const inquirer = require("inquirer");
@@ -51,9 +52,10 @@ const questions = [
             try {
                 if (array.every(ID => /\d+/.test(ID)))
                     return true;
+                return "Please insert an array of user IDs.";
             } catch (e) {
+                return "Please insert an array of user IDs.";
             }
-            return "Please insert an array of user IDs.";
         }
     },
     ...pluginQuestions,
@@ -79,7 +81,7 @@ inquirer.prompt({
     name: "force",
     message: "A configuration file already exists. Would you like to overwrite it?",
     default: false,
-    when: function() {
+    when() {
         try {
             JSON.parse(fs.readFileSync(configPath, "utf8"));
             return true;
