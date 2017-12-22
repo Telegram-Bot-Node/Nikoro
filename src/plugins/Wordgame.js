@@ -1,6 +1,6 @@
 const Plugin = require("./../Plugin");
 
-const wordlist = require("fs").readFileSync(require("word-list"), "utf8").split("\n");
+const wordlist = Object.values(require("diceware-wordlist-en-eff"));
 
 function getRandomWord() {
     return wordlist[Math.floor(Math.random() * wordlist.length)];
@@ -46,13 +46,10 @@ module.exports = class Wordgame extends Plugin {
         };
     }
 
-    onText({message}, reply) {
+    onText({message}) {
         if (this.state === "") return;
         if (message.text !== this.word) return;
         this.state = "";
-        reply({
-            type: "text",
-            text: `Well done, @${message.from.username}!`
-        });
+        this.sendMessage(message.chat.id, `Well done, @${message.from.username}!`);
     }
 };
