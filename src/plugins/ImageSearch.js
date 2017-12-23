@@ -28,11 +28,10 @@ module.exports = class ImageSearch extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
+    onCommand({command, args}) {
         if (command !== "images") return;
         const query = args.join(" ");
-        this.client.search(query)
-            .then(images => this.sendPhoto(message.chat.id, images[0].url))
-            .catch(err => this.sendMessage(message.chat.id, JSON.stringify(err, null, 4)));
+        return this.client.search(query)
+            .then(images => ({type: "photo", photo: images[0].url}));
     }
 };

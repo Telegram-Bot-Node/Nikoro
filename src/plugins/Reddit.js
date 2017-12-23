@@ -1,6 +1,6 @@
 const Plugin = require("../Plugin");
 const Util = require("./../Util");
-const request = require("request");
+const request = require("request-promise-native");
 
 module.exports = class Reddit extends Plugin {
     static get plugin() {
@@ -13,52 +13,45 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
+    async onCommand({message, command, args}) {
         if (command !== "reddit" && command !== "redimg")
             return;
 
         const sub = args[0];
-        const url = "https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json";
-        request(url, (error, response, body) => {
-            if (error || response.statusCode !== 200) {
-                return this.sendMessage(message.chat.id, "An error occurred.");
-            }
-            try {
-                switch (command) {
-                    case "reddit":
-                        this.reddit(message, body);
-                        break;
-                    case "redimg":
-                        this.redimg(message, body);
-                        break;
-                }
-            } catch (e) {
-                return this.sendMessage(message.chat.id, "An error occurred.");
-            }
-        });
+        const body = await request("https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json");
+        const results = JSON.parse(body).data.children;
+        switch (command) {
+            case "reddit":
+                return Reddit.reddit(message, results);
+            case "redimg":
+                return Reddit.redimg(message, results);
+        }
     }
 
-    reddit(message, body) {
-        const data = JSON.parse(body);
-        const results = data.data.children;
+    static reddit(message, results) {
         const item = results[Math.floor(Math.random() * results.length)].data;
-        this.sendMessage(
-            message.chat.id,
-            `${Util.makeHTMLLink(item.title, "https://reddit.com" + item.permalink)} - r/${item.subreddit}`,
-            {
+        return {
+            type: "text",
+            text: `${Util.makeHTMLLink(item.title, "https://reddit.com" + item.permalink)} - r/${item.subreddit}`,
+            options: {
                 parse_mode: "HTML"
             }
-        );
+        };
     }
 
-    redimg(message, body) {
-        const data = JSON.parse(body);
-        const results = data.data.children
+    static redimg(message, results) {
+        results = results
             .map(c => c.data)
             .filter(c => c.post_hint === "image");
         const item = results[Math.floor(Math.random() * results.length)];
 
-        this.sendPhoto(message.chat.id, item.url, {caption: `${item.title}\n\n${item.url}`});
+        return {
+            type: "photo",
+            photo: item.url,
+            options: {
+                caption: `${item.title}\n\n${item.url}`
+            }
+        };
     }
 };
 

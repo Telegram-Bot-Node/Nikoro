@@ -1,9 +1,6 @@
 const Plugin = require("../Plugin");
 const wiki = require("wikijs").default();
-
-function sanitize(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
+const Util = require("./../Util");
 
 module.exports = class Wikipedia extends Plugin {
     static get plugin() {
@@ -14,17 +11,21 @@ module.exports = class Wikipedia extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
-        if (command !== "wiki") return;
-        const query = args.join(" ");
-        wiki.page(query)
-            // .raw.title isn't a promise, but .summary is
-            .then(page => Promise.all([page.raw.title, page.summary()]))
-            .then(([title, summary]) => `<b>${sanitize(title)}</b>\n\n${sanitize(summary)}`)
-            .then(text => this.sendMessage(message.chat.id, text, {parse_mode: "HTML"}))
-            .catch(err => {
-                this.log.error(err);
-                this.sendMessage(message.chat.id, "An error occurred.");
-            });
+    get commands() {
+        return {
+            wiki: async ({args}) => {
+                const query = args.join(" ");
+                const page = await wiki.page(query);
+                const title = page.raw.title;
+                const summary = await page.summary();
+                return {
+                    type: "text",
+                    text: `<b>${Util.escapeHTML(title)}</b>\n\n${Util.escapeHTML(summary)}`,
+                    options: {
+                        parse_mode: "HTML"
+                    }
+                };
+            }
+        }
     }
 };

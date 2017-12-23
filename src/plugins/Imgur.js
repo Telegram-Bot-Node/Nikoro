@@ -1,5 +1,5 @@
 const Plugin = require("../Plugin");
-const request = require("request");
+const request = require("request-promise-native");
 
 module.exports = class Imgur extends Plugin {
     static get plugin() {
@@ -10,32 +10,36 @@ module.exports = class Imgur extends Plugin {
         };
     }
 
-    onCommand({message, command}) {
-        if (command !== "imgur") return;
-        Imgur.findValidPic(0, message);
+    get commands() {
+        return {
+            imgur: ({message}) => this.findValidPic(0, message)
+        };
     }
 
-    static findValidPic(s, message) {
+    async findValidPic(s, message) {
         if (s > 50)
             return;
 
         this.sendChatAction(message.chat.id, "upload_photo");
 
-        const url = Imgur.generateUrl(6);
-        const options = {
-            method: "HEAD",
-            uri: `http://i.imgur.com/${url}.png`
-        };
+        const url = `http://i.imgur.com/${Imgur.generateUrl(6)}.png`;
 
-        request(options, (error, response) => {
-            if (error)
-                return this.sendMessage(message.chat.id, "An error occurred.");
-
-            if (response.statusCode === 404 || response.headers["content-length"] === "503")
-                return Imgur.findValidPic(s + 1, message);
-
-            this.sendPhoto(message.chat.id, `https://i.imgur.com/${url}.png`);
-        });
+        try {
+            const response = await request({
+                method: "HEAD",
+                uri: url
+            });
+            if (response["content-length"] === "12022")
+                return this.findValidPic(s + 1, message);
+            return {
+                type: "photo",
+                photo: url
+            };
+        } catch (e) {
+            if (e.statusCode === 404)
+                return this.findValidPic(s + 1, message);
+            return "An error occurred.";
+        }
     }
 
     static generateUrl(len) {

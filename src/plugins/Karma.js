@@ -33,7 +33,7 @@ module.exports = class Karma extends Plugin {
         const operator = parts[2];
 
         if (target.toLowerCase() === message.from.username.toLowerCase())
-            return this.sendMessage(message.chat.id, "You can't karma yourself!");
+            return "You can't karma yourself!";
 
         if (!this.db[chatId])
             this.db[chatId] = {};
@@ -42,6 +42,6 @@ module.exports = class Karma extends Plugin {
 
         this.db[chatId][target] += (operator === "++") ? +1 : -1;
 
-        this.sendMessage(message.chat.id, `${target} now has ${this.db[chatId][target]} karma points`);
+        return `${target} now has ${this.db[chatId][target]} karma points`;
     }
 };

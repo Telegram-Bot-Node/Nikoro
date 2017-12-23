@@ -50,6 +50,6 @@ module.exports = class Wordgame extends Plugin {
         if (this.state === "") return;
         if (message.text !== this.word) return;
         this.state = "";
-        this.sendMessage(message.chat.id, `Well done, @${message.from.username}!`);
+        return `Well done, @${message.from.username}!`;
     }
 };

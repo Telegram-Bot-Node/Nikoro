@@ -1,5 +1,5 @@
 const Plugin = require("../Plugin");
-const request = require("request");
+const request = require("request-promise-native");
 
 module.exports = class BoobsButts extends Plugin {
     static get plugin() {
@@ -10,18 +10,17 @@ module.exports = class BoobsButts extends Plugin {
         };
     }
 
-    onCommand({message, command}) {
+    async onCommand({command}) {
         switch (command) {
             case "boobs":
-            case "butts":
-                request(`http://api.o${command}.ru/noise/1`, (err, _, data) => {
-                    if (err)
-                        return this.sendMessage(message.chat.id, "An error occurred.");
-
-                    const item = JSON.parse(data)[0];
-                    this.sendPhoto(message.chat.id, `http://media.o${command}.ru/${item.preview}`);
-                });
-                return;
+            case "butts": {
+                const data = await request(`http://api.o${command}.ru/noise/1`);
+                const item = JSON.parse(data)[0];
+                return {
+                    type: "photo",
+                    photo: `http://media.o${command}.ru/${item.preview}`
+                };
+            }
         }
     }
 };

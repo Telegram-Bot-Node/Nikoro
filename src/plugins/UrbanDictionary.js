@@ -1,6 +1,6 @@
 const Plugin = require("../Plugin");
 const Util = require("./../Util");
-const request = require("request-promise");
+const request = require("request-promise-native");
 
 module.exports = class UrbanDictionary extends Plugin {
     static get plugin() {
@@ -13,39 +13,29 @@ module.exports = class UrbanDictionary extends Plugin {
 
     get commands() {
         return {
-            ud: ({args, message}) => {
-                if (args.length === 0) {
-                    this.sendMessage(message.chat.id, "Please provide a search term after /ud");
-                    return;
-                }
+            ud: async ({args}) => {
+                if (args.length === 0)
+                    return "Please provide a search term after /ud.";
 
                 const query = args.join(" ");
 
-                request(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(query)}`)
-                    .then(response => {
-                        const data = JSON.parse(response);
-                        /* data.list will be an array, it seems like typically
-                           the most popular defintion is at the zero index though.
-                        */
-                        const def = data.list[0];
-                        const opts = {parse_mode: "Markdown"};
-                        let msg;
-
-                        if (data.result_type === "no_results") {
-                            msg = `Sorry, I was unable to find results for: ${args.join(" ")}.`;
-                        } else {
-                            msg =
-                                `<b>${Util.escapeHTML(def.word)}</b>: `
-                                + `${Util.escapeHTML(def.definition)}\n\n`
-                                + `<i>${Util.escapeHTML(def.example)}</i>`;
-                        }
-
-                        this.sendMessage(message.chat.id, msg, opts);
-                    })
-                    .catch(err => {
-                        this.sendMessage(message.chat.id, "An error occured.");
-                        this.log.error(`An error occured. The returned error was: ${JSON.parse(err)}`);
-                    });
+                const response = await request(`http://api.urbandictionary.com/v0/define?term=${encodeURIComponent(query)}`);
+                const data = JSON.parse(response);
+                if (data.result_type === "no_results")
+                    return `Sorry, I was unable to find results for "${args.join(" ")}".`;
+                /* data.list will be an array, it seems like typically
+                   the most popular defintion is at the zero index though.
+                */
+                const def = data.list[0];
+                return {
+                    type: "text",
+                    text: `<b>${Util.escapeHTML(def.word)}</b>: `
+                        + `${Util.escapeHTML(def.definition)}\n\n`
+                        + `<i>${Util.escapeHTML(def.example)}</i>`,
+                    options: {
+                        parse_mode: "HTML"
+                    }
+                };
             }
         };
     }

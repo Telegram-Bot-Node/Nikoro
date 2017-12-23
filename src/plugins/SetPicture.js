@@ -28,11 +28,10 @@ module.exports = class SetPicture extends Plugin {
         };
     }
 
-    setPhoto(message) {
+    async setPhoto(message) {
         const fileId = message.photo[message.photo.length - 1].file_id;
-        this.downloadFile(fileId, os.tmpdir())
-            .then(path => this.setChatPhoto(message.chat.id, path))
-            .catch(err => this.sendMessage(message.chat.id, "An error occurred:\n\n" + err));
+        const path = await this.downloadFile(fileId, os.tmpdir())
+        await this.setChatPhoto(message.chat.id, path);
     }
 
     onPhoto({message}) {
@@ -40,10 +39,8 @@ module.exports = class SetPicture extends Plugin {
             return;
         if (!message.caption.startsWith("/setpicture"))
             return;
-        if (!this.auth.isMod(message.from.id, message.chat.id)) {
-            this.sendMessage(message.chat.id, "Insufficient privileges.");
-            return;
-        }
-        this.setPhoto(message);
+        if (!this.auth.isMod(message.from.id, message.chat.id))
+            return "Insufficient privileges.";
+        return this.setPhoto(message);
     }
 };

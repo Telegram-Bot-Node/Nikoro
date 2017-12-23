@@ -58,10 +58,13 @@ module.exports = class Plugin {
             if (typeof this[handlerName] !== "function") continue;
             const isEnabled = id => !this.blacklist.has(id); // A function that says whether the plugin is enabled or not in a given chat.
             const eventHandler = this[handlerName].bind(this); // A function that refers to the appropriate handler (this.onText, this.onCommand, etc.)
+            const smartReply = this.smartReply.bind(this);
             const wrappedHandler = function(arg) {
                 if (("chat" in arg.message) && !isEnabled(arg.message.chat.id)) // If the plugin is disabled in this chat
                     return;
-                eventHandler(arg);
+                const val = eventHandler(arg);
+                if (val && val.then)
+                    val.then(ret => smartReply(ret, arg.message));
             }; // A function that receives the event, checks the message against the blacklist, and calls the appropriate handler
             this.listener.on(eventName, wrappedHandler);
             this.handlers[eventName] = wrappedHandler; // Keeps a reference to the handler so that it can be removed later
@@ -77,47 +80,56 @@ module.exports = class Plugin {
             for (const trigger of Object.keys(this.commands)) {
                 if (command !== trigger) continue;
                 const ret = this.commands[trigger]({message, args});
-                if (typeof ret === "string" || typeof ret === "number") {
-                    this.sendMessage(message.chat.id, ret);
+                if (!ret)
                     return;
-                }
-                if (typeof ret === "undefined")
-                    return;
-                switch (ret.type) {
-                    case "text":
-                        return this.sendMessage(message.chat.id, ret.text, ret.options);
-
-                    case "audio":
-                        return this.sendAudio(message.chat.id, ret.audio, ret.options);
-
-                    case "document":
-                        return this.sendDocument(message.chat.id, ret.document, ret.options);
-
-                    case "photo":
-                        return this.sendPhoto(message.chat.id, ret.photo, ret.options);
-
-                    case "sticker":
-                        return this.sendSticker(message.chat.id, ret.sticker, ret.options);
-
-                    case "video":
-                        return this.sendVideo(message.chat.id, ret.video, ret.options);
-
-                    case "voice":
-                        return this.sendVoice(message.chat.id, ret.voice, ret.options);
-
-                    case "status": case "chatAction":
-                        return this.sendChatAction(message.chat.id, ret.status, ret.options);
-
-                    default:
-                        this.log.error(`Unrecognized reply type ${ret.type}`);
-                        return Promise.reject(`Unrecognized reply type ${ret.type}`);
-                }
+                if (ret.then) // if async fn
+                    ret.then(val => this.smartReply(val, message));
+                else
+                    this.smartReply(ret, message);
             }
         };
         if (this.listener) {
             this.listener.on("_command", shortcutHandler);
         }
         this.shortcutHandler = shortcutHandler;
+    }
+
+    smartReply(ret, message) {
+        if (typeof ret === "string" || typeof ret === "number") {
+            this.sendMessage(message.chat.id, ret);
+            return;
+        }
+        if (typeof ret === "undefined")
+            return;
+        switch (ret.type) {
+            case "text":
+                return this.sendMessage(message.chat.id, ret.text, ret.options);
+
+            case "audio":
+                return this.sendAudio(message.chat.id, ret.audio, ret.options);
+
+            case "document":
+                return this.sendDocument(message.chat.id, ret.document, ret.options);
+
+            case "photo":
+                return this.sendPhoto(message.chat.id, ret.photo, ret.options);
+
+            case "sticker":
+                return this.sendSticker(message.chat.id, ret.sticker, ret.options);
+
+            case "video":
+                return this.sendVideo(message.chat.id, ret.video, ret.options);
+
+            case "voice":
+                return this.sendVoice(message.chat.id, ret.voice, ret.options);
+
+            case "status": case "chatAction":
+                return this.sendChatAction(message.chat.id, ret.status, ret.options);
+
+            default:
+                this.log.error(`Unrecognized reply type ${ret.type}`);
+                return Promise.reject(new Error(`Unrecognized reply type ${ret.type}`));
+        }
     }
 
     stop() {

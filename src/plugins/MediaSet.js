@@ -86,29 +86,27 @@ module.exports = class MediaSet extends Plugin {
         this.setStepTwo(message, "voice");
     }
 
-    onCommand({message, command, args}) {
+    async onCommand({message, command, args}) {
         const chatID = message.chat.id;
         const trigger = args[0];
         switch (command) {
-            case "mset":
+            case "mset": {
                 if (args.length !== 1)
-                    return this.sendMessage(chatID, "Syntax: `/mset trigger`", {parse_mode: "Markdown"});
+                    return "Syntax: /mset trigger";
                 this.log.verbose("Triggered stepOne on " + Util.buildPrettyChatName(message.chat));
                 if (!this.db.pendingRequests[chatID])
                     this.db.pendingRequests[chatID] = {};
-                this.sendMessage(chatID, "Perfect! Now send me the media as a reply to this message!")
-                    .then(({message_id}) => {
-                        this.db.pendingRequests[chatID][message_id] = trigger;
-                    });
+                const {message_id} = await this.sendMessage(chatID, "Perfect! Now send me the media as a reply to this message!");
+                this.db.pendingRequests[chatID][message_id] = trigger;
                 break;
+            }
             case "munset":
-            case "moonset":
+            case "moonset": // Easter egg!
                 if (args.length !== 1)
-                    return this.sendMessage(chatID, "Syntax: `/munset trigger` (or `/moonset trigger`)", {parse_mode: "Markdown"});
+                    return "Syntax: `/munset trigger`";
                 delete this.db.triggers[chatID][trigger];
                 this.log.verbose("Removed trigger " + trigger + " on " + Util.buildPrettyChatName(message.chat));
-                this.sendMessage(chatID, "Done!");
-                break;
+                return "Done!";
         }
     }
 

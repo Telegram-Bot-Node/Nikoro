@@ -1,9 +1,6 @@
 const Plugin = require("../Plugin");
-const request = require("request");
-
-function sanitize(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
+const Util = require("./../Util");
+const request = require("request-promise-native");
 
 module.exports = class Porn extends Plugin {
     static get plugin() {
@@ -14,33 +11,28 @@ module.exports = class Porn extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
+    async onCommand({command, args}) {
         if (command !== "porn") return;
         if (args.length === 0)
-            return this.sendMessage(message.chat.id, "Please enter a search query.");
+            return "Please enter a search query.";
 
         const query = args.join(" ");
-        request(`http://api.porn.com/videos/find.json?search=${encodeURIComponent(query)}`, (err, res, data) => {
-            if (err || res.statusCode === 404)
-                return this.sendMessage(message.chat.id, "An error occurred.");
+        const data = JSON.parse(await request(`http://api.porn.com/videos/find.json?search=${encodeURIComponent(query)}`));
+        if (data.success !== true)
+            throw new Error("An error occurred.");
 
-            const jsonData = JSON.parse(data);
-            if (jsonData.success !== true)
-                return this.sendMessage(message.chat.id, "An error occurred.");
-            const item = jsonData.result[0];
+        const item = data.result[0];
+        const minutes = String(Math.floor(item.duration / 60));
+        let seconds = String(item.duration % 60);
+        if (String(seconds).length === 1)
+            seconds = "0" + seconds;
 
-            const minutes = String(Math.floor(item.duration / 60));
-            let seconds = String(item.duration % 60);
-            if (String(seconds).length === 1)
-                seconds = "0" + seconds;
-
-            this.sendMessage(
-                message.chat.id,
-                `<a href="${item.url}">${sanitize(item.title)}</a> - ${minutes}:${seconds}`,
-                {
-                    parse_mode: "HTML"
-                }
-            );
-        });
+        return {
+            type: "text",
+            text: `${Util.makeHTMLLink(item.title, item.url)} - ${minutes}:${seconds}`,
+            options: {
+                parse_mode: "HTML"
+            }
+        };
     }
 };

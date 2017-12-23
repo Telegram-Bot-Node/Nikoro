@@ -20,13 +20,13 @@ module.exports = class Forward extends Plugin {
                 this.db[chatID].target = args[0];
                 return "Done.";
             },
-            fwd: ({message}) => {
+            fwd: async ({message}) => {
                 const chatID = message.chat.id;
                 if (!this.db[chatID])
                     return "Use /fwdset to set the target channel/group.";
                 if (!message.reply_to_message)
                     return "Reply to a message with /fwd to forward it.";
-                this.forwardMessage(
+                await this.forwardMessage(
                     this.db[chatID].target,
                     message.reply_to_message.chat.id,
                     message.reply_to_message.message_id
