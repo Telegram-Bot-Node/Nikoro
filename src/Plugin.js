@@ -40,38 +40,15 @@ module.exports = class Plugin {
         return this.constructor.plugin;
     }
 
-    constructor({db, blacklist, emitter, config /* , bot, auth */}) {
+    constructor({db, blacklist, config /* , bot, auth */}) {
         if (new.target === Plugin) {
             throw new TypeError("Cannot construct Plugin instances directly!");
         }
 
         this.log = new Logger(this.plugin.name, config);
-        this.listener = emitter;
 
         this.db = db;
         this.blacklist = new Set(blacklist); // Chats where the plugin is disabled
-        this.handlers = {};
-
-        const eventNames = Object.keys(Plugin.handlerNames);
-        for (const eventName of eventNames) {
-            const handlerName = Plugin.handlerNames[eventName];
-            if (typeof this[handlerName] !== "function") continue;
-            const isEnabled = id => !this.blacklist.has(id); // A function that says whether the plugin is enabled or not in a given chat.
-            const eventHandler = this[handlerName].bind(this); // A function that refers to the appropriate handler (this.onText, this.onCommand, etc.)
-            const smartReply = this.smartReply.bind(this);
-            const wrappedHandler = function(arg) {
-                if (("chat" in arg.message) && !isEnabled(arg.message.chat.id)) // If the plugin is disabled in this chat
-                    return;
-                const val = eventHandler(arg);
-                if (val && val.then)
-                    val.then(ret => smartReply(ret, arg.message));
-                else
-                    smartReply(val, arg.message);
-            }; // A function that receives the event, checks the message against the blacklist, and calls the appropriate handler
-            this.listener.on(eventName, wrappedHandler);
-            this.handlers[eventName] = wrappedHandler; // Keeps a reference to the handler so that it can be removed later
-        }
-
     }
 
     smartReply(ret, message) {
@@ -113,12 +90,5 @@ module.exports = class Plugin {
     }
 
     stop() {
-        const eventNames = Object.keys(this.handlers);
-        if (this.listener) {
-            for (const eventName of eventNames) {
-                const handler = this.handlers[eventName];
-                this.listener.removeListener(eventName, handler);
-            }
-        }
     }
 };

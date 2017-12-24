@@ -3,7 +3,6 @@ const fs = require("fs");
 const path = require("path");
 const Logger = require("./Log");
 const Plugin = require("./Plugin");
-const {EventEmitter} = require("events");
 
 // A small utility functor to find a plugin with a given name
 const nameMatches = targetName => pl => pl.plugin.name.toLowerCase() === targetName.toLowerCase();
@@ -42,8 +41,6 @@ module.exports = class PluginManager {
         this.log = new Logger("PluginManager", config);
         this.auth = auth;
         this.plugins = [];
-        this.emitter = new EventEmitter();
-        this.emitter.setMaxListeners(Infinity);
 
         this.config = config;
 
@@ -59,6 +56,8 @@ module.exports = class PluginManager {
             bot.on(
                 eventName,
                 async message => {
+                    // const messageID = message.message_id + '@' + message.chat.id;
+                    // console.time(messageID);
                     this.parseHardcoded(message);
                     try {
                         await Promise.all(this.plugins
@@ -69,14 +68,20 @@ module.exports = class PluginManager {
                         if (err)
                             this.log.error("Message rejected with error", err);
                     }
-                    this.emit(
-                        "message",
-                        message
-                    );
-                    this.emit(
-                        eventName,
-                        message
-                    );
+                    try {
+                        await this.emit("message", message);
+                        await this.emit(eventName, message);
+                        this.log.debug("Message chain completed.");
+                    } catch (e) {
+                        if (!e) {
+                            this.log.error("Message chain failed with no error message.");
+                            this.bot.sendMessage(message.chat.id, "An error occurred.");
+                            return;
+                        }
+                        this.log.error(e);
+                        this.bot.sendMessage(message.chat.id, e.stack.split("\n").slice(0, 2).join("\n"));
+                    }
+                    // console.timeEnd(messageID);
                 }
             );
         }
@@ -199,7 +204,6 @@ module.exports = class PluginManager {
         const loadedPlugin = new ThisPlugin({
             db,
             blacklist,
-            emitter: this.emitter,
             bot: this.bot,
             config: this.config,
             auth: this.auth
@@ -314,19 +318,42 @@ module.exports = class PluginManager {
     emit(event, message) {
         this.log.debug(`Triggered event ${event}`);
 
+        let cmdPromise;
         if (event !== "message") {
             // Command emitter
             if (messageIsCommand(message)) {
                 const {command, args} = parseCommand(message);
-                this.emitter.emit("_command", {message, command, args});
+                cmdPromise = this._emit("_command", {message, command, args});
             } else if (message.query !== undefined) {
                 const parts = message.query.split(" ");
                 const command = parts[0].toLowerCase();
                 const args = parts.length > 1 ? parts.slice(1) : [];
-                this.emitter.emit("_inline_command", {message, command, args});
+                cmdPromise = this._emit("_inline_command", {message, command, args});
             }
         }
 
-        this.emitter.emit(event, {message});
+        const msgPromise = this._emit(event, {message});
+        return Promise.all([cmdPromise, msgPromise]);
+    }
+
+    _emit(event, data) {
+        const handlerName = Plugin.handlerNames[event];
+        return Promise.all(this.plugins
+            // If the plugin exposes a listener
+            .filter(pl => handlerName in pl)
+            // If the plugin is disabled in this chat
+            .filter(pl => ("chat" in data.message) && !pl.blacklist.has(data.message.chat.id))
+            .map(pl => {
+                try {
+                    const ret = pl[handlerName](data)
+                    const smartReply = pl.smartReply.bind(pl);
+                    if (ret && ret.then)
+                        return ret.then(x => smartReply(x, data.message));
+                    return smartReply(ret, data.message);
+                } catch (e) {
+                    return Promise.reject(e);
+                }
+            })
+        );
     }
 };

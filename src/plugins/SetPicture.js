@@ -22,13 +22,7 @@ module.exports = class SetPicture extends Plugin {
             return "Reply to a picture with the caption /setpicture to set the chat's picture.";
         if (!this.auth.isMod(message.from.id, message.chat.id))
             return "Insufficient privileges.";
-        this.setPhoto(message.reply_to_message);
-    }
-
-    async setPhoto(message) {
-        const fileId = message.photo[message.photo.length - 1].file_id;
-        const path = await this.downloadFile(fileId, os.tmpdir())
-        this.setChatPhoto(message.chat.id, path);
+        return this.setPhoto(message.reply_to_message);
     }
 
     onPhoto({message}) {
@@ -39,5 +33,15 @@ module.exports = class SetPicture extends Plugin {
         if (!this.auth.isMod(message.from.id, message.chat.id))
             return "Insufficient privileges.";
         return this.setPhoto(message);
+    }
+
+    async setPhoto(message) {
+        const fileId = message.photo[message.photo.length - 1].file_id;
+        const path = await this.downloadFile(fileId, os.tmpdir())
+        try {
+            await this.setChatPhoto(message.chat.id, path);
+        } catch (e) {
+            return "Couldn't set the chat picture.";
+        }
     }
 };
