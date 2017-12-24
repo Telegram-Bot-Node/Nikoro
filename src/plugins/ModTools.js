@@ -22,10 +22,10 @@ module.exports = class ModTools extends Plugin {
             this.db.blacklist = {};
     }
 
-    get commands() {
-        return {
-            warn: ({message}) => {
-                const chatID = message.chat.id;
+    onCommand({message, command, args}) {
+        const chatID = message.chat.id;
+        switch (command) {
+            case "warn": {
                 if (!this.auth.isMod(message.from.id, chatID))
                     return "Insufficient privileges.";
                 if (!message.reply_to_message)
@@ -45,9 +45,8 @@ module.exports = class ModTools extends Plugin {
                     return "User warned. Kicked after 3 warnings.";
                 }
                 return `User warned. Number of warnings: ${this.db.warnings[chatID][target]}/3.`;
-            },
-            blacklist: ({message, args}) => {
-                const chatID = message.chat.id;
+            }
+            case "blacklist": {
                 if (args.length === 0) {
                     if (!this.db.blacklist[chatID])
                         return "The blacklist is empty.";
@@ -73,7 +72,7 @@ module.exports = class ModTools extends Plugin {
                         return "Syntax: `/blacklist <add/delete> <word>`";
                 }
             }
-        };
+        }
     }
 
     onText({message}) {

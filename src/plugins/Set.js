@@ -27,26 +27,24 @@ module.exports = class Set extends Plugin {
         }
     }
 
-    get commands() {
-        return {
-            set: ({args, message}) => {
-                const chatID = message.chat.id;
+    onCommand({message, command, args}) {
+        const chatID = message.chat.id;
+        switch (command) {
+            case "set": {
                 if (args.length < 2) return "Syntax: `/set <trigger> <replacement>`";
 
                 const trigger = args.shift();
                 const replacement = args.join(" ");
                 this.db.replacements.push({trigger, replacement, chatID});
                 return "Done.";
-            },
-            unset: ({args, message}) => {
-                const chatID = message.chat.id;
+            }
+            case "unset": {
                 const trigger = args[0];
                 // Take only replacements with either a different chat id or a different trigger
                 this.db.replacements = this.db.replacements.filter(item => (item.chatID !== chatID) || (item.trigger !== trigger));
                 return "Done.";
-            },
-            get: ({message}) => {
-                const chatID = message.chat.id;
+            }
+            case "get": {
                 let text = "";
                 for (const item of this.db.replacements) {
                     if (item.chatID !== chatID) continue;
@@ -54,6 +52,6 @@ module.exports = class Set extends Plugin {
                 }
                 return (text === "") ? "No triggers set." : text;
             }
-        };
+        }
     }
 };

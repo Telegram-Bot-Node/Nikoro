@@ -56,9 +56,9 @@ module.exports = class UserStats extends Plugin {
         }
     }
 
-    get commands() {
-        return {
-            userstats: ({message}) => {
+    onCommand({message, command}) {
+        switch (command) {
+            case "userstats": {
                 const statsObject = this.db["stat" + message.chat.id];
                 const totalCount = statsObject.totalMessageCount;
                 const userList = Object.keys(statsObject)
@@ -70,8 +70,8 @@ module.exports = class UserStats extends Plugin {
                     const percentage = (user.messageCount / totalCount * 100).toFixed(4);
                     return `${user.username}: ${user.messageCount} (${percentage}%)`;
                 }).join("\n");
-            },
-            wordstats: ({message}) => {
+            }
+            case "wordstats": {
                 const statsObject = this.db["stat" + message.chat.id];
                 const userList = Object.keys(statsObject)
                     .map(item => statsObject[item])
@@ -83,6 +83,6 @@ module.exports = class UserStats extends Plugin {
                     return `${user.username}: ${user.wordCount} words (${averageWords} words/message)`;
                 }).join("\n");
             }
-        };
+        }
     }
 };

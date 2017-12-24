@@ -20,21 +20,19 @@ module.exports = class Vote extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            vote: ({args, message}) => {
-                const chatId = message.chat.id;
+    onCommand({message, command, args}) {
+        const chatID = message.chat.id;
+        switch (command) {
+            case "vote":
                 if (args.length === 0) return "Syntax: `/vote <option>`";
-                if (!this.db.votes[chatId]) return "There is no vote at this time.";
+                if (!this.db.votes[chatID]) return "There is no vote at this time.";
 
-                this.db.votes[chatId].results[message.from.username] = args.join(" ");
+                this.db.votes[chatID].results[message.from.username] = args.join(" ");
                 return "Your vote has been registered.";
-            },
-            clearvote: ({message}) => {
+            case "clearvote":
                 delete this.db.votes[message.chat.id];
                 return "Question cleared.";
-            },
-            setvote: ({args, message}) => {
+            case "setvote": {
                 if (args.length === 0) return "Please specify a question.";
                 const question = args.join(" ");
 
@@ -45,12 +43,11 @@ module.exports = class Vote extends Plugin {
                 };
 
                 return "Question set.";
-            },
-            getvote: ({message}) => {
-                const chatId = message.chat.id;
-                if (!this.db.votes[chatId]) return "There is no vote at this time.";
+            }
+            case "getvote": {
+                if (!this.db.votes[chatID]) return "There is no vote at this time.";
 
-                const poll = this.db.votes[chatId];
+                const poll = this.db.votes[chatID];
                 const totalVotes = Object.keys(poll.results).length;
                 let response = `Question: ${poll.text}\n` +
                     `Vote count: ${totalVotes}\n\n`;
@@ -87,6 +84,6 @@ module.exports = class Vote extends Plugin {
 
                 return response;
             }
-        };
+        }
     }
 };

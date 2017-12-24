@@ -6,16 +6,12 @@ module.exports = class Math extends Plugin {
         return {
             name: "Math",
             description: "Amazing calculator based on [math.js](http://mathjs.org/)",
-            help: `Use \`/calc expression\` or \`/math expression\` to get a quick answer for your math expression.
-You can use _imagnary numbers_, functions such as _sin_, _cos_ and much, much more.
-Check out math.js website for examples of supported stuff.`
+            help: "Use `/calc expression` or `/math expression` to get a quick answer for your math expression. Supports imaginary numbers, sin/cos/tan, and much more!"
         };
     }
 
-    get commands() {
-        return {
-            calc: ({args}) => mathjs.eval(args.join(" ")),
-            math: ({args}) => mathjs.eval(args.join(" "))
-        };
+    onCommand({command, args}) {
+        if (command !== "calc" && command !== "math") return;
+        return mathjs.eval(args.join(" "));
     }
 };

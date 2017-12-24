@@ -16,25 +16,25 @@ module.exports = class Kick extends Plugin {
         this.auth = obj.auth;
     }
 
-    get commands() {
-        return {
-            banlist: ({message}) => {
+    async onCommand({message, command, args}) {
+        switch (command) {
+            case "banlist": {
                 const chatID = message.chat.id;
                 if (!this.db[chatID])
                     return "Empty.";
                 return JSON.stringify(this.db[chatID]);
-            },
-            kick: ({message, args}) => {
+            }
+            case "kick": {
                 if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 const target = Util.getTargetID(message, args, "kick");
                 if (typeof target === "string") return target;
                 if (this.auth.isMod(target, message.chat.id))
                     return "Can't kick mods or admins (demote the target first).";
-                this.kick(message, target);
+                await this.kickChatMember(message.chat.id, target);
                 return "Kicked.";
-            },
-            ban: ({message, args}) => {
+            }
+            case "ban": {
                 if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 const target = Util.getTargetID(message, args, "ban");
@@ -42,10 +42,10 @@ module.exports = class Kick extends Plugin {
                 if (this.auth.isMod(target, message.chat.id))
                     return "Can't ban mods or admins (demote the target first).";
                 this.ban(message, target);
-                this.kick(message, target);
+                await this.kickChatMember(message.chat.id, target);
                 return "Banned.";
-            },
-            unban: ({message, args}) => {
+            }
+            case "unban": {
                 if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "Insufficient privileges.";
                 const target = Util.getTargetID(message, args, "unban");
@@ -55,12 +55,7 @@ module.exports = class Kick extends Plugin {
                 this.db[message.chat.id] = this.db[message.chat.id].filter(id => id !== target);
                 return "Unbanned.";
             }
-        };
-    }
-
-    kick(message, target) {
-        this.kickChatMember(message.chat.id, target)
-            .catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
+        }
     }
 
     // Note that banning does not imply kicking.

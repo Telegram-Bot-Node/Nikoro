@@ -12,9 +12,8 @@ module.exports = class Echo extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            echo: ({args}) => args.join(" ")
-        };
+    onCommand({command, args}) {
+        if (command !== "echo") return;
+        return args.join(" ");
     }
 };

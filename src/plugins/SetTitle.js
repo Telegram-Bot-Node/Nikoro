@@ -15,17 +15,13 @@ module.exports = class SetTitle extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            settitle: ({args, message}) => {
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Insufficient privileges.";
-                if (args.length === 0)
-                    return "Syntax: /settitle <title>";
-                const title = args.join(" ");
-                this.setChatTitle(message.chat.id, title);
-                return "Done.";
-            }
-        };
+    onCommand({message, command, args}) {
+        if (command !== "settitle") return;
+        if (!this.auth.isMod(message.from.id, message.chat.id))
+            return "Insufficient privileges.";
+        if (args.length === 0)
+            return "Syntax: /settitle <title>";
+        const title = args.join(" ");
+        this.setChatTitle(message.chat.id, title);
     }
 };

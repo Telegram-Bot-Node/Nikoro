@@ -83,9 +83,9 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
         return this.processIgnore(message);
     }
 
-    get commands() {
-        return {
-            floodignore: ({message, args}) => {
+    onCommand({message, command, args}) {
+        switch (command) {
+            case "floodignore": {
                 if (args.length !== 1)
                     return "Syntax: /floodignore <N>";
                 if (!this.auth.isMod(message.from.id, message.chat.id))
@@ -98,8 +98,8 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                 }
                 this.ignoreLimiters[chatId] = new LeakyBucket(N, RATE_TIMEOUT, 0);
                 return `New rate limit: ${N} messages per 5 seconds`;
-            },
-            floodwarn: ({message, args}) => {
+            }
+            case "floodwarn": {
                 if (args.length !== 1)
                     return "Syntax: /floodwarn <N>";
                 if (!this.auth.isMod(message.from.id, message.chat.id))
@@ -114,8 +114,8 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                 // Issue at most one warning every five seconds, so as not to help the user spam
                 this.warnMessageLimiters[chatId] = new LeakyBucket(1, RATE_TIMEOUT, 0);
                 return `New rate limit: ${N} messages per 5 seconds`;
-            },
-            floodkick: ({message, args}) => {
+            }
+            case "floodkick": {
                 if (args.length !== 1)
                     return "Syntax: /floodkick <N>";
                 if (!this.auth.isMod(message.from.id, message.chat.id))
@@ -129,6 +129,6 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
                 this.kickLimiters[chatId] = new LeakyBucket(N, RATE_TIMEOUT, 0);
                 return `New rate limit: ${N} messages per 5 seconds`;
             }
-        };
+        }
     }
 };

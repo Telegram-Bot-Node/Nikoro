@@ -50,24 +50,21 @@ module.exports = class RegexSet extends Plugin {
         }
     }
 
-    get commands() {
-        return {
-            regexdelete: ({message, args}) => {
-                // Prevents users from spamming, eg. "/regexset .* - spam!"
+    onCommand({message, command, args}) {
+        switch (command) {
+            case "regexdelete":
                 if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "RegexSet is restricted to mods.";
-                // RegexSet is split by dashes, not spaces
-                const _args = dashArgs(args);
-                return this.regexdelete(_args, message.chat.id);
-            },
-            regexlist: ({message}) => this.regexlist(message.chat.id),
-            regexset: ({message, args}) => {
+                return this.regexdelete(args, message.chat.id);
+            case "regexlist":
+                return this.regexlist(message.chat.id);
+            case "regexset": {
                 if (!this.auth.isMod(message.from.id, message.chat.id))
                     return "RegexSet is restricted to mods.";
                 const _args = dashArgs(args);
                 return this.regexset(_args, message.chat.id);
             }
-        };
+        }
     }
 
     regexset(args, chatID) {

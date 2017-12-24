@@ -1,6 +1,7 @@
 const Plugin = require("../Plugin");
-const GoogleSearch = require("google-search");
+const Util = require("./../Util");
 const assert = require("assert");
+const GoogleSearch = require("google-search");
 
 module.exports = class Google extends Plugin {
     constructor(obj) {
@@ -30,23 +31,20 @@ module.exports = class Google extends Plugin {
         };
     }
 
-    onCommand({message, command, args}) {
+    async onCommand({command, args}) {
         if (command !== "google") return;
         const query = args.join(" ");
-        this.google.build({
+        const response = await new Promise((resolve, reject) => this.google.build({
             q: query
-        }, (err, response) => {
-            if (err) {
-                this.sendMessage(message.chat.id, "An error happened.");
-                return;
+        }, (err, response) => err ? reject(err) : resolve(response)));
+        return {
+            type: "text",
+            text: response.items
+                .map(Util.makeHTMLLink)
+                .join("\n\n"),
+            options: {
+                parse_mode: "HTML"
             }
-            const links = response.items;
-            const text = links
-                .map(link => `<a href="${link.link}">${link.title}</a>\n\n${link.htmlSnippet}`)
-                .join("\n\n")
-                .replace(/<br>/g, "\n") // This tag doesn't work in Telegram HTML.
-                .replace(/&nbsp;/g, " "); // This entity doesn't work in Telegram HTML.
-            this.sendMessage(message.chat.id, text, {parse_mode: "HTML"});
-        });
+        };
     }
 };

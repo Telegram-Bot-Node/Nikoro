@@ -106,13 +106,10 @@ module.exports = class Markov extends Plugin {
         this.sendMessage(message.chat.id, this.m.generateFragment(chat));
     }
 
-    get commands() {
-        return {
-            markov: ({message, args}) => {
-                const chat = message.chat.id;
-                if (!this.m.dictionary[chat]) return;
-                return this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined);
-            }
-        };
+    onCommand({message, command, args}) {
+        if (command !== "markov") return;
+        const chat = message.chat.id;
+        if (!this.m.dictionary[chat]) return;
+        return this.m.generateFragment(message.chat.id, (args.length > 0) ? args : undefined);
     }
 };

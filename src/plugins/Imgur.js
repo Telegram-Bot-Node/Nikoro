@@ -10,10 +10,9 @@ module.exports = class Imgur extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            imgur: ({message}) => this.findValidPic(0, message)
-        };
+    onCommand({message, command}) {
+        if (command !== "imgur") return;
+        return this.findValidPic(0, message);
     }
 
     async findValidPic(s, message) {

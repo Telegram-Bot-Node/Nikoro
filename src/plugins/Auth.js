@@ -22,17 +22,25 @@ The same commands work with admins (eg. /adminlist, /addadmin and so on).`
         this.auth = obj.auth;
     }
 
-    get commands() {
-        return {
-            modlist: ({message}) => JSON.stringify(this.auth.getMods(message.chat.id)),
-            adminlist: ({message}) => JSON.stringify(this.auth.getAdmins(message.chat.id)),
-            addmod: ({message, args}) => this.doAction("mod", "addMod", message, args),
-            delmod: ({message, args}) => this.doAction("mod", "removeMod", message, args),
-            addadmin: ({message, args}) => this.doAction("admin", "addAdmin", message, args),
-            deladmin: ({message, args}) => this.doAction("admin", "removeAdmin", message, args),
-            importmods: ({message, args}) => this.import("mod", "addMod", message, args),
-            importadmins: ({message, args}) => this.import("admin", "addAdmin", message, args)
-        };
+    onCommand({message, command, args}) {
+        switch (command) {
+            case "modlist":
+                return JSON.stringify(this.auth.getMods(message.chat.id));
+            case "adminlist":
+                return JSON.stringify(this.auth.getAdmins(message.chat.id));
+            case "addmod":
+                return this.doAction("mod", this.auth.addMod, message, args);
+            case "delmod":
+                return this.doAction("mod", this.auth.removeMod, message, args);
+            case "addadmin":
+                return this.doAction("admin", this.auth.addAdmin, message, args);
+            case "deladmin":
+                return this.doAction("admin", this.auth.removeAdmin, message, args);
+            case "importmods":
+                return this.import("mod", "addMod", message, args);
+            case "importadmins":
+                return this.import("admin", "addAdmin", message, args);
+        }
     }
 
     checkPrivilege(privilege, {from, chat}) {
@@ -50,17 +58,18 @@ The same commands work with admins (eg. /adminlist, /addadmin and so on).`
         }
     }
 
-    import(privilege, command, message) {
+    async import(privilege, action, message) {
         const err = this.checkPrivilege(privilege, message);
         if (err)
             return err;
 
-        this.getChatAdministrators(message.chat.id)
-            .then(users => users.forEach(user => this.auth[command](user, message.chat.id)))
-            .catch(err => this.sendMessage(message.chat.id, "An error occurred: " + err));
+        const users = await this.getChatAdministrators(message.chat.id);
+        const fn = action.bind(this.auth);
+        for (const user of users)
+            fn(user, message.chat.id);
     }
 
-    doAction(privilege, command, message, args) {
+    doAction(privilege, action, message, args) {
         const err = this.checkPrivilege(privilege, message);
         if (err)
             return err;
@@ -80,7 +89,7 @@ The same commands work with admins (eg. /adminlist, /addadmin and so on).`
         if (!target)
             return "Invalid user (couldn't parse ID, or unknown username).";
 
-        this.auth[command](target, message.chat.id);
+        action.bind(this.auth)(target, message.chat.id);
         return "Done.";
     }
 };

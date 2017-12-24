@@ -45,37 +45,34 @@ module.exports = class UserInfo extends Plugin {
         return Promise.resolve();
     }
 
-    get commands() {
-        return {
-            id: ({message, args}) => {
-                let username;
-                if (args.length === 1)
-                    username = args[0].replace("@", "");
-                else if (message.reply_to_message) {
-                    if (message.reply_to_message.new_chat_participant)
-                        username = message.reply_to_message.new_chat_participant.username;
-                    else if (message.reply_to_message.left_chat_participant)
-                        username = message.reply_to_message.left_chat_participant.username;
-                    else
-                        username = message.reply_to_message.from.username;
-                } else
-                    return "Syntax: /id @username";
+    onCommand({message, command, args}) {
+        if (command !== "id") return;
+        let username;
+        if (args.length === 1)
+            username = args[0].replace("@", "");
+        else if (message.reply_to_message) {
+            if (message.reply_to_message.new_chat_participant)
+                username = message.reply_to_message.new_chat_participant.username;
+            else if (message.reply_to_message.left_chat_participant)
+                username = message.reply_to_message.left_chat_participant.username;
+            else
+                username = message.reply_to_message.from.username;
+        } else
+            return "Syntax: /id @username";
 
-                if (!(username in Util.nameResolver.db))
-                    return "I've never seen that user before.";
+        if (!(username in Util.nameResolver.db))
+            return "I've never seen that user before.";
 
-                const userId = Util.nameResolver.getUserIDFromUsername(username);
-                const aliases = Util.nameResolver.getUsernamesFromUserID(userId);
-                let tags = "";
-                if (this.auth.isAdmin(message.from.id, message.chat.id))
-                    tags += " [admin]";
-                else if (this.auth.isMod(message.from.id, message.chat.id))
-                    tags += " [mod]";
+        const userId = Util.nameResolver.getUserIDFromUsername(username);
+        const aliases = Util.nameResolver.getUsernamesFromUserID(userId);
+        let tags = "";
+        if (this.auth.isAdmin(message.from.id, message.chat.id))
+            tags += " [admin]";
+        else if (this.auth.isMod(message.from.id, message.chat.id))
+            tags += " [mod]";
 
-                return `${username} - ${userId}${tags}
+        return `${username} - ${userId}${tags}
 
 Known aliases: ${aliases.join(", ")}`;
-            }
-        };
     }
 };

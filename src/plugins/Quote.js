@@ -23,15 +23,15 @@ module.exports = class Quote extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            addquote: ({message}) => this.addQuote(message),
-            quote: ({args}) => {
+    onCommand({command, message, args}) {
+        switch (command) {
+            case "addquote":
+                return this.addQuote(message);
+            case "quote":
                 if (args[0])
                     return this.findQuote(args[0] - 1);
                 return this.randomQuote();
-            }
-        };
+        }
     }
 
     addQuote(message) {

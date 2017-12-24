@@ -11,7 +11,7 @@ module.exports = {
         "getter-return": "error",
         "no-await-in-loop": "warn",
         "array-callback-return": "error",
-        "class-methods-use-this": ["warn", {exceptMethods: ["commands"]}],
+        "class-methods-use-this": ["warn", {exceptMethods: ["onText", "onCommand"]}],
         "guard-for-in": "warn",
         "no-caller": "error",
         "no-else-return": "warn",

@@ -65,33 +65,13 @@ module.exports = class Plugin {
                 const val = eventHandler(arg);
                 if (val && val.then)
                     val.then(ret => smartReply(ret, arg.message));
+                else
+                    smartReply(val, arg.message);
             }; // A function that receives the event, checks the message against the blacklist, and calls the appropriate handler
             this.listener.on(eventName, wrappedHandler);
             this.handlers[eventName] = wrappedHandler; // Keeps a reference to the handler so that it can be removed later
         }
 
-        /* this.commands can contain an object, mapping command names (eg. "ping") to either:
-         *
-         *   - a string, in which case the string is sent as a message
-         *   - an object, in which case it is sent with the appropriate message type
-         */
-        const shortcutHandler = ({message, command, args}) => {
-            if (!this.commands) return;
-            for (const trigger of Object.keys(this.commands)) {
-                if (command !== trigger) continue;
-                const ret = this.commands[trigger]({message, args});
-                if (!ret)
-                    return;
-                if (ret.then) // if async fn
-                    ret.then(val => this.smartReply(val, message));
-                else
-                    this.smartReply(ret, message);
-            }
-        };
-        if (this.listener) {
-            this.listener.on("_command", shortcutHandler);
-        }
-        this.shortcutHandler = shortcutHandler;
     }
 
     smartReply(ret, message) {
@@ -139,7 +119,6 @@ module.exports = class Plugin {
                 const handler = this.handlers[eventName];
                 this.listener.removeListener(eventName, handler);
             }
-            this.listener.removeListener("_command", this.shortcutHandler);
         }
     }
 };

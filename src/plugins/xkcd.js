@@ -10,32 +10,29 @@ module.exports = class xkcd extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            xkcd: async ({args}) => {
-                let xkcdid = "";
-                if (args.length !== 0) {
-                    if (isNaN(args[0]))
-                        return "Please write a number as the ID.";
-                    xkcdid = args[0] + "/";
-                }
-                const requrl = `https://xkcd.com/${xkcdid}info.0.json`;
+    async onCommand({command, args}) {
+        if (command !== "xkcd") return;
+        let xkcdid = "";
+        if (args.length !== 0) {
+            if (isNaN(args[0]))
+                return "Please write a number as the ID.";
+            xkcdid = args[0] + "/";
+        }
+        const requrl = `https://xkcd.com/${xkcdid}info.0.json`;
 
-                this.log.debug(`Requesting XKCD at ${requrl}`);
+        this.log.debug(`Requesting XKCD at ${requrl}`);
 
-                try {
-                    const data = await request(requrl);
-                    const jsondata = JSON.parse(data);
-                    return {
-                        type: "photo",
-                        photo: jsondata.img
-                    };
-                } catch (e) {
-                    if (e.statusCode === 404)
-                        return "Comic strip not found!";
-                    return "An error occurred.";
-                }
-            }
+        try {
+            const data = await request(requrl);
+            const jsondata = JSON.parse(data);
+            return {
+                type: "photo",
+                photo: jsondata.img
+            };
+        } catch (e) {
+            if (e.statusCode === 404)
+                return "Comic strip not found!";
+            return "An error occurred.";
         }
     }
 };

@@ -9,15 +9,15 @@ module.exports = class Ping extends Plugin {
         };
     }
 
-    get commands() {
-        return {
-            ping: () => "Pong pong!"
-        };
+    onCommand({command}) {
+        if (command !== "ping") return;
+        this.log.debug("Got a ping");
+        return "Pong!";
     }
 
     onText({message}) {
         if (message.text !== "ping") return;
         this.log.debug("Got a ping");
-        this.sendMessage(message.chat.id, "Pong!");
+        return "Pong!";
     }
 };

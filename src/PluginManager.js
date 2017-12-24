@@ -58,24 +58,25 @@ module.exports = class PluginManager {
         for (const eventName of events) {
             bot.on(
                 eventName,
-                message => {
+                async message => {
                     this.parseHardcoded(message);
-                    Promise.all(
-                        this.plugins
+                    try {
+                        await Promise.all(this.plugins
                             .filter(plugin => plugin.plugin.isProxy)
                             .map(plugin => plugin.proxy(eventName, message))
-                    )
-                        .then(() => this.emit(
-                            "message",
-                            message
-                        ))
-                        .then(() => this.emit(
-                            eventName,
-                            message
-                        ))
-                        .catch(err => {
-                            if (err) this.log.error("Message rejected with error", err);
-                        });
+                        );
+                    } catch (err) {
+                        if (err)
+                            this.log.error("Message rejected with error", err);
+                    }
+                    this.emit(
+                        "message",
+                        message
+                    );
+                    this.emit(
+                        eventName,
+                        message
+                    );
                 }
             );
         }
