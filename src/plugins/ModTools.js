@@ -80,13 +80,13 @@ module.exports = class ModTools extends Plugin {
         if (message.text.includes("#admin")) {
             for (const admin of this.auth.getAdmins(chatID)) {
                 this.sendMessage(admin, `Message from ${Util.buildPrettyChatName(message.chat)}:\n\n${message.text}`)
-                    .catch(() => this.sendMessage(chatID, `Couldn't send message to admin ${admin} (${Util.nameResolver.getUsernamesFromUserID(admin).join(", ")}). Perhaps they need to initiate a conversation with the bot?`));
+                    .catch(() => this.sendMessage(chatID, `Couldn't send message to admin ${admin} (${Util.nameResolver.getUsernameFromUserID(admin)}). Perhaps they need to initiate a conversation with the bot?`));
             }
         }
         if (message.text.includes("#mod")) {
             for (const mod of this.auth.getMods(chatID)) {
                 this.sendMessage(mod, `Message from ${Util.buildPrettyChatName(message.chat)}:\n\n${message.text}`)
-                    .catch(() => this.sendMessage(chatID, `Couldn't send message to mod ${mod} (${Util.nameResolver.getUsernamesFromUserID(mod).join(", ")}). Perhaps they need to initiate a conversation with the bot?`));
+                    .catch(() => this.sendMessage(chatID, `Couldn't send message to mod ${mod} (${Util.nameResolver.getUsernameFromUserID(mod)}). Perhaps they need to initiate a conversation with the bot?`));
             }
         }
 

@@ -27,9 +27,9 @@ module.exports = class UserInfo extends Plugin {
 
         if (message.from.username) {
             const username = message.from.username;
-            const userId = message.from.id;
-            this.log.debug(`Username ${username} mapped to ID ${userId}`);
-            this.db[username] = userId;
+            const userID = message.from.id;
+            this.log.debug(`ID ${userID} mapped to username ${username}`);
+            this.db[userID] = username;
         }
 
         // Register people who join or leave, too.
@@ -37,8 +37,8 @@ module.exports = class UserInfo extends Plugin {
             const source = message.new_chat_participant ?
                 message.new_chat_participant :
                 message.left_chat_participant;
-            this.log.debug(`Username ${source.username} mapped to ID ${source.id}`);
-            this.db[source.username] = source.id;
+            this.log.debug(`ID ${source.id} mapped to username ${source.username}`);
+            this.db[source.id] = source.username;
         }
 
         // Util.nameResolver.setDb(this.db);
@@ -47,32 +47,60 @@ module.exports = class UserInfo extends Plugin {
 
     onCommand({message, command, args}) {
         if (command !== "id") return;
-        let username;
-        if (args.length === 1)
-            username = args[0].replace("@", "");
-        else if (message.reply_to_message) {
+
+        if (args.length === 1) {
+            const input = args[0];
+            if (/^@/.test(input)) {
+                const username = input.replace("@", "");
+                return this.printFromUsername(username, message.chat.id);
+            } 
+            const userID = input;
+            return this.printFromID(userID, message.chat.id);
+        }
+
+        if (message.reply_to_message) {
+            let userID;
             if (message.reply_to_message.new_chat_participant)
-                username = message.reply_to_message.new_chat_participant.username;
+                userID = message.reply_to_message.new_chat_participant.id;
             else if (message.reply_to_message.left_chat_participant)
-                username = message.reply_to_message.left_chat_participant.username;
+                userID = message.reply_to_message.left_chat_participant.id;
             else
-                username = message.reply_to_message.from.username;
-        } else
-            return "Syntax: /id @username";
+                userID = message.reply_to_message.from.id;
 
-        if (!(username in Util.nameResolver.db))
-            return "I've never seen that user before.";
+            return this.printFromID(userID, message.chat.id);
+        }
+        
+        return "Syntax: /id @username or /id userID";
+    }
 
-        const userId = Util.nameResolver.getUserIDFromUsername(username);
-        const aliases = Util.nameResolver.getUsernamesFromUserID(userId);
-        let tags = "";
-        if (this.auth.isAdmin(message.from.id, message.chat.id))
-            tags += " [admin]";
-        else if (this.auth.isMod(message.from.id, message.chat.id))
-            tags += " [mod]";
+    printFromUsername(username, chatID) {
+        const userID = Util.nameResolver.getUserIDFromUsername(username);
+        if (!userID)
+            return "No such user.";
+        const isAdmin = this.auth.isAdmin(userID, chatID);
+        const isMod = this.auth.isMod(userID, chatID);
 
-        return `${username} - ${userId}${tags}
+        return UserInfo.print(username, userID, isMod, isAdmin);
+    }
 
-Known aliases: ${aliases.join(", ")}`;
+    printFromID(userID, chatID) {
+        const username = Util.nameResolver.getUsernameFromUserID(userID);
+        const isAdmin = this.auth.isAdmin(userID, chatID);
+        const isMod = this.auth.isMod(userID, chatID);
+
+        return UserInfo.print(username, userID, isMod, isAdmin);
+    }
+
+    static print(username, userID, isMod, isAdmin) {
+        return {
+            type: "text",
+            text: `*Username*: ${username ? ("\`@" + username + "\`") : "none"}
+*User ID*: \`${userID}\`
+*Mod*? ${isMod ? "yes" : "no"}
+*Admin*? ${isAdmin ? "yes" : "no"}`,
+            options: {
+                parse_mode: "Markdown"
+            }
+        };
     }
 };

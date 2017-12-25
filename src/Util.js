@@ -11,7 +11,9 @@ const fs = require("fs");
 const Logger = require("./Log");
 const log = new Logger("Util", {loggingLevel: "info"}); // todo: figure out how to manage this
 
-// Because of architectural reasons, this is a thin wrapper around UserInfo
+/* Because of architectural reasons (i.e. being able to synchronize the db), this
+ * is a thin wrapper around UserInfo.
+ */
 class NameResolver {
     // This function is called ONLY by the UserInfo plugin to pass its db
     setDb(db) {
@@ -26,16 +28,16 @@ class NameResolver {
             log.error("NameResolver: database is uninitialized");
             throw new Error("Database uninitialized");
         }
-        return this.db[username];
+        return Object.keys(this.db).find(userID => this.db[userID] === username);
     }
 
-    // For a given user ID, get username(s)
-    getUsernamesFromUserID(userID) {
+    // For a given user ID, get the latest username.
+    getUsernameFromUserID(userID) {
         if (!this.db) {
             log.error("NameResolver: database is uninitialized");
             throw new Error("Database uninitialized");
         }
-        return Object.keys(this.db).filter(username => this.db[username] === userID);
+        return this.db[userID];
     }
 }
 
