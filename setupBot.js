@@ -12,7 +12,7 @@ const walk = require("walk-sync");
 let commit = "";
 if (fs.existsSync(path.join(__dirname, "./.git")))
     commit = fs.readFileSync(path.join(__dirname, "./.git/refs/heads/es6"), "utf8").substr(0, 7);
-log.info(`Telegram-Bot-Node version ${require('./package.json').version}` + (commit ? `, commit ${commit}` : ""));
+log.info(`Nikoro version ${require('./package.json').version}` + (commit ? `, commit ${commit}` : ""));
 
 let token;
 let bot;

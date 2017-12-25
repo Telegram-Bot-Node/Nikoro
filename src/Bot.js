@@ -23,7 +23,7 @@ const log = new Logger("Bot", Config);
 let commit = "";
 if (fs.existsSync(path.join(__dirname, "../.git")))
     commit = fs.readFileSync(path.join(__dirname, "../.git/refs/heads/es6"), "utf8").substr(0, 7);
-log.info(`Telegram-Bot-Node version ${require("../package.json").version}` + (commit ? `, commit ${commit}` : ""));
+log.info(`Nikoro version ${require("../package.json").version}` + (commit ? `, commit ${commit}` : ""));
 
 if (Config.globalAdmins) {
     log.warn("Config contains deprecated key 'globalAdmins', replacing with 'owners'");

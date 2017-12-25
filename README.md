@@ -1,10 +1,10 @@
-# Telegram-Bot-Node
+# Nikoro
 
-[![Build Status](https://travis-ci.org/crisbal/Telegram-Bot-Node.svg?branch=es6)](https://travis-ci.org/crisbal/Telegram-Bot-Node)
+[![Build Status](https://travis-ci.org/Telegram-Bot-Node/Telegram-Bot-Node.svg?branch=es6)](https://travis-ci.org/Telegram-Bot-Node/Telegram-Bot-Node)
 
 An all-in-one, plugin-based, Telegram bot written in Node.js. 
 
-<!-- See it in action on `@Factotum_Bot` -->
+See it in action on [@nikorobot](https://telegram.me/nikorobot)! [TODO]
 
 Based on [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) 
 
@@ -52,7 +52,7 @@ Did you make a plugin you want to share with everyone? Did you improve the code 
 
 Submit a pull request! This project will only grow if *YOU* help!
 
-Guidelines for contributing are outlined in `CONTRIBUTING.md`. If you need help writing plugins, check out the [wiki](https://github.com/crisbal/Telegram-Bot-Node/wiki), and look at existing plugins (`src/plugins/Ping.js` can be a simple starting point).
+Guidelines for contributing are outlined in `CONTRIBUTING.md`. If you need help writing plugins, check out the [wiki](https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/wiki), and look at existing plugins (`src/plugins/Ping.js` can be a simple starting point).
 
 ## Contributors
 In alphabetical order
@@ -76,4 +76,4 @@ In alphabetical order
     * Added automatic testing via Travis CI 
     
 ## Need help?
-[Send me a mail](bld.cris.96@gmail.com) or [create an issue](https://github.com/crisbal/Telegram-Bot-Node/issues/new), I will answer ASAP. :+1:
+[Send me a mail](bld.cris.96@gmail.com) or [create an issue](https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/issues/new), I will answer ASAP. :+1:
