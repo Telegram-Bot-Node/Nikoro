@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const Plugin = require("./../Plugin");
 
-const githubURL = "https://github.com/Telegram-Bot-Node/Telegram-Bot-Node";
+const githubURL = "https://github.com/Telegram-Bot-Node/Nikoro";
 let commit = "";
 if (fs.existsSync(path.join(__dirname, "../../.git")))
     commit = fs.readFileSync(path.join(__dirname, "../../.git/refs/heads/es6"), "utf8").substr(0, 7);

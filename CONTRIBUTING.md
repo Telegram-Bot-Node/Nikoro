@@ -1,8 +1,6 @@
 # Contributing
 
-## Pull requests
-
-Are welcome.
+**Refer to the [developer's guide](http://telegram-bot-node.github.io/Nikoro/dist/developer.html).**
 
 ## Coding standards
 
