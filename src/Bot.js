@@ -5,19 +5,20 @@ process.env.NTBA_FIX_319 = 1;
 
 const fs = require("fs");
 const path = require("path");
-const TelegramBot = require("node-telegram-bot-api");
-const Logger = require("./Log");
-const Config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+const TelegramBot = require(process.env.IS_TEST_ENVIRONMENT ? process.env.MOCK_NTBA : "node-telegram-bot-api");
 const PluginManager = require("./PluginManager");
+const Config = JSON.parse(fs.readFileSync("./config.json", "utf8"));
+const Logger = require("./Log");
+const log = new Logger("Bot", Config);
+if (process.env.IS_TEST_ENVIRONMENT)
+    log.warn("Running in test mode (mocking Telegram)");
 const Auth = require("./helpers/Auth");
-const auth = new Auth(Config);
+const auth = new Auth(Config, log);
 
 if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
-    console.log("You must provide a Telegram bot token in config.json. Try running \"npm run configure:guided\" or \"npm run configure:expert\".");
+    log.error("You must provide a Telegram bot token in config.json. Try running \"npm run configure:guided\" or \"npm run configure:expert\".");
     process.exit(1);
 }
-
-const log = new Logger("Bot", Config);
 
 // Version reporting, useful for bug reports
 let commit = "";
@@ -66,3 +67,6 @@ process.on("uncaughtException", handleShutdown("Uncaught exception"));
 process.on("unhandledRejection", (reason, p) => {
     log.error("Unhandled rejection at Promise ", p, " with reason ", reason);
 });
+
+if (process.env.IS_TEST_ENVIRONMENT)
+    module.exports = bot; // The test instance will reuse this to push messages
