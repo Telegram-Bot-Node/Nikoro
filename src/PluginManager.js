@@ -92,7 +92,7 @@ module.exports = class PluginManager {
         if (!messageIsCommand(message)) return;
         const {command, args: [pluginName, targetChat]} = parseCommand(message);
         // Skip everything if we're not interested in this command
-        if (command !== "help" && command !== "enable" && command !== "disable") return;
+        if (command !== "help" && command !== "plugins" && command !== "enable" && command !== "disable") return;
 
         const response = this.processHardcoded(command, pluginName, targetChat, message);
         this.bot.sendMessage(message.chat.id, response, {
@@ -118,6 +118,34 @@ module.exports = class PluginManager {
             if (!plugin)
                 return "No such plugin.";
             return `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`;
+        }
+
+        if (command === "plugins") {
+            const pluginPath = path.join(__dirname, "plugins");
+            const files = fs.readdirSync(pluginPath).map(filename => filename.replace(/\.js$/, ""));
+            const plugins = files.map(filename => {
+                try {
+                    return require(path.join(pluginPath, filename), false).plugin;
+                } catch (e) {
+                    let message = e.message;
+                    message = message.replace(/^Cannot find module '([^']+)'$/, "Must install `$1` first");
+                    return {
+                        name: `${filename}`,
+                        disabled: message
+                    };
+                }
+            });
+            // Does the list of plugins contain the given name?
+            const isEnabled = pl => this.plugins.some(nameMatches(pl.name))
+            const enabled = plugins
+                .filter(pl => isEnabled(pl))
+                .map(pl => `*${pl.name}*: ${pl.description}`)
+                .join("\n");
+            const available = plugins
+                .filter(pl => !isEnabled(pl))
+                .map(pl => `*${pl.name}*` + (pl.disabled ? ` (${pl.disabled})` : `: ${pl.description}`))
+                .join("\n");
+            return "*Enabled:*\n" + enabled + "\n\n*Available:*\n" + available;
         }
 
         if (!this.auth.isOwner(message.from.id, message.chat.id))
@@ -152,10 +180,10 @@ module.exports = class PluginManager {
                     return "Plugin enabled successfully.";
                 } catch (e) {
                     this.log.warn(e);
+                    if (e.message === "No such file.")
+                        return "No such plugin.\n\nIf you can't find the plugin you want, try running /plugins.";
                     if (!/^Cannot find module/.test(e.message))
                         return "Couldn't load plugin, check console for errors.";
-                    if (/src.plugins/.test(e.message))
-                        return "No such plugin.\n\nIf you can't find the plugin you want, try running /plugins.";
                     return e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
                 }
 
