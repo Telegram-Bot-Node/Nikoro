@@ -48,26 +48,26 @@
   },
   "config": {
     "dev": "./dev/",
-    "dist": "./dist/",
+    "dist": "./",
     "views": {
       "dev": "./dev/views/pages ./dev/views/pages/**",
-      "dist": "./dist/"
+      "dist": "./"
     },
     "styles": {
       "dev": "./dev/styles/",
-      "dist": "./dist/assets/css/"
+      "dist": "./assets/css/"
     },
     "scripts": {
       "dev": "./dev/scripts/",
-      "dist": "./dist/assets/js/"
+      "dist": "./assets/js/"
     },
     "images": {
       "dev": "./dev/images/**/*.{gif,jpg,png,svg}",
-      "dist": "./dist/assets/images/"
+      "dist": "./assets/images/"
     },
     "fonts": {
       "dev": "./dev/fonts/",
-      "dist": "./dist/assets/fonts/"
+      "dist": "./assets/"
     }
   },
   "scripts": {
@@ -93,7 +93,6 @@
   },
   "dependencies": {
     "bulma": "^0.6.0",
-    "normalize.css": "^7.0.0",
-    "sass-mq": "^3.3.2"
+    "normalize.css": "^7.0.0"
   }
 }
