@@ -1,4 +1,77 @@
-<!DOCTYPE html><html><head><title>Documentation</title><meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="assets/css/styles.css"></head><body><nav class="navbar is-white"><div class="container"><div class="navbar-brand"><a class="navbar-item brand-text" href=".">Telegram-Bot-Node</a></div><div class="navbar-menu" id="navMenu"><div class="navbar-start"><a class="navbar-item" href=".">Project page</a><a class="navbar-item" href="https://github.com/crisbal/Telegram-Bot-Node">Source code</a><a class="navbar-item" href="https://github.com/crisbal/Telegram-Bot-Node/issues">Issues</a><a class="navbar-item" href="https://github.com/crisbal/Telegram-Bot-Node/pulls">Pull requests</a></div></div></div></nav><div class="container"><section class="section"><div class="columns"><div class="column is-3"><aside class="menu"><p class="menu-label">Developer's guide</p><ul class="menu-list"><li><a href="#firstplugin">Writing your first plugin</a></li><li><a href="#architecture">Architecture</a></li><li><a href="#plugins">Plugins</a><ul><li><a href="#staticGetPlugin"><tt>static get plugin()</tt></a></li><li><a href="#constructor"><tt>constructor(obj)</tt></a></li><li><a href="#getCommands"><tt>get commands()</tt></a></li><li><a href="#eventListeners">Event listeners</a></li></ul></li><li><a href="#usingAPI">Using the Telegram API</a></li><li><a href="#proxy">Proxy plugins</a></li><li><a href="#auth">The Auth helper</a></li></ul></aside></div><div class="column is-9"><section id="firstplugin"><h3 class="title">Writing your first plugin</h3><p>Are you looking forward to writing a plugin? The Developer's Guide will help you. Here is a list of steps you could follow:</p><ol class="list"><li>Understand the <a href="#plugins">general structure of plugins</a>.</li><li>Develop your plugin, perhaps using <a href="https://github.com/crisbal/Telegram-Bot-Node/blob/es6/src/plugins/Echo.js"><tt>Echo.js</tt></a> as a starting point. Refer often to this guide to learn about available features, and take inspiration from similar plugins.</li><li>Test your plugin's functionality, both by yourself and with other users.</li><li>Review our <a href="#bestpractices">best practices</a> and apply them to your plugin.</li><li>If you wish, submit it into the main repository!<ol class="list"><li>Fork <a href="https://github.com/crisbal/Telegram-Bot-Node">our repository</a> on GitHub.</li><li>Commit your changes, taking care to follow our <a href="https://github.com/crisbal/Telegram-Bot-Node/blob/es6/CONTRIBUTING.md">coding standards</a> which dictate rules on code formatting and commit messages.</li><li>Open a <a href="https://github.com/crisbal/Telegram-Bot-Node/pulls">pull request</a>.</li></ol></li></ol><br></section><section id="architecture"><h3 class="title">Architecture</h3><p>This is an overview of the logic flow of messages:</p><figure class="has-text-centered"><a href="assets/images/Message_diagram.png" alt="Message flow diagram" title="Open this image in a new tab" target="_blank"><img src="assets/images/Message_diagram.png"></a></figure><p>PluginManager receives Telegram messages, and passes them to the proxy plugins for inspection. If the message is approved by all proxies, it is sent to all plugins, which may decide to reply with a text, picture and so on by interacting directly with the Telegram API.</p></section><section id="plugins"><h3 class="title">Plugins</h3><p>In Telegram-Bot-Node, plugins are <strong>classes that react to specific events from the Telegram API</strong>.</p><p>The general structure is:</p><pre><code class="js">// File: src/plugins/MyPlugin.js
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Documentation</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/styles.css">
+  </head>
+  <body>
+    <nav class="navbar is-white">
+      <div class="container">
+        <div class="navbar-brand"><a class="navbar-item brand-text" href=".">Nikoro</a></div>
+        <div class="navbar-menu" id="navMenu">
+          <div class="navbar-start"><a class="navbar-item" href=".">Project page</a><a class="navbar-item" href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node">Source code</a><a class="navbar-item" href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/issues">Issues</a><a class="navbar-item" href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/pulls">Pull requests</a></div>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <section class="section">
+        <div class="columns">
+          <div class="column is-3">
+            <aside class="menu">
+              <p class="menu-label">Developer's guide</p>
+              <ul class="menu-list">
+                <li><a href="#firstplugin">Writing your first plugin</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#plugins">Plugins</a>
+                  <ul>
+                    <li><a href="#staticGetPlugin">
+                        <tt>static get plugin()</tt></a></li>
+                    <li><a href="#constructor">
+                        <tt>constructor(obj)</tt></a></li>
+                    <li><a href="#eventListeners">Event listeners</a></li>
+                  </ul>
+                </li>
+                <li><a href="#usingAPI">Using the Telegram API</a></li>
+                <li><a href="#proxy">Proxy plugins</a></li>
+                <li><a href="#auth">The Auth helper</a></li>
+                <li><a href="#test">Testing</a></li>
+                <li><a href="#bestpractices">The Auth helper</a></li>
+              </ul>
+            </aside>
+          </div>
+          <div class="column is-9">
+            <section id="firstplugin">
+              <h3 class="title">Writing your first plugin</h3>
+              <p>Are you looking forward to writing a plugin? The Developer's Guide will help you. Here is a list of steps you could follow:</p>
+              <ol class="list">
+                <li>Understand the <a href="#plugins">general structure of plugins</a>.</li>
+                <li>Develop your plugin, perhaps using <a href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/blob/es6/src/plugins/Echo.js">
+                    <tt>Echo.js</tt></a> as a starting point. Refer often to this guide to learn about available features, and take inspiration from similar plugins.</li>
+                <li>Test your plugin's functionality, both by yourself and with other users.</li>
+                <li>Review our <a href="#bestpractices">best practices</a> and apply them to your plugin.</li>
+                <li>If you wish, submit it into the main repository!
+                  <ol class="list">
+                    <li>Fork <a href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node">our repository</a> on GitHub.</li>
+                    <li>Commit your changes, taking care to follow our <a href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/blob/es6/CONTRIBUTING.md">coding standards</a> which dictate rules on code formatting and commit messages.</li>
+                    <li>Open a <a href="https://github.com/Telegram-Bot-Node/Telegram-Bot-Node/pulls">pull request</a>.</li>
+                  </ol>
+                </li>
+              </ol><br>
+            </section>
+            <section id="architecture">
+              <h3 class="title">Architecture</h3>
+              <p>This is an overview of the logic flow of messages:</p>
+              <figure class="has-text-centered"><a href="assets/images/Message_diagram.png" alt="Message flow diagram" title="Open this image in a new tab" target="_blank"><img src="assets/images/Message_diagram.png"></a></figure>
+              <p>PluginManager receives Telegram messages, and passes them to the proxy plugins for inspection. If the message is approved by all proxies, it is sent to all plugins, which may decide to reply with a text, picture and so on by interacting directly with the Telegram API.</p>
+            </section>
+            <section id="plugins">
+              <h3 class="title">Plugins</h3>
+              <p>In Nikoro, plugins are <strong>classes that react to specific events from the Telegram API</strong>.</p>
+              <p>The general structure is:</p>
+              <pre><code class="js">// File: src/plugins/MyPlugin.js
 const Plugin = require("../Plugin");
 
 module.exports = class MyPlugin extends Plugin {
@@ -23,21 +96,16 @@ module.exports = class MyPlugin extends Plugin {
     foo.stop();
   }
 
-  // An object, mapping commands to their handlers.
-  // Handlers can return a string, representing a text reply.
-  get commands() {
-    return {
-      hello: ({args, message}) => {
-        // Args is an array of arguments passed by the user (eg. `/foo bar` would have args = ["bar"])
-        // Message is the message that triggered the handler
-
-        return "Heyo!";
-    };
-  }
-
-  // Alternatively, you can use the more verbose onCommand listener.
+  /* Handlers can return a string, representing a text reply;
+   * alternatively, they can return {type: "text", text: "..."} (see Telegram API);
+   * alternatively, they can use this.sendMessage.
+   *
+   * The same goes for eg. pictures (either {type: "photo"} or this.sendPhoto),
+   * music ({type: "audio"}, this.sendAudio) and so on.
+   */
   onCommand({message, command, args}) {
     if (command === "hello") {
+      return "Heyo!";
       this.sendMessage(message.chat.id, "Heyo!");
     }
   }
@@ -54,57 +122,228 @@ module.exports = class MyPlugin extends Plugin {
   }
 
   /* ... */
-}</code></pre><p>As you can see, it is a class that extends Plugin (from <tt>src/Plugin.js</tt>). The metadata is given through <tt>static get plugin()</tt>, which <strong>must</strong> be present.</p><blockquote id="staticGetPlugin">Every plugin must have <tt>static get plugin()</tt>, which returns an object. At a minimum, it contains:<ul class="list"><li><tt>name</tt>: the plugin's name</li><li><tt>description</tt>: a short description (shown in the list of plugins)</li><li><tt>help</tt>: a help text (shown in <kbd>/help PluginName</kbd>)</li></ul>It can include additional properties, which we'll explain later:<ul class="list"><li><tt>isProxy</tt>, which says whether this plugin has proxy capabilities or not (default: false)</li><li><tt>isHidden</tt>, which says whether this plugin is hidden from <kbd>/help</kbd> or not (default: false)</li></ul></blockquote><p>It optionally features a <tt>constructor</tt>, to give you access to rarely-used objects:</p><blockquote id="constructor"><tt>constructor</tt> gets passed a single variable (usually called <tt>obj</tt>), which contains the objects needed to initialize the plugin. They are:<ul class="list"><li>config: the bot's configuration</li><li>auth: an instance of the Auth helper, documented later</li></ul>There are also some properties you shouldn't need:<ul class="list"><li>db: the plugin database loaded from disk (you shouldn't need it, it's in <tt>this.db</tt>)</li><li>blacklist: same as above, but with the blacklist (<tt>this.blacklist</tt>)</li><li>emitter: the emitter from PluginManager (can be accessed with <tt>onText</tt>, <tt>onMessage</tt> and so on)</li><li>bot: the TelegramBot object from <tt>node-telegram-bot-api</tt></li></ul></blockquote><p>Most of the time, it features a list of commands, in a special shorthand form (<tt>command:&nbsp;({message,&nbsp;args})&nbsp;=&gt;&nbsp;reply</tt>) that allows for concise code.</p><blockquote id="getCommands">To use the commands shorthand, add a <tt>commands</tt> getter:<pre><code class="js">get commands() {
-  return {
-    commandName: ({message, args}) => {
-      // Your code here
-    },
-    ping: ({message, args}) => "Pong!"                  
-  }
-}</code></pre>It returns an object, where each key is the command name and the value is the handler. It takes an object with <tt>message</tt> being the Telegram message, and <tt>args</tt> being an array of arguments.<blockquote><strong>Note that <tt>args</tt> is just "the rest of the message, split with spaces", so it can have unpredictable results when you expect strings.</strong><br>For instance, if the original message is <kbd>/echo Hello world!</kbd>, <tt>args</tt> will be <tt>["Hello", "world!"</tt>] and <strong>not</strong> <tt>["Hello world!"</tt>].</blockquote>If the handler returns a string, it is sent to the chat where the message came from. This can be useful to avoid going through the cumbersome Telegram API. For example:<pre><code class="js">get commands() {
-  return {
-    reverseText: ({message, args}) => {
-      const text = args.join(" "); // Because there may be multiple words
-      if (text === "")
-        return "Please give me some text to reverse.";
-      const reversed = text.split("").reverse().join(""); // https://stackoverflow.com/a/959004
-      return reversed;
-    }
-  }
-}</code></pre></blockquote><p>It also features one or more <strong>event listeners</strong>, functions that react to events.</p><blockquote id="eventListeners">An example of event listener is:<pre><code class="js">onText({message}) {
+}</code></pre>
+              <p>As you can see, it is a class that extends Plugin (from 
+                <tt>src/Plugin.js</tt>). The metadata is given through 
+                <tt>static get plugin()</tt>, which <strong>must</strong> be present.
+              </p>
+              <blockquote id="staticGetPlugin">Every plugin must have 
+                <tt>static get plugin()</tt>, which returns an object. At a minimum, it contains:
+                <ul class="list">
+                  <li>
+                    <tt>name</tt>: the plugin's name
+                  </li>
+                  <li>
+                    <tt>description</tt>: a short description (shown in the list of plugins)
+                  </li>
+                  <li>
+                    <tt>help</tt>: a help text (shown in <kbd>/help PluginName</kbd>)
+                  </li>
+                </ul>It can include additional properties, which we'll explain later:
+                <ul class="list">
+                  <li>
+                    <tt>isProxy</tt>, which says whether this plugin has proxy capabilities or not (default: false)
+                  </li>
+                  <li>
+                    <tt>isHidden</tt>, which says whether this plugin is hidden from <kbd>/help</kbd> or not (default: false)
+                  </li>
+                </ul>
+              </blockquote>
+              <p>It optionally features a 
+                <tt>constructor</tt>, to give you access to rarely-used objects:
+              </p>
+              <blockquote id="constructor">
+                <tt>constructor</tt> gets passed a single variable (usually called 
+                <tt>obj</tt>), which contains the objects needed to initialize the plugin. They are:
+                <ul class="list">
+                  <li>config: the bot's configuration</li>
+                  <li>auth: an instance of the Auth helper, documented later</li>
+                </ul>There are also some properties you shouldn't need:
+                <ul class="list">
+                  <li>db: the plugin database loaded from disk (you shouldn't need it, it's in 
+                    <tt>this.db</tt>)
+                  </li>
+                  <li>blacklist: same as above, but with the blacklist (
+                    <tt>this.blacklist</tt>)
+                  </li>
+                  <li>emitter: the emitter from PluginManager (can be accessed with 
+                    <tt>onText</tt>, 
+                    <tt>onMessage</tt> and so on)
+                  </li>
+                  <li>bot: the TelegramBot object from 
+                    <tt>node-telegram-bot-api</tt>
+                  </li>
+                </ul>
+              </blockquote>
+              <p>It also features one or more <strong>event listeners</strong>, functions that react to events.</p>
+              <blockquote id="eventListeners">An example of event listener is:
+                <pre><code class="js">onText({message}) {
   // Your code here
-}</code></pre><p>They are functions that are invoked whenever a specific event happens. They take an object argument with the property <tt>message</tt>; the return value is ignored.</p><p>You can reply to the message using the Telegram API methods, documented below.</p><p>You can find a list of event listeners in <tt>src/Plugins.js</tt>; the general rule is that the listener takes the name of the event (text -> onText, photo -> onPhoto and so on).</p></blockquote></section><section id="usingAPI"><h3 class="title">Using the Telegram API</h3><p>Telegram-Bot-Node exposes the Telegram API through <tt><a href="https://npmjs.com/package/node-telegram-bot-api">node-telegram-bot-api</a></tt>, the methods of which are bound on the Plugin instance. In short, this means that inside a plugin you can simply call <tt>this.sendMessage(...)</tt> and it will work as expected.</p><blockquote>Note that in <tt>function() { }</tt> blocks, <tt>this</tt> <strong>does not</strong> point to the Plugin instance, so <tt>this.sendMessage</tt> won't work as expected. You should replace them with arrow functions if you wish to use <tt>this</tt>.</blockquote><p>Refer to the <a href="https://github.com/yagop/node-telegram-bot-api/blob/release/doc/api.md">NTBA reference</a> or its <a href="https://github.com/yagop/node-telegram-bot-api#usage">documentation</a> for extended information on how to use it. Here are some of the most common cases:</p><pre><code class="js">// Responding to a message
+}</code></pre>
+              </blockquote>
+              <p>They are functions that are invoked whenever a specific event happens. They take an object argument with the property 
+                <tt>message</tt>.
+              </p>
+              <p>There are many ways you can react to a message by eg. sending a text message:</p>
+              <ol>
+                <li>You can return a string: 
+                  <tt>return "Hello there!"</tt>
+                </li>
+                <li>You can return an object with the type of message and its contents:
+                  <pre><code class="js">return {
+  type: "text",
+  text: "*Hello* there!",
+  options: { // Optional parameters, see Telegram API
+    parse_mode: "Markdown"
+  }
+}</code></pre>
+                  <blockquote>Use "audio" for the API method 
+                    <tt>sendAudio</tt>, "document" for 
+                    <tt>sendDocument</tt>, "photo" for 
+                    <tt>sendPhoto</tt> and so on. "text" is an exception, it uses 
+                    <tt>sendMessage</tt>. Note that you can't send contacts or locations with this method.
+                  </blockquote>
+                </li>
+                <li><strong>You can return a 
+                    <tt>Promise</tt></strong> that returns one of the above:
+                  <pre><code class="js">onCommand({command, args}) {
+  const query = args[0];
+  return request("https://google.com/search?q=" + query)
+    .then(text => "The result of your search is:\n\n" + query);
+}</code></pre>
+                </li>
+                <li>You can use the Telegram API methods, documented below. For example, 
+                  <tt>this.sendMessage(message.chat.id, "Hello!")</tt>.
+                </li>
+              </ol>
+              <p>You can find a list of event listeners in 
+                <tt>src/Plugins.js</tt>; the general rule is that the listener takes the name of the event (text -> onText, photo -> onPhoto and so on).
+              </p>
+            </section>
+            <section id="usingAPI">
+              <h3 class="title">Using the Telegram API</h3>
+              <p>Nikoro exposes the Telegram API through 
+                <tt><a href="https://npmjs.com/package/node-telegram-bot-api">node-telegram-bot-api</a></tt>, the methods of which are bound on the Plugin instance. In short, this means that inside a plugin you can simply call 
+                <tt>this.sendMessage(...)</tt> and it will work as expected.
+              </p>
+              <blockquote>Note that in 
+                <tt>function() { }</tt> blocks, 
+                <tt>this</tt> <strong>does not</strong> point to the Plugin instance, so 
+                <tt>this.sendMessage</tt> won't work as expected. You should replace them with arrow functions if you wish to use 
+                <tt>this</tt>.
+              </blockquote>
+              <p>Refer to the <a href="https://github.com/yagop/node-telegram-bot-api/blob/release/doc/api.md">NTBA reference</a> or its <a href="https://github.com/yagop/node-telegram-bot-api#usage">documentation</a> for extended information on how to use it. Here are some of the most common cases:</p>
+              <pre><code class="js">// Responding to a message
 onText({message}) {
   if (message.text === "Hello, bot!") {
-    this.sendMessage(message.chat.id, "Hello, user!");
+    return "Hello, user!";
   }
 }
 
 // Italic/bold text
 onText({message}) {
-  this.sendMessage(message.chat.id, "__Italic__, **bold**", {parse_mode: "Markdown"});
+  this.sendMessage(message.chat.id, "__Italic__, *bold*", {parse_mode: "Markdown"});
   this.sendMessage(message.chat.id, "&lt;i&gt;Italic&lt;/i&gt;, &lt;b&gt;bold&lt;/b&gt;", {parse_mode: "HTML"});
 }
 
 // Sending a picture
 onText({message}) {
   this.sendPhoto(message.chat.id, "/home/john/Pictures/paveldurov.jpg", {caption: "This is Pavel Durov."});
-}</code></pre><blockquote>Note that <tt>sendMessage</tt> (like all send* functions) takes two arguments, the chat ID (or the user ID, if they already initiated a conversation with the bot) and the text.</blockquote></section><section id="proxy"><h3 class="title">Proxy plugins</h3><p>Telegram-Bot-Node supports <i>proxy plugins</i>, i.e. plugins that can approve or reject messages. Approved messages keep going through the bot and plugins; rejected messages are dropped.</p><p>To configure a plugin as a proxy, simply set <tt>isProxy: true</tt> in <tt>static get plugin()</tt> and implement a <tt>proxy(eventName, message)</tt> method. It will receive every message, returning a rejected Promise (<tt>Promise.reject</tt>) if the message is rejected, and anything else otherwise.</p></section><section id="auth"><h3 class="title">The Auth helper</h3><p>Sometimes, you may want to restrict the usage of a command to mods, or viceversa you may want to apply a command differently for normal users and admins (eg. prevent admins from being kicked). For this, you can use the Auth helper, which has methods to determine whether a user is a mod or an admin in a specific chat. You can get it via the constructor:</p><pre><code class="js">constructor(obj) {
+}</code></pre>
+              <blockquote>Note that 
+                <tt>sendMessage</tt> (like all send* functions) takes two arguments, the chat ID (or the user ID, if they already initiated a conversation with the bot) and the text.
+              </blockquote>
+            </section>
+            <section id="proxy">
+              <h3 class="title">Proxy plugins</h3>
+              <p>Nikoro supports <i>proxy plugins</i>, i.e. plugins that can approve or reject messages. Approved messages keep going through the bot and plugins; rejected messages are dropped.</p>
+              <p>To configure a plugin as a proxy, simply set 
+                <tt>isProxy: true</tt> in 
+                <tt>static get plugin()</tt> and implement a 
+                <tt>proxy(eventName, message)</tt> method. It will receive every message, returning a rejected Promise (
+                <tt>Promise.reject</tt>) if the message is rejected, and anything else otherwise.
+              </p>
+            </section>
+            <section id="auth">
+              <h3 class="title">The Auth helper</h3>
+              <p>Sometimes, you may want to restrict the usage of a command to chat administrators, or viceversa you may want to apply a command differently for normal users and admins (eg. prevent admins from being kicked). For this, you can use the Auth helper, which has methods to determine whether a user is a chat administrator for a specific chat or an owner. You can get it via the constructor:</p>
+              <pre><code class="js">constructor(obj) {
   super(obj);
 
   this.auth = obj.auth;
 }
 
 onText({message}) {
-  if (this.auth.isAdmin(message.chat.id, message.from.id)) {
-    this.sendMessage(message.chat.id, "You are an admin!");
+  if (this.auth.isOwner(message.from.id)) {
+    return "You are an owner!";
+  } else if (this.auth.isChatAdmin(message.chat.id, message.from.id)) {
+    return "You are a chat admin!";
   } else {
-    this.sendMessage(message.chat.id, "You are not an admin, sorry.");                
+    return "You are not an admin, sorry.";
   }
-}</code></pre><p>It exposes the methods <tt>isMod(chatID, userID)</tt> and <tt>isAdmin(chatID, userID)</tt> to determine whether an user is <strong>at least</strong> a mod or an admin in a chat, <tt>isGlobalAdmin(userID)</tt> to determine if the user is a global admin (i.e. a founder) per <tt>config.json</tt>, and <tt>getMods(chatID)</tt>/<tt>getAdmins(chatID)</tt> to get an array of mod and admin user IDs respectively.</p></section><section id="bestpractices"><h3 class="title">Best practices</h3><p>This is a list of guidelines that plugins should follow in order to be enjoyed by users.</p><ul class="list"><li>Each plugin exists to fulfill one or more needs, be it a need for fun or for a tool. The plugin should fulfill the users' needs with the <strong>minimum number of steps</strong>, and possibly <strong>short interactions</strong>.</li><li>Being able to fulfill a task in few steps is part of <strong>keeping it simple</strong>. This principle also means hiding the complexities of a system from the user, exposing a simple interface instead.</li><li><strong>Use structured input (buttons) when possible</strong>. This usually makes it as easy as possible to interact with the bot, since it reduces the possibilities to make mistakes.</li><li>Enforce <strong>authorization checks</strong>. This can be as trivial as not letting a mod kick an admin, but can also be more subtle: for instance, if an action takes two or more steps, it shouldn't be possible for an user to initiate the action and another to continue it.</li><li><strong>Provide feedback</strong> for user's actions. For instance, if you're writing the Set plugin, you might want to send the user a confirmation:<blockquote><strong>User</strong>: /set Hello Hey there!
-<br>
-<strong>Bot</strong>: Set Hello =&gt; Hey there!</blockquote><p>Note that in this case, we're not just providing a confirmation, but we're repeating part of the input to confirm the action was understood correctly.</p><p>On the other hand, you <strong>shouldn't provide redundant feedback</strong>. For instance, if you ask the bot to change the chat title, Telegram will already display a notification, so you shouldn't send an additional message:</p><blockquote><strong>User</strong>: /settitle My favourite chat
-<br>
-<i>Bot changed the chat title to "My favourite chat".</i></blockquote></li><li>An important part of providing feedback is <strong>handling errors</strong> and informing the user of them. For instance, if you're writing a plugin to change the chat's title, consider the possibility that it doesn't work due to the bot not being an admin:<blockquote><strong>User</strong>: /settitle My favourite chat
-<br>
-<strong>Bot</strong>: Couldn't set the chat title: not a chat admin.</blockquote>Note that for Telegram API methods such as <tt>.setChatTitle</tt>, this is achieved with promises with a <tt>.catch(error =&gt; {...})</tt> clause.</li><li><strong>Use <tt>this.log</tt> sparingly</strong> instead of <tt>console.log</tt>. This allows the bot's owner to stay aware of what their bot is doing, without being overwhelmed with messages. Choose levels accordingly: being unable to kick an user should be logged with <tt>this.log.error</tt>, but the user running a query on your plugin (eg. <kbd>/google telegram bots</kbd>) is worthy of <tt>this.log.debug</tt> at most.</li><li>If you use a multi-step process, <strong>provide a way out</strong>. Users may change their minds or decide they "started with the wrong foot"; they should be able to undo the action, and not be stuck in the process.</li></ul><small>Sources: Microsoft's <a href="https://docs.microsoft.com/en-us/bot-framework/bot-design-principles">Principles of bot design</a>, Intercom's <a href="https://blog.intercom.com/principles-bot-design/">principles of bot design</a>, Facebook's <a href="https://developers.facebook.com/docs/messenger-platform/introduction/general-best-practices">Design best practices</a>.</small></section></div></div></section></div><script src="assets/js/bundle.main.js" async="true"></script></body></html>
+}</code></pre>
+              <p>It exposes the methods 
+                <tt>isChatAdmin(chatID, userID)</tt> to determine whether an user is a chat admin for the given chat or a (global) owner, 
+                <tt>isOwner(userID)</tt> to determine if the user is an owner per 
+                <tt>config.json</tt>, and 
+                <tt>getChatAdmins(chatID)</tt>/
+                <tt>getOwners()</tt> to get an array of chat admin and owner user IDs respectively.
+              </p>
+            </section>
+            <section id="test">
+              <h3 class="title">Testing</h3>
+              <p>You can test your bot by simply writing to it on Telegram, of course. However, in some situations (eg. requiring multiple accounts) it can be tricky or time-consuming to do so. For this reason, you can use a "mock interface" in 
+                <tt>tests/cli.js</tt>.
+              </p>
+              <p>It will run your bot in a fake environment, pretending to be Telegram. It will only receive your messages from the console, and the messages it sends are printed to the console. Furthermore, you can use the console to switch between different accounts and groups with a simple command.</p>
+              <p>For further information, send "#help" using the tool.</p>
+            </section>
+            <section id="bestpractices">
+              <h3 class="title">Best practices</h3>
+              <p>This is a list of guidelines that plugins should follow in order to be enjoyed by users.</p>
+              <ul class="list">
+                <li>Each plugin exists to fulfill one or more needs, be it a need for fun or for a tool. The plugin should fulfill the users' needs with the <strong>minimum number of steps</strong>, and possibly <strong>short interactions</strong>.</li>
+                <li>Being able to fulfill a task in few steps is part of <strong>keeping it simple</strong>. This principle also means hiding the complexities of a system from the user, exposing a simple interface instead.</li>
+                <li><strong>Use structured input (buttons) when possible</strong>. This usually makes it as easy as possible to interact with the bot, since it reduces the possibilities to make mistakes.</li>
+                <li>Enforce <strong>authorization checks</strong>. This can be as trivial as not letting a mod kick an admin, but can also be more subtle: for instance, if an action takes two or more steps, it shouldn't be possible for an user to initiate the action and another to continue it.</li>
+                <li><strong>Provide feedback</strong> for user's actions. For instance, if you're writing the Set plugin, you might want to send the user a confirmation:
+                  <blockquote><strong>User</strong>: /set Hello Hey there!
+                    <br>
+                    <strong>Bot</strong>: Set Hello =&gt; Hey there!
+                  </blockquote>
+                  <p>Note that in this case, we're not just providing a confirmation, but we're repeating part of the input to confirm the action was understood correctly.</p>
+                  <p>On the other hand, you <strong>shouldn't provide redundant feedback</strong>. For instance, if you ask the bot to change the chat title, Telegram will already display a notification, so you shouldn't send an additional message:</p>
+                  <blockquote><strong>User</strong>: /settitle My favourite chat
+                    <br>
+                    <i>Bot changed the chat title to "My favourite chat".</i>
+                  </blockquote>
+                </li>
+                <li>An important part of providing feedback is <strong>handling errors</strong> and informing the user of them. For instance, if you're writing a plugin to change the chat's title, consider the possibility that it doesn't work due to the bot not being an admin:
+                  <blockquote><strong>User</strong>: /settitle My favourite chat
+                    <br>
+                    <strong>Bot</strong>: Couldn't set the chat title: not a chat admin.
+                  </blockquote>Note that for Telegram API methods such as 
+                  <tt>.setChatTitle</tt>, this is achieved with promises with a 
+                  <tt>.catch(error =&gt; {...})</tt> clause.
+                </li>
+                <li><strong>Use 
+                    <tt>this.log</tt> sparingly</strong> instead of 
+                  <tt>console.log</tt>. This allows the bot's owner to stay aware of what their bot is doing, without being overwhelmed with messages. Choose levels accordingly: being unable to kick an user should be logged with 
+                  <tt>this.log.error</tt>, but the user running a query on your plugin (eg. <kbd>/google telegram bots</kbd>) is worthy of 
+                  <tt>this.log.debug</tt> at most.
+                </li>
+                <li>If you use a multi-step process, <strong>provide a way out</strong>. Users may change their minds or decide they "started with the wrong foot"; they should be able to undo the action, and not be stuck in the process.</li>
+                <li>Use standard text messages. Currently, the only standard is returning 
+                  <tt>Insufficient privileges (chat admin required).</tt> and 
+                  <tt>Insufficient privileges (owner required).</tt> when a user lacks authorization to run a command.
+                </li>
+                <li>Differentiate between actions that can be run by anyone, commands that are only for chat administrators (because they can be disruptive to the chat, eg. kicking users), and commands that are only for owners (because they can disrupt the operation of the bot, eg. global settings, enabling plugins).</li>
+              </ul><small>Sources: Microsoft's <a href="https://docs.microsoft.com/en-us/bot-framework/bot-design-principles">Principles of bot design</a>, Intercom's <a href="https://blog.intercom.com/principles-bot-design/">principles of bot design</a>, Facebook's <a href="https://developers.facebook.com/docs/messenger-platform/introduction/general-best-practices">Design best practices</a>.</small>
+            </section>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script src="assets/js/bundle.main.js" async="true"></script>
+  </body>
+</html>

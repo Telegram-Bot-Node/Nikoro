@@ -2,7 +2,6 @@ extends /layouts/default
 
 block vars
   - var page = "developer";
-  - const github = "https://github.com/crisbal/Telegram-Bot-Node";
   - const repoName = github.split("/")[4];
 
 block content
@@ -22,11 +21,12 @@ block content
                 ul
                   li: a(href="#staticGetPlugin"): tt static get plugin()
                   li: a(href="#constructor"): tt constructor(obj)
-                  li: a(href="#getCommands"): tt get commands()
                   li: a(href="#eventListeners") Event listeners
               li: a(href="#usingAPI") Using the Telegram API
               li: a(href="#proxy") Proxy plugins
               li: a(href="#auth") The Auth helper
+              li: a(href="#test") Testing
+              li: a(href="#bestpractices") The Auth helper
         .column.is-9
           section#firstplugin
             h3.title Writing your first plugin
@@ -92,21 +92,16 @@ block content
                   foo.stop();
                 }
 
-                // An object, mapping commands to their handlers.
-                // Handlers can return a string, representing a text reply.
-                get commands() {
-                  return {
-                    hello: ({args, message}) => {
-                      // Args is an array of arguments passed by the user (eg. `/foo bar` would have args = ["bar"])
-                      // Message is the message that triggered the handler
-
-                      return "Heyo!";
-                  };
-                }
-
-                // Alternatively, you can use the more verbose onCommand listener.
+                /* Handlers can return a string, representing a text reply;
+                 * alternatively, they can return {type: "text", text: "..."} (see Telegram API);
+                 * alternatively, they can use this.sendMessage.
+                 *
+                 * The same goes for eg. pictures (either {type: "photo"} or this.sendPhoto),
+                 * music ({type: "audio"}, this.sendAudio) and so on.
+                 */
                 onCommand({message, command, args}) {
                   if (command === "hello") {
+                    return "Heyo!";
                     this.sendMessage(message.chat.id, "Heyo!");
                   }
                 }
@@ -150,37 +145,6 @@ block content
                 li emitter: the emitter from PluginManager (can be accessed with #[tt onText], #[tt onMessage] and so on)
                 li bot: the TelegramBot object from #[tt node-telegram-bot-api]
             p.
-              Most of the time, it features a list of commands, in a special shorthand form (#[tt command:&nbsp;({message,&nbsp;args})&nbsp;=&gt;&nbsp;reply]) that allows for concise code.
-            blockquote#getCommands
-              | To use the commands shorthand, add a #[tt commands] getter:
-              pre: code.js.
-                get commands() {
-                  return {
-                    commandName: ({message, args}) => {
-                      // Your code here
-                    },
-                    ping: ({message, args}) => "Pong!"                  
-                  }
-                }
-              | It returns an object, where each key is the command name and the value is the handler. It takes an object with #[tt message] being the Telegram message, and #[tt args] being an array of arguments.
-              blockquote
-                strong Note that #[tt args] is just "the rest of the message, split with spaces", so it can have unpredictable results when you expect strings.
-                br
-                | For instance, if the original message is #[kbd /echo Hello world!], #[tt args] will be #[tt ["Hello", "world!"]] and #[strong not] #[tt ["Hello world!"]].
-              | If the handler returns a string, it is sent to the chat where the message came from. This can be useful to avoid going through the cumbersome Telegram API. For example:
-              pre: code.js.
-                get commands() {
-                  return {
-                    reverseText: ({message, args}) => {
-                      const text = args.join(" "); // Because there may be multiple words
-                      if (text === "")
-                        return "Please give me some text to reverse.";
-                      const reversed = text.split("").reverse().join(""); // https://stackoverflow.com/a/959004
-                      return reversed;
-                    }
-                  }
-                }
-            p.
               It also features one or more #[strong event listeners], functions that react to events.
             blockquote#eventListeners
               | An example of event listener is:
@@ -188,9 +152,31 @@ block content
                 onText({message}) {
                   // Your code here
                 }
-              p They are functions that are invoked whenever a specific event happens. They take an object argument with the property #[tt message]; the return value is ignored.
-              p You can reply to the message using the Telegram API methods, documented below.
-              p You can find a list of event listeners in #[tt src/Plugins.js]; the general rule is that the listener takes the name of the event (text -> onText, photo -> onPhoto and so on).
+            p They are functions that are invoked whenever a specific event happens. They take an object argument with the property #[tt message].
+            p There are many ways you can react to a message by eg. sending a text message:
+            ol
+              li You can return a string: #[tt return "Hello there!"]
+              li
+                | You can return an object with the type of message and its contents:
+                pre: code.js.
+                  return {
+                    type: "text",
+                    text: "*Hello* there!",
+                    options: { // Optional parameters, see Telegram API
+                      parse_mode: "Markdown"
+                    }
+                  }
+                blockquote.
+                  Use "audio" for the API method #[tt sendAudio], "document" for #[tt sendDocument], "photo" for #[tt sendPhoto] and so on. "text" is an exception, it uses #[tt sendMessage]. Note that you can't send contacts or locations with this method.
+              li #[strong You can return a #[tt Promise]] that returns one of the above:
+                pre: code.js.
+                  onCommand({command, args}) {
+                    const query = args[0];
+                    return request("https://google.com/search?q=" + query)
+                      .then(text => "The result of your search is:\n\n" + query);
+                  }
+              li You can use the Telegram API methods, documented below. For example, #[tt this.sendMessage(message.chat.id, "Hello!")].
+            p You can find a list of event listeners in #[tt src/Plugins.js]; the general rule is that the listener takes the name of the event (text -> onText, photo -> onPhoto and so on).
           section#usingAPI
             h3.title Using the Telegram API
             p.
@@ -203,13 +189,13 @@ block content
               // Responding to a message
               onText({message}) {
                 if (message.text === "Hello, bot!") {
-                  this.sendMessage(message.chat.id, "Hello, user!");
+                  return "Hello, user!";
                 }
               }
 
               // Italic/bold text
               onText({message}) {
-                this.sendMessage(message.chat.id, "__Italic__, **bold**", {parse_mode: "Markdown"});
+                this.sendMessage(message.chat.id, "__Italic__, *bold*", {parse_mode: "Markdown"});
                 this.sendMessage(message.chat.id, "&lt;i&gt;Italic&lt;/i&gt;, &lt;b&gt;bold&lt;/b&gt;", {parse_mode: "HTML"});
               }
 
@@ -228,7 +214,7 @@ block content
           section#auth
             h3.title The Auth helper
             p.
-              Sometimes, you may want to restrict the usage of a command to mods, or viceversa you may want to apply a command differently for normal users and admins (eg. prevent admins from being kicked). For this, you can use the Auth helper, which has methods to determine whether a user is a mod or an admin in a specific chat. You can get it via the constructor:
+              Sometimes, you may want to restrict the usage of a command to chat administrators, or viceversa you may want to apply a command differently for normal users and admins (eg. prevent admins from being kicked). For this, you can use the Auth helper, which has methods to determine whether a user is a chat administrator for a specific chat or an owner. You can get it via the constructor:
             pre: code.js.
               constructor(obj) {
                 super(obj);
@@ -237,14 +223,23 @@ block content
               }
 
               onText({message}) {
-                if (this.auth.isAdmin(message.chat.id, message.from.id)) {
-                  this.sendMessage(message.chat.id, "You are an admin!");
+                if (this.auth.isOwner(message.from.id)) {
+                  return "You are an owner!";
+                } else if (this.auth.isChatAdmin(message.chat.id, message.from.id)) {
+                  return "You are a chat admin!";
                 } else {
-                  this.sendMessage(message.chat.id, "You are not an admin, sorry.");                
+                  return "You are not an admin, sorry.";
                 }
               }
             p.
-              It exposes the methods #[tt isMod(chatID, userID)] and #[tt isAdmin(chatID, userID)] to determine whether an user is #[strong at least] a mod or an admin in a chat, #[tt isGlobalAdmin(userID)] to determine if the user is a global admin (i.e. a founder) per #[tt config.json], and #[tt getMods(chatID)]/#[tt getAdmins(chatID)] to get an array of mod and admin user IDs respectively.
+              It exposes the methods #[tt isChatAdmin(chatID, userID)] to determine whether an user is a chat admin for the given chat or a (global) owner, #[tt isOwner(userID)] to determine if the user is an owner per #[tt config.json], and #[tt getChatAdmins(chatID)]/#[tt getOwners()] to get an array of chat admin and owner user IDs respectively.
+          section#test
+            h3.title Testing
+            p You can test your bot by simply writing to it on Telegram, of course. However, in some situations (eg. requiring multiple accounts) it can be tricky or time-consuming to do so. For this reason, you can use a "mock interface" in #[tt tests/cli.js].
+
+            p It will run your bot in a fake environment, pretending to be Telegram. It will only receive your messages from the console, and the messages it sends are printed to the console. Furthermore, you can use the console to switch between different accounts and groups with a simple command.
+
+            p For further information, send "#help" using the tool.
           section#bestpractices
             h3.title Best practices
             p.
@@ -281,5 +276,9 @@ block content
                 | #[strong Use #[tt this.log] sparingly] instead of #[tt console.log]. This allows the bot's owner to stay aware of what their bot is doing, without being overwhelmed with messages. Choose levels accordingly: being unable to kick an user should be logged with #[tt this.log.error], but the user running a query on your plugin (eg. #[kbd /google telegram bots]) is worthy of #[tt this.log.debug] at most.
               li.
                 If you use a multi-step process, #[strong provide a way out]. Users may change their minds or decide they "started with the wrong foot"; they should be able to undo the action, and not be stuck in the process.
+              li.
+                Use standard text messages. Currently, the only standard is returning #[tt Insufficient privileges (chat admin required).] and #[tt Insufficient privileges (owner required).] when a user lacks authorization to run a command.
+              li.
+                Differentiate between actions that can be run by anyone, commands that are only for chat administrators (because they can be disruptive to the chat, eg. kicking users), and commands that are only for owners (because they can disrupt the operation of the bot, eg. global settings, enabling plugins).
             small.
               Sources: Microsoft's #[a(href="https://docs.microsoft.com/en-us/bot-framework/bot-design-principles") Principles of bot design], Intercom's #[a(href="https://blog.intercom.com/principles-bot-design/") principles of bot design], Facebook's #[a(href="https://developers.facebook.com/docs/messenger-platform/introduction/general-best-practices") Design best practices].
