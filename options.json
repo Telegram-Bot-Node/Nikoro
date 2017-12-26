@@ -2,7 +2,7 @@
   "projectname": "Nikoro",
   "projectdescription": "A plugin-based, all-in-one Telegram bot written in Node.js.",
   "projectbranch": "es6",
-  "github": "https://github.com/Telegram-Bot-Node/Telegram-Bot-Node",
+  "github": "https://github.com/Telegram-Bot-Node/Nikoro",
   "basedir": "./dev/views/",
   "root": "",
   "pages": {
