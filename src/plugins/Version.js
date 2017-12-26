@@ -5,8 +5,10 @@ const Plugin = require("./../Plugin");
 
 const githubURL = "https://github.com/Telegram-Bot-Node/Nikoro";
 let commit = "";
-if (fs.existsSync(path.join(__dirname, "../../.git")))
-    commit = fs.readFileSync(path.join(__dirname, "../../.git/refs/heads/es6"), "utf8").substr(0, 7);
+if (fs.existsSync(path.join(__dirname, "../../.git"))) {
+    const branchRef = fs.readFileSync(path.join(__dirname, "../../.git/HEAD"), "utf8").replace(/^ref: /, "").replace(/\n$/, "");
+    commit = fs.readFileSync(path.join(__dirname, "../../.git", branchRef), "utf8").substr(0, 7);
+}
 
 module.exports = class Ping extends Plugin {
     static get plugin() {

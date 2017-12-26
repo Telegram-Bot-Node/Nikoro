@@ -22,8 +22,10 @@ if (typeof Config.TELEGRAM_TOKEN !== "string" || Config.TELEGRAM_TOKEN === "") {
 
 // Version reporting, useful for bug reports
 let commit = "";
-if (fs.existsSync(path.join(__dirname, "../.git")))
-    commit = fs.readFileSync(path.join(__dirname, "../.git/refs/heads/es6"), "utf8").substr(0, 7);
+if (fs.existsSync(path.join(__dirname, "../.git"))) {
+    const branchRef = fs.readFileSync(path.join(__dirname, "../.git/HEAD"), "utf8").replace(/^ref: /, "").replace(/\n$/, "");
+    commit = fs.readFileSync(path.join(__dirname, "../.git", branchRef), "utf8").substr(0, 7);
+}
 log.info(`Nikoro version ${require("../package.json").version}` + (commit ? `, commit ${commit}` : ""));
 
 if (Config.globalAdmins) {
