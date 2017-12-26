@@ -140,8 +140,8 @@ module.exports = class PluginManager {
                         return `Plugin enabled successfully for chat ${targetChat}.`;
                     } catch (e) {
                         this.log.warn(e);
-                        if (/^Cannot find module/.test(e.message))
-                            return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                        if (e.message === "No such file.")
+                            return "No such plugin.\n\nIf you can't find the plugin you want, try running /plugins.";
                         return "Couldn't load plugin: " + e.message;
                     }
                 }
@@ -155,7 +155,7 @@ module.exports = class PluginManager {
                     if (!/^Cannot find module/.test(e.message))
                         return "Couldn't load plugin, check console for errors.";
                     if (/src.plugins/.test(e.message))
-                        return "No such plugin. Did you spell it correctly? Note that names are case-sensitive.";
+                        return "No such plugin.\n\nIf you can't find the plugin you want, try running /plugins.";
                     return e.message.replace(/Cannot find module '([^']+)'/, "The plugin has a missing dependency: `$1`");
                 }
 
@@ -176,8 +176,15 @@ module.exports = class PluginManager {
     }
 
     // Instantiates the plugin.
+    // Case-insensitive.
     // Returns the plugin itself.
-    loadPlugin(pluginName) {
+    loadPlugin(_pluginName) {
+        // Find a matching filename, case-insensitively
+        const files = fs.readdirSync(path.join(__dirname, "plugins")).map(filename => filename.replace(/\.js$/, ""));
+        const pluginName = files.find(filename => filename.toLowerCase() === _pluginName.toLowerCase());
+        if (!pluginName)
+            throw new Error("No such file.");
+
         const pluginPath = path.join(__dirname, "plugins", pluginName);
         /* Invalidates the require() cache.
          * This allows for "hot fixes" to plugins: just /disable it, make the
