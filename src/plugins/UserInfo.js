@@ -77,27 +77,27 @@ module.exports = class UserInfo extends Plugin {
         const userID = Util.nameResolver.getUserIDFromUsername(username);
         if (!userID)
             return "No such user.";
-        const isAdmin = this.auth.isAdmin(userID, chatID);
-        const isMod = this.auth.isMod(userID, chatID);
+        const isOwner = this.auth.isOwner(userID, chatID);
+        const isChatAdmin = this.auth.isChatAdmin(userID, chatID);
 
-        return UserInfo.print(username, userID, isMod, isAdmin);
+        return UserInfo.print(username, userID, isChatAdmin, isOwner);
     }
 
     printFromID(userID, chatID) {
         const username = Util.nameResolver.getUsernameFromUserID(userID);
-        const isAdmin = this.auth.isAdmin(userID, chatID);
-        const isMod = this.auth.isMod(userID, chatID);
+        const isOwner = this.auth.isOwner(userID, chatID);
+        const isChatAdmin = this.auth.isChatAdmin(userID, chatID);
 
-        return UserInfo.print(username, userID, isMod, isAdmin);
+        return UserInfo.print(username, userID, isChatAdmin, isOwner);
     }
 
-    static print(username, userID, isMod, isAdmin) {
+    static print(username, userID, isChatAdmin, isOwner) {
         return {
             type: "text",
             text: `*Username*: ${username ? ("\`@" + username + "\`") : "none"}
 *User ID*: \`${userID}\`
-*Mod*? ${isMod ? "yes" : "no"}
-*Admin*? ${isAdmin ? "yes" : "no"}`,
+*Chat admin*? ${isChatAdmin ? "yes" : "no"}
+*Owner*? ${isOwner ? "yes" : "no"}`,
             options: {
                 parse_mode: "Markdown"
             }

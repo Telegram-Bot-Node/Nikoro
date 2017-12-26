@@ -25,29 +25,29 @@ module.exports = class Kick extends Plugin {
                 return JSON.stringify(this.db[chatID]);
             }
             case "kick": {
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Insufficient privileges.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "kick");
                 if (typeof target === "string") return target;
-                if (this.auth.isMod(target, message.chat.id))
-                    return "Can't kick mods or admins (demote the target first).";
+                if (this.auth.isChatAdmin(target, message.chat.id))
+                    return "Can't kick chat admins!";
                 await this.kickChatMember(message.chat.id, target);
                 return "Kicked.";
             }
             case "ban": {
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Insufficient privileges.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "ban");
                 if (typeof target === "string") return target;
-                if (this.auth.isMod(target, message.chat.id))
-                    return "Can't ban mods or admins (demote the target first).";
+                if (this.auth.isChatAdmin(target, message.chat.id))
+                    return "Can't ban chat admins!";
                 this.ban(message, target);
                 await this.kickChatMember(message.chat.id, target);
                 return "Banned.";
             }
             case "unban": {
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Insufficient privileges.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "unban");
                 if (typeof target === "string") return target;
                 if (!this.db[message.chat.id])
@@ -74,7 +74,7 @@ module.exports = class Kick extends Plugin {
             const target = member.id;
             if (!this.db[chatID].includes(target))
                 continue;
-            if (this.auth.isMod(target, message.chat.id))
+            if (this.auth.isChatAdmin(target, message.chat.id))
                 continue;
             this.kickChatMember(chatID, target)
                 .catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));

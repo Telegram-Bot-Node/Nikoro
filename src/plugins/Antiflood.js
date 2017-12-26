@@ -88,8 +88,8 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             case "floodignore": {
                 if (args.length !== 1)
                     return "Syntax: /floodignore <N>";
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Mods only.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const chatId = message.chat.id;
                 const N = Number(args[0]);
                 if (N === 0) {
@@ -102,8 +102,8 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             case "floodwarn": {
                 if (args.length !== 1)
                     return "Syntax: /floodwarn <N>";
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Mods only.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const chatId = message.chat.id;
                 const N = Number(args[0]);
                 if (N === 0) {
@@ -118,8 +118,8 @@ A value of 0 disables the feature (eg. "/floodkick 0" will disable automatic kic
             case "floodkick": {
                 if (args.length !== 1)
                     return "Syntax: /floodkick <N>";
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "Mods only.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const chatId = message.chat.id;
                 const N = Number(args[0]);
                 if (N === 0) {

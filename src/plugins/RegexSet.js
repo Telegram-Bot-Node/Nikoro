@@ -53,14 +53,14 @@ module.exports = class RegexSet extends Plugin {
     onCommand({message, command, args}) {
         switch (command) {
             case "regexdelete":
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "RegexSet is restricted to mods.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 return this.regexdelete(args, message.chat.id);
             case "regexlist":
                 return this.regexlist(message.chat.id);
             case "regexset": {
-                if (!this.auth.isMod(message.from.id, message.chat.id))
-                    return "RegexSet is restricted to mods.";
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const _args = dashArgs(args);
                 return this.regexset(_args, message.chat.id);
             }

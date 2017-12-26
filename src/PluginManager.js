@@ -120,7 +120,8 @@ module.exports = class PluginManager {
             return `*${plugin.name}* - ${plugin.description}\n\n${plugin.help}`;
         }
 
-        if (!this.auth.isAdmin(message.from.id, message.chat.id)) return;
+        if (!this.auth.isOwner(message.from.id, message.chat.id))
+            return "Insufficient privileges (owner required).";
         // Syntax: /("enable"|"disable") pluginName [targetChat|"chat"]
         // The string "chat" will enable the plugin in the current chat.
         if (targetChat === "chat") targetChat = message.chat.id;

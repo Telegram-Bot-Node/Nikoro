@@ -32,16 +32,20 @@ module.exports = class Ignore extends Plugin {
             case "ignorelist":
                 return JSON.stringify(this.db.ignored);
             case "ignore": {
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "ignore");
                 if (typeof target === "string") // Error messages
                     return target;
-                if (this.auth.isMod(target, message.chat.id))
-                    return "Can't ignore mods.";
+                if (this.auth.isChatAdmin(target, message.chat.id))
+                    return "Can't ignore chat admins.";
 
                 this.db.ignored.push(target);
                 return "Ignored.";
             }
             case "unignore": {
+                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                    return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "unignore");
                 if (typeof target === "string") // Error messages
                     return target;

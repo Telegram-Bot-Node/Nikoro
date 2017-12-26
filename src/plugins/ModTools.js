@@ -8,7 +8,7 @@ module.exports = class ModTools extends Plugin {
             description: "Moderation tools",
             help: `- Warnings: use /warn to warn a user and delete the message (gets kicked after 3 warnings)
 - Blacklist: words that will get you kicked and your message removed. /blacklist shows the blacklist, \`/blacklist add <word>\` adds a word, \`/blacklist delete <word>\` removes it.
-- #mod, #admin: use #mod to notify all mods, #admin to notify all admins.`
+- #admin: use #admin to notify all chat admins.`
         };
     }
 
@@ -26,8 +26,8 @@ module.exports = class ModTools extends Plugin {
         const chatID = message.chat.id;
         switch (command) {
             case "warn": {
-                if (!this.auth.isMod(message.from.id, chatID))
-                    return "Insufficient privileges.";
+                if (!this.auth.isChatAdmin(message.from.id, chatID))
+                    return "Insufficient privileges (chat admin required).";
                 if (!message.reply_to_message)
                     return "Reply to a message with /warn to issue a warning and delete a message.";
                 if (!message.from)
@@ -52,8 +52,8 @@ module.exports = class ModTools extends Plugin {
                         return "The blacklist is empty.";
                     return this.db.blacklist[chatID].map(word => `- ${word}`).join("\n");
                 }
-                if (!this.auth.isMod(message.from.id, chatID))
-                    return "Insufficient privileges.";
+                if (!this.auth.isChatAdmin(message.from.id, chatID))
+                    return "Insufficient privileges (chat admin required).";
                 const word = args.slice(1).join(" ");
                 if (!this.db.blacklist[chatID])
                     this.db.blacklist[chatID] = [];
@@ -83,14 +83,8 @@ module.exports = class ModTools extends Plugin {
                     .catch(() => this.sendMessage(chatID, `Couldn't send message to admin ${admin} (${Util.nameResolver.getUsernameFromUserID(admin)}). Perhaps they need to initiate a conversation with the bot?`));
             }
         }
-        if (message.text.includes("#mod")) {
-            for (const mod of this.auth.getMods(chatID)) {
-                this.sendMessage(mod, `Message from ${Util.buildPrettyChatName(message.chat)}:\n\n${message.text}`)
-                    .catch(() => this.sendMessage(chatID, `Couldn't send message to mod ${mod} (${Util.nameResolver.getUsernameFromUserID(mod)}). Perhaps they need to initiate a conversation with the bot?`));
-            }
-        }
 
-        if (this.auth.isMod(message.from.id, message.chat.id))
+        if (this.auth.isChatAdmin(message.from.id, message.chat.id))
             return;
         for (const word of this.db.blacklist[chatID]) {
             if (!message.text.includes(word))

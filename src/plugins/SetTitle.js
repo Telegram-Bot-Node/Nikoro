@@ -17,8 +17,8 @@ module.exports = class SetTitle extends Plugin {
 
     async onCommand({message, command, args}) {
         if (command !== "settitle") return;
-        if (!this.auth.isMod(message.from.id, message.chat.id))
-            return "Insufficient privileges.";
+        if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+            return "Insufficient privileges (chat admin required).";
         if (args.length === 0)
             return "Syntax: /settitle <title>";
         const title = args.join(" ");

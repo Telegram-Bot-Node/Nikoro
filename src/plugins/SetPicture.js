@@ -20,8 +20,8 @@ module.exports = class SetPicture extends Plugin {
         if (command !== "setpicture") return;
         if (!message.reply_to_message || !message.reply_to_message.photo)
             return "Reply to a picture with the caption /setpicture to set the chat's picture.";
-        if (!this.auth.isMod(message.from.id, message.chat.id))
-            return "Insufficient privileges.";
+        if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+            return "Insufficient privileges (chat admin required).";
         return this.setPhoto(message.reply_to_message);
     }
 
@@ -30,8 +30,8 @@ module.exports = class SetPicture extends Plugin {
             return;
         if (!message.caption.startsWith("/setpicture"))
             return;
-        if (!this.auth.isMod(message.from.id, message.chat.id))
-            return "Insufficient privileges.";
+        if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+            return "Insufficient privileges (chat admin required).";
         return this.setPhoto(message);
     }
 
