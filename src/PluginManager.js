@@ -292,6 +292,7 @@ module.exports = class PluginManager {
     startSynchronization() {
         this.synchronizationInterval = setInterval(() => {
             this.log.debug("Starting synchronization");
+            this.auth.synchronize();
             this.plugins.forEach(plugin => {
                 fs.writeFile(
                     PluginManager.getDatabasePath(plugin.plugin.name),
