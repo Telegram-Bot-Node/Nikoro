@@ -47,7 +47,7 @@ const nameResolver = new NameResolver();
  * or replying "/ignore" to a message sent by @username.
  */
 function getTargetID(message, args, commandName = "command") {
-    if (args.length === 1) {
+    if (args.length > 0) {
         if (/^\d+$/.test(args[0])) {
             return Number(args[0]);
         }

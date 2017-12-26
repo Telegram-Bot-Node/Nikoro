@@ -26,11 +26,11 @@ The owner(s) can add other owners by manually editing the bot's configuration an
         const chatID = message.chat.id;
         switch (command) {
             case "adminlist":
-                return JSON.stringify(this.auth.getChatAdmins(chatID));
+                return this.auth.getChatAdmins(chatID).map(id => Util.nameResolver.getUsernameFromUserID(id) || id).map(str => "- " + str).join("\n") || "None.";
             case "addadmin": {
                 if (!this.auth.isChatAdmin(message.from.id, chatID))
                     return "Insufficient privileges (chat admin required).";
-                const target = AuthPlugin.getTarget(chatID, args);
+                const target = Util.getTargetID(message, args, "addadmin");
                 if (typeof target === "string") return target;
                 this.auth.addChatAdmin(target, chatID);
                 return "Added.";
@@ -38,7 +38,7 @@ The owner(s) can add other owners by manually editing the bot's configuration an
             case "deladmin": {
                 if (!this.auth.isChatAdmin(message.from.id, chatID))
                     return "Insufficient privileges (chat admin required).";
-                const target = AuthPlugin.getTarget(chatID, args);
+                const target = Util.getTargetID(message, args, "deladmin");
                 if (typeof target === "string") return target;
                 this.auth.removeChatAdmin(target, chatID);
                 return "Removed.";
@@ -52,32 +52,5 @@ The owner(s) can add other owners by manually editing the bot's configuration an
                 return `Imported ${users.length} users successfully!`
             }
         }
-    }
-
-    static getTarget(chatID, args) {
-        if (args.length !== 1)
-            return "Please supply one ID/username.";
-
-        let target;
-        if (Number(args[0])) // ID
-            target = Number(args[0]);
-        else {
-            try {
-                const input = args[0];
-                if (/^@/.test(input)) {
-                    const username = input.replace("@", "");
-                    target = Util.printFromUsername(username, chatID);
-                } else {
-                    const userID = input;
-                    target = Util.printFromID(userID, chatID);
-                }
-            } catch (e) {
-                return "Couldn't resolve username. Did you /enable UserInfo?";
-            }
-        }
-        if (!target)
-            return "Invalid user (couldn't parse ID, or unknown username).";
-
-        return target;
     }
 };
