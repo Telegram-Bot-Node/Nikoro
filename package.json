@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An all-in-one, plugin-based, Telegram Bot.",
   "dependencies": {
-    "google-images": "^1.0.0",
+    "google-search": "0.0.5",
     "inquirer": "^1.2.2",
     "leaky-bucket": "^2.1.1",
     "node-telegram-bot-api": "^0.29.0",

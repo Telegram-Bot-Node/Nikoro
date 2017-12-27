@@ -9,11 +9,11 @@ module.exports = class Google extends Plugin {
 
         assert(typeof obj.config.GOOGLE_API_KEY === typeof "", "You must supply a Google API key.");
         assert(obj.config.GOOGLE_API_KEY !== "", "Please supply a valid Google API key.");
-        assert(typeof obj.config.GOOGLE_CX === typeof "", "You must supply a Google CX key.");
-        assert(obj.config.GOOGLE_CX !== "", "Please supply a valid Google CX key.");
-        this.google = new GoogleSearch({
+        assert(typeof obj.config.GOOGLE_CSE_ID === typeof "", "You must supply a Google CX key.");
+        assert(obj.config.GOOGLE_CSE_ID !== "", "Please supply a valid Google CX key.");
+        this.client = new GoogleSearch({
             key: obj.config.GOOGLE_API_KEY,
-            cx: obj.config.GOOGLE_CX
+            cx: obj.config.GOOGLE_CSE_ID
         });
     }
 
@@ -25,7 +25,7 @@ module.exports = class Google extends Plugin {
             needs: {
                 config: {
                     GOOGLE_API_KEY: "Google API key",
-                    GOOGLE_CX: "Google CX key"
+                    GOOGLE_CSE_ID: "Google CSE ID"
                 }
             }
         };
@@ -34,15 +34,15 @@ module.exports = class Google extends Plugin {
     async onCommand({command, args}) {
         if (command !== "google") return;
         const query = args.join(" ");
-        const response = await new Promise((resolve, reject) => this.google.build({
-            q: query
-        }, (err, response) => err ? reject(err) : resolve(response)));
+        const response = await new Promise((resolve, reject) => this.client.build({q: query, num: 5}, (error, response) => error ? reject(error) : resolve(response)));
+
         return {
             type: "text",
             text: response.items
-                .map(Util.makeHTMLLink)
+                .map(({title, link, snippet}) => `${Util.makeHTMLLink(title, link)}\n${snippet.replace(/\n/g, "")}`)
                 .join("\n\n"),
             options: {
+                disable_web_page_preview: true,
                 parse_mode: "HTML"
             }
         };
