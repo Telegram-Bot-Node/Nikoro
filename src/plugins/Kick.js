@@ -17,52 +17,71 @@ module.exports = class Kick extends Plugin {
     }
 
     async onCommand({message, command, args}) {
+        const chatID = message.chat.id;
         switch (command) {
             case "banlist": {
-                const chatID = message.chat.id;
                 if (!this.db[chatID])
                     return "Empty.";
-                return JSON.stringify(this.db[chatID]);
+                return this.db[chatID].map(id => Util.nameResolver.getUsernameFromUserID(id) || id).map(str => "- " + str).join("\n") || "None.";
             }
             case "kick": {
-                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                if (!this.auth.isChatAdmin(message.from.id, chatID))
                     return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "kick");
                 if (typeof target === "string") return target;
-                if (this.auth.isChatAdmin(target, message.chat.id))
+                if (this.auth.isChatAdmin(target, chatID))
                     return "Can't kick chat admins!";
-                await this.kickChatMember(message.chat.id, target);
-                return "Kicked.";
+                return this.kick(chatID, target).catch(e => {
+                    if (/USER_NOT_PARTICIPANT/.test(e.message))
+                        return "The user is no longer in the chat!";
+                    throw e;
+                });
             }
             case "ban": {
-                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                if (!this.auth.isChatAdmin(message.from.id, chatID))
                     return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "ban");
                 if (typeof target === "string") return target;
-                if (this.auth.isChatAdmin(target, message.chat.id))
+                if (this.auth.isChatAdmin(target, chatID))
                     return "Can't ban chat admins!";
-                this.ban(message, target);
-                await this.kickChatMember(message.chat.id, target);
-                return "Banned.";
+                this.ban(chatID, target);
+                return this.kick(chatID, target).catch(e => {
+                    /* We don't care if the user is no longer in the chat, so
+                     * we should swallow the error. However, in that case, the
+                     * admin wouldn't receive any feedback! So, return a
+                     * confirmation message.
+                     */
+                    if (/USER_NOT_PARTICIPANT/.test(e.message))
+                        return "Banned.";
+                    throw e;
+                });
             }
             case "unban": {
-                if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
+                if (!this.auth.isChatAdmin(message.from.id, chatID))
                     return "Insufficient privileges (chat admin required).";
                 const target = Util.getTargetID(message, args, "unban");
                 if (typeof target === "string") return target;
-                if (!this.db[message.chat.id])
+                if (!this.db[chatID])
                     return "It seems that there are no banned users.";
-                this.db[message.chat.id] = this.db[message.chat.id].filter(id => id !== target);
+                this.db[chatID] = this.db[chatID].filter(id => id !== target);
                 return "Unbanned.";
             }
         }
     }
 
+    kick(chatID, target) {
+        return this.kickChatMember(chatID, target).then(() => {}).catch(e => {
+            if (/CHAT_ADMIN_REQUIRED/.test(e.message))
+                return "I'm not a chat administrator, I can't kick users!";
+            throw e;
+        });
+    }
+
     // Note that banning does not imply kicking.
-    ban(message, target) {
-        if (!this.db[message.chat.id])
-            this.db[message.chat.id] = [];
-        this.db[message.chat.id].push(target);
+    ban(chatID, target) {
+        if (!this.db[chatID])
+            this.db[chatID] = [];
+        this.db[chatID].push(target);
     }
 
     onNewChatMembers({message}) {
@@ -70,14 +89,16 @@ module.exports = class Kick extends Plugin {
         // If there is no database, nobody was ever banned so far. Return early.
         if (!this.db[chatID]) return;
 
-        for (const member of message.new_chat_members) {
-            const target = member.id;
-            if (!this.db[chatID].includes(target))
-                continue;
-            if (this.auth.isChatAdmin(target, message.chat.id))
-                continue;
-            this.kickChatMember(chatID, target)
-                .catch(err => this.sendMessage(message.chat.id, "An error occurred while kicking the user: " + err));
-        }
+        // Return a promise, so that we can print exceptions.
+        return Promise.all(message.new_chat_members
+            .map(member => member.id)
+            .filter(target => this.db[chatID].includes(target))
+            .filter(target => !this.auth.isChatAdmin(target, chatID))
+            .map(target => this.kick(chatID, target).then(msg => {
+                // Yeah, not super clean.
+                if (msg)
+                    return this.sendMessage(chatID, msg);
+            }))
+        ).then(() => {});
     }
 };
