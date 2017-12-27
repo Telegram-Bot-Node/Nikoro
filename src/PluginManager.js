@@ -92,7 +92,11 @@ module.exports = class PluginManager {
         if (!messageIsCommand(message)) return;
         const {command, args: [pluginName, targetChat]} = parseCommand(message);
         // Skip everything if we're not interested in this command
-        if (command !== "help" && command !== "plugins" && command !== "enable" && command !== "disable") return;
+        if (command !== "help"
+            && command !== "start"
+            && command !== "plugins"
+            && command !== "enable"
+            && command !== "disable") return;
 
         const response = this.processHardcoded(command, pluginName, targetChat, message);
         this.bot.sendMessage(message.chat.id, response, {
@@ -102,6 +106,14 @@ module.exports = class PluginManager {
     }
 
     processHardcoded(command, pluginName, targetChat, message) {
+        if (command === "start") {
+            let text = `*Nikoro* v${require("../package.json").version}
+
+Nikoro is a plugin-based Telegram bot. To get started, use /help to find out how to use the currently active plugins.`;
+            if (this.auth.isOwner(message.from.id))
+                text += `\n\nYou can also use /plugins for a list of available plugins, or browse the [user guide](https://telegram-bot-node.github.io/Nikoro/user.html) for more information on this bot's features.`;
+            return text;
+        }
         if (command === "help") {
             const availablePlugins = this.plugins
                 .map(pl => pl.plugin)
@@ -110,7 +122,7 @@ module.exports = class PluginManager {
             if (!pluginName)
                 return availablePlugins
                     .map(pl => `*${pl.name}*: ${pl.description}`)
-                    .join("\n");
+                    .join("\n") + "\n\nFor help about a specific plugin, use /help PluginName.";
 
             const plugin = availablePlugins
                 .find(pl => pl.name.toLowerCase() === pluginName.toLowerCase());
@@ -149,7 +161,7 @@ module.exports = class PluginManager {
                 .filter(pl => !isEnabled(pl))
                 .map(pl => `*${pl.name}*` + (pl.disabled ? ` (${pl.disabled})` : `: ${pl.description}`))
                 .join("\n");
-            return "*Enabled:*\n" + enabled + "\n\n*Available:*\n" + available;
+            return "Enabled:\n" + enabled + "\n\nAvailable:\n" + available + "\n\nUse \"/enable PluginName\" to load a plugin.";
         }
 
         if (!this.auth.isOwner(message.from.id, message.chat.id))
