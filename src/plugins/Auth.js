@@ -22,7 +22,7 @@ The owner(s) can add other owners by manually editing the bot's configuration an
         this.auth = obj.auth;
     }
 
-    onCommand({message, command, args}) {
+    async onCommand({message, command, args}) {
         const chatID = message.chat.id;
         switch (command) {
             case "adminlist":
@@ -46,10 +46,16 @@ The owner(s) can add other owners by manually editing the bot's configuration an
             case "importadmins": {
                 if (!this.auth.isChatAdmin(message.from.id, chatID))
                     return "Insufficient privileges (chat admin required).";
-                const users = this.auth.getChatAdmins(chatID);
-                for (const user of users)
-                    this.auth.addChatAdmin(user, message.chat.id);
-                return `Imported ${users.length} users successfully!`
+                const users = await this.getChatAdministrators(chatID);
+                const myID = (await this.getMe()).id;
+                let i = 0;
+                for (const user of users) {
+                    if (user.user.id === myID) continue; // Do not add self
+                    if (this.auth.isOwner(user.user.id)) continue; // Do not add owners
+                    this.auth.addChatAdmin(user.user.id, message.chat.id);
+                    i++;
+                }
+                return `Imported ${i} users successfully!`
             }
         }
     }

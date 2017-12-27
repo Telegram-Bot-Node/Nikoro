@@ -16,7 +16,7 @@ module.exports = class Kick extends Plugin {
         this.auth = obj.auth;
     }
 
-    async onCommand({message, command, args}) {
+    onCommand({message, command, args}) {
         const chatID = message.chat.id;
         switch (command) {
             case "banlist": {

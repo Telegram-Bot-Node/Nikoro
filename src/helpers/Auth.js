@@ -65,6 +65,8 @@ module.exports = class Auth {
         const chatId = Number(_chatId);
         assert(isFinite(chatId));
         assert(!isNaN(chatId));
+
+        if (this.isOwner(_userId)) return; // Do not add duplicates
         if (!this.db.auth[chatId])
             this.db.auth[chatId] = {};
 
