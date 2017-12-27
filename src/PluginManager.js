@@ -125,7 +125,11 @@ module.exports = class PluginManager {
             const files = fs.readdirSync(pluginPath).map(filename => filename.replace(/\.js$/, ""));
             const plugins = files.map(filename => {
                 try {
-                    return require(path.join(pluginPath, filename), false).plugin;
+                    const plugin = require(path.join(pluginPath, filename), false).plugin;
+                    return {
+                        name: filename,
+                        description: plugin.description
+                    };
                 } catch (e) {
                     let message = e.message;
                     message = message.replace(/^Cannot find module '([^']+)'$/, "Must install `$1` first");
