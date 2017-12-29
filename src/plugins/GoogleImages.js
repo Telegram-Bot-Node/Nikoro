@@ -35,7 +35,7 @@ module.exports = class GoogleImages extends Plugin {
         if (command !== "images") return;
         const query = args.join(" ");
         const response = await new Promise((resolve, reject) => this.client.build({q: query, searchtype: "image", num: 1}, (error, response) => error ? reject(error) : resolve(response)));
-        if (!response.items)
+        if ((!response.items) || (response.items.length === 0))
             return "No results found.";
         const item = response.items[0];
         return {
