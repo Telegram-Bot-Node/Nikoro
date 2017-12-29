@@ -1,14 +1,6 @@
 const Plugin = require("./../Plugin");
 const safe = require("safe-regex");
 
-function dashArgs(spaceArgs) {
-    return spaceArgs
-        // Get the original string
-        .join(" ")
-        // Split by dash
-        .split(" - ");
-}
-
 module.exports = class RegexSet extends Plugin {
     constructor(obj) {
         super(obj);
@@ -23,7 +15,7 @@ module.exports = class RegexSet extends Plugin {
         return {
             name: "RegexSet",
             description: "Regex-capable set command",
-            help: "Syntax: `/regexset trigger - flags - replacement`, or `/regexset trigger - replacement`\nExamples:\n/regexset fo+ - i - bar"
+            help: "Commands: `/regexset /regex/flags replacement`, /regexlist\n\nFor example:\n/regexset /fo+/i - bar\n\nDon't forget to escape literal slashes with \"\\/\"."
         };
     }
 
@@ -61,62 +53,65 @@ module.exports = class RegexSet extends Plugin {
             case "regexset": {
                 if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
                     return "Insufficient privileges (chat admin required).";
-                const _args = dashArgs(args);
-                return this.regexset(_args, message.chat.id);
+                return this.regexset(args, message.chat.id);
             }
         }
     }
 
     regexset(args, chatID) {
-        const literalRegex = args[0];
-        let flags;
-        let text;
+        const helpText = "Syntax: `/regexset /regex/flags replacement` (see `/help RegexSet` for more information)";
+        if (args.length < 2)
+            return helpText;
+        const replacement = args.pop();
+        const literalRegex = args.join(" ");
 
-        switch (args.length) {
-            case 2:
-                flags = "";
-                text = args[1];
-                break;
-            case 3:
-                flags = args[1];
-                text = args[2];
-                break;
-            default:
-                return "Syntax: `/regexset needle - flags - replacement`, or `/regexset needle - replacement`";
-        }
+        const metaRegex = /^\/(.+)\/([a-z]*)$/i; // Regex for a valid regex
+        if (!metaRegex.test(literalRegex))
+            return helpText;
+
+        // eslint-disable-next-line no-unused-vars
+        const [_, regexBody, flags] = literalRegex.match(metaRegex);
 
         try {
-            RegExp(literalRegex, flags);
+            RegExp(regexBody, flags);
         } catch (e) {
             return "Cannot compile regular expression: " + e;
         }
 
-        if (!safe(literalRegex))
+        if (!safe(regexBody))
             return "That regular expression seems to be inefficient.";
 
-        this.db.replacements.push({regex: literalRegex, text, flags, chatID});
+        this.db.replacements.push({regex: regexBody, text: replacement, flags, chatID});
         return "Done.";
     }
 
     regexlist(chatID) {
         const string = this.db.replacements
             .filter(item => item.chatID === chatID)
-            .map((item, ID) => `${ID}: "${item.regex}" -> "${item.text}"`)
-            .join("\n");
-        return string || "No items set for this chat.";
+            .map(item => ` - /${item.regex}/${item.flags} -> ${item.text}`)
+            .join("\n") || "No items set for this chat.";
+        return string + "\n\nTo delete a regular expression, use /regexdelete /regex/flags.";
     }
 
     regexdelete(args, chatID) {
-        if (args.length !== 1)
-            return "Syntax: /regexdelete ID";
+        if (args.length === 0)
+            return "Syntax: /regexdelete /regex/flags";
 
-        const ID = Number(args[0]);
-        if (!this.db.replacements[ID])
+        const literalRegex = args.join(" ");
+
+        const metaRegex = /^\/(.+)\/([a-z]*)$/i; // Regex for a valid regex
+        if (!metaRegex.test(literalRegex))
+            return "Syntax: /regexdelete /regex/flags";
+
+        // eslint-disable-next-line no-unused-vars
+        const [_, regexBody, flags] = literalRegex.match(metaRegex);
+
+        const find = obj => (obj.regex === regexBody) && (obj.flags === flags) && (obj.chatID === chatID);
+        if (!this.db.replacements.some(find))
             return "No such expression.";
-        if (this.db.replacements[ID].chatID !== chatID)
-            return "No such item in this chat.";
+        const i = this.db.replacements.findIndex(obj => find(obj));
 
-        this.db.replacements.splice(ID, 1);
+        this.db.replacements.splice(i, 1);
         return "Deleted.";
     }
 };
