@@ -120,8 +120,8 @@ Nikoro is a plugin-based Telegram bot. To get started, use /help to find out how
                 .filter(pl => !pl.isHidden);
 
             if (!pluginName)
-                return availablePlugins
-                    .map(pl => `*${pl.name}*: ${pl.description}`)
+                return "The following plugins are enabled:\n\n" + availablePlugins
+                    .map(pl => `*${pl.name}*`)
                     .join("\n") + "\n\nFor help about a specific plugin, use /help PluginName.";
 
             const plugin = availablePlugins
