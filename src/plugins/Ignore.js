@@ -27,10 +27,10 @@ module.exports = class Ignore extends Plugin {
         return Promise.resolve();
     }
 
-    onCommands({message, command, args}) {
+    onCommand({message, command, args}) {
         switch (command) {
             case "ignorelist":
-                return JSON.stringify(this.db.ignored);
+                return this.db.ignored.map(id => Util.nameResolver.getUsernameFromUserID(id) || id).map(str => "- " + str).join("\n") || "None.";
             case "ignore": {
                 if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
                     return "Insufficient privileges (chat admin required).";
