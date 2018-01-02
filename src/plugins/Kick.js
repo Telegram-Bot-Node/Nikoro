@@ -64,6 +64,9 @@ module.exports = class Kick extends Plugin {
                 if (!this.db[chatID])
                     return "It seems that there are no banned users.";
                 this.db[chatID] = this.db[chatID].filter(id => id !== target);
+                const chat = await this.getChat(chatID);
+                if (chat.type === "supergroup")
+                    await this.unbanChatMember(chatID, target);
                 return "Unbanned.";
             }
         }
