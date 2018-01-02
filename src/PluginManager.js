@@ -174,8 +174,6 @@ Nikoro is a plugin-based Telegram bot. To get started, use /help to find out how
         const isGloballyEnabled = this.plugins.some(nameMatches(pluginName));
         switch (command) {
             case "enable":
-                if (isGloballyEnabled)
-                    return "Plugin already enabled.";
                 if (targetChat) {
                     try {
                         this.loadAndAdd(pluginName);
@@ -189,6 +187,9 @@ Nikoro is a plugin-based Telegram bot. To get started, use /help to find out how
                         return "Couldn't load plugin: " + e.message;
                     }
                 }
+
+                if (isGloballyEnabled)
+                    return "Plugin already enabled.";
 
                 this.log.info(`Enabling ${pluginName} from message interface`);
                 try {
