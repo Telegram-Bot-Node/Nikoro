@@ -26,7 +26,8 @@ class Scheduler extends EventEmitter {
         const date = Number(_date); // Cast to Unix timestamp
         this.events.push({name, metadata, date});
         const now = new Date();
-        setTimeout(() => this.emit(name, metadata), date - now);
+        if ((date - now) < Math.pow(2, 32)) // setTimeout can only schedule 2^32 ms in the future
+            setTimeout(() => this.emit(name, metadata), date - now);
         this.synchronize();
     }
     /* Cancels all events that match a specific function.
