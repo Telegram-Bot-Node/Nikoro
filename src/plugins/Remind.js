@@ -37,7 +37,7 @@ Use /remindlist for a list of upcoming events.`
         }
     }
 
-    remindHandler({message, command, args}) {
+    remindHandler({message, args}) {
         if (args.length < 2)
             return "Invalid command (see /help Remind for usage)."
         const delayString = args.shift();
