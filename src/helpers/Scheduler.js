@@ -5,6 +5,7 @@ const EventEmitter = require("events");
 const fs = require("fs");
 const path = require("path");
 const assert = require("assert");
+const cron = require("cron");
 
 const dbPath = path.join(__dirname, "../../db/helper_Scheduler.json");
 
@@ -17,10 +18,19 @@ class Scheduler extends EventEmitter {
     constructor() {
         super();
         this.events = [];
-        if (fs.existsSync(dbPath))
-            this.events = JSON.parse(fs.readFileSync(dbPath)).map(it => {it.date = new Date(it.date); return it});
+        this.crons = [];
+        if (fs.existsSync(dbPath)) {
+            const entries = JSON.parse(fs.readFileSync(dbPath));
+            entries
+                .filter(it => "date" in it)
+                .map(it => {it.date = new Date(it.date); return it})
+                .forEach(({name, metadata, date}) => this.scheduleOneoff(name, metadata, date));
+            entries
+                .filter(it => "cronString" in it)
+                .forEach(({name, metadata, cronString}) => this.scheduleCron(name, metadata, cronString));
+        }
     }
-    schedule(name, metadata, _date) {
+    scheduleOneoff(name, metadata, _date) {
         assert.deepEqual(typeof metadata, "object", "Metadata must be an object!");
         assert((typeof _date === "object") || (typeof _date === "number"), "Must pass a valid date!");
         const date = Number(_date); // Cast to Unix timestamp
@@ -30,12 +40,26 @@ class Scheduler extends EventEmitter {
             setTimeout(() => this.emit(name, metadata), date - now);
         this.synchronize();
     }
+    scheduleCron(name, metadata, cronString) {
+        assert.deepEqual(typeof metadata, "object", "Metadata must be an object!");
+        assert.deepEqual(typeof cronString, "string", "Must pass a valid cron string!");
+
+        const job = new cron.CronJob(cronString, () => this.emit(name, metadata), undefined, true);
+        this.crons.push({name, metadata, cronString, job});
+        this.synchronize();
+    }
     /* Cancels all events that match a specific function.
      * Take care to check for your plugin's metadata, so that you don't
      * accidentally delete other plugins' events!
      */
     cancel(fn) {
-        this.events = this.events.filter(fn);
+        this.events = this.events.filter(it => !fn(it));
+        this.crons.filter(it => {
+            if (!fn(it))
+                return true;
+            it.job.stop();
+            return false;
+        });
     }
 
     // Private method
@@ -43,7 +67,9 @@ class Scheduler extends EventEmitter {
         // Remove old events
         const now = new Date();
         this.events = this.events.filter(evt => evt.date >= now);
-        fs.writeFileSync(dbPath, JSON.stringify(this.events));
+        const serializableCrons = this.crons.map(({name, metadata, cronString}) => ({name, metadata, cronString}));
+        const serializableData = this.events.concat(serializableCrons);
+        fs.writeFileSync(dbPath, JSON.stringify(serializableData));
     }
 }
 

@@ -9,7 +9,7 @@ module.exports = class Remind extends Plugin {
             help: ` - '/remind date event' (eg. '/remind 16/01/18 Call Bob', day comes before month)
  - '/remind time event' (eg. '/remind 18:00 Call Bob'. Please use a 24-hour format, not am/pm!)
  - '/remind date time event' (eg. '/remind 16/01/18 18:00 Call Bob'. Please use a 24-hour format, not am/pm!)
- - '/remind delay event' (eg. '/remind 2h30m Call Bob')
+${"[TODO: enable in the future] - '/remind delay event' (eg. '/remind 2h30m Call Bob')"}
 
 Use /remindlist for a list of upcoming events.`
         };
@@ -29,7 +29,7 @@ Use /remindlist for a list of upcoming events.`
                 return Scheduler.events
                     .filter(it => it.metadata.plugin === "Remind")
                     .filter(it => it.metadata.chat === message.chat.id)
-                    .map(it => `${it.date.toLocaleString("it-IT")}: ${it.metadata.text}`)
+                    .map(it => `${new Date(it.date).toLocaleString("it-IT")}: ${it.metadata.text}`)
                     .join("\n") || "None.";
             case "remind":
                 // To reduce indentation
@@ -62,7 +62,7 @@ Use /remindlist for a list of upcoming events.`
         }
         if (date < now)
             return "Can't set events in the past!";
-        Scheduler.schedule("reminder", {
+        Scheduler.scheduleOneoff("reminder", {
             plugin: "Remind",
             chat: message.chat.id,
             text: args.join(" ")
