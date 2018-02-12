@@ -69,8 +69,7 @@ module.exports = class RegexSet extends Plugin {
         if (!metaRegex.test(literalRegex))
             return helpText;
 
-        // eslint-disable-next-line no-unused-vars
-        const [_, regexBody, flags] = literalRegex.match(metaRegex);
+        const [regexBody, flags] = literalRegex.match(metaRegex).slice(1);
 
         try {
             RegExp(regexBody, flags);
@@ -103,8 +102,7 @@ module.exports = class RegexSet extends Plugin {
         if (!metaRegex.test(literalRegex))
             return "Syntax: /regexdelete /regex/flags";
 
-        // eslint-disable-next-line no-unused-vars
-        const [_, regexBody, flags] = literalRegex.match(metaRegex);
+        const [regexBody, flags] = literalRegex.match(metaRegex).slice(1);
 
         const find = obj => (obj.regex === regexBody) && (obj.flags === flags) && (obj.chatID === chatID);
         if (!this.db.replacements.some(find))
