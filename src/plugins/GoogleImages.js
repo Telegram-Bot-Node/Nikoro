@@ -38,12 +38,14 @@ module.exports = class GoogleImages extends Plugin {
         if ((!response.items) || (response.items.length === 0))
             return "No results found.";
         const item = response.items[0];
+        let caption = item.snippet.replace(/\n/g, "");
+        if (caption.length > 200) {
+            caption = caption.substring(0, 197) + "..."
+        }
         return {
             type: "photo",
             photo: item.pagemap.cse_image[0].src,
-            options: {
-                caption: `${item.snippet.replace(/\n/g, "")}`
-            }
+            options: {caption}
         };
     }
 };
