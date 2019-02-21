@@ -45,7 +45,7 @@ Did you make a plugin you want to share with everyone? Did you improve the code 
 
 Submit a pull request! This project will only grow if *YOU* help!
 
-Basic guidelines for contributing are outlined in `CONTRIBUTING.md`. We also have a complete [developer's guide](http://telegram-bot-node.github.io/Nikoro/dist/developer.html)! Finally, you can look at existing plugins (`src/plugins/Ping.js` can be a simple starting point) for a quick start.
+Basic guidelines for contributing are outlined in `CONTRIBUTING.md`. We also have a complete [developer's guide](http://telegram-bot-node.github.io/Nikoro/developer.html)! Finally, you can look at existing plugins (`src/plugins/Ping.js` can be a simple starting point) for a quick start.
 
 ## Contributors
 In alphabetical order

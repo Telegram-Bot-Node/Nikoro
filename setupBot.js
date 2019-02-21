@@ -3,7 +3,7 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
 const Log = require("./src/Log");
-const log = Log.get("Bot", null, "debug");
+const log = Log("Bot", null, "debug");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
 const walk = require("walk-sync");
