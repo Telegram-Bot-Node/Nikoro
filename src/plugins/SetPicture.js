@@ -19,7 +19,7 @@ module.exports = class SetPicture extends Plugin {
     onCommand({message, command}) {
         if (command !== "setpicture") return;
         if (!message.reply_to_message || !message.reply_to_message.photo)
-            return "Reply to a picture with the caption /setpicture to set the chat's picture.";
+            return "Reply to a picture with the caption /setpicture or /setimage to set the chat's picture.";
         if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
             return "Insufficient privileges (chat admin required).";
         return this.setPhoto(message.reply_to_message);
@@ -29,6 +29,8 @@ module.exports = class SetPicture extends Plugin {
         if (!message.caption)
             return;
         if (!message.caption.startsWith("/setpicture"))
+            return;
+        if (!message.caption.startsWith("/setimage"))
             return;
         if (!this.auth.isChatAdmin(message.from.id, message.chat.id))
             return "Insufficient privileges (chat admin required).";
