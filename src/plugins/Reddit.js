@@ -34,8 +34,8 @@ module.exports = class Reddit extends Plugin {
 
         const sub = args[0];
         return this.sendRequest("https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json")
-            .then(body => this.subCommand(command,body))
-            .catch(() => "reddit down or subreddit banned ")
+            .then(body => this.subCommand(command, body))
+            .catch(() => "Reddit down or subreddit banned.")
         
     }
 
@@ -55,7 +55,7 @@ module.exports = class Reddit extends Plugin {
             .map(c => c.data)
             .filter(c => c.post_hint === "image");
 
-        if(results.length == 0 ) return "subreddit not found"
+        if (results.length == 0) return "Subreddit not found!"
 
         const item = results[Math.floor(Math.random() * results.length)];
         return {
