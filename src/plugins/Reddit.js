@@ -39,12 +39,14 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
-    static redimg(message, results) {
+    static redimg(message, results) {   
         results = results
             .map(c => c.data)
             .filter(c => c.post_hint === "image");
-        const item = results[Math.floor(Math.random() * results.length)];
 
+        if(results.length == 0 ) return "subreddit not found"
+
+        const item = results[Math.floor(Math.random() * results.length)];
         return {
             type: "photo",
             photo: item.url,
