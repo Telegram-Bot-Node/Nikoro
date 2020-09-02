@@ -13,7 +13,7 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
-    async sendRequest(url) { 
+    async sendRequest(url) {
         return request(url);
     }
 
@@ -50,7 +50,7 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
-    redimg(results) {   
+    redimg(results) {
         results = results
             .map(c => c.data)
             .filter(c => c.post_hint === "image");
