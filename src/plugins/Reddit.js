@@ -13,22 +13,33 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
+    async sendRequest(url) {
+        return request(url);
+    }
+
+    subCommand(command,body) {
+        const results = JSON.parse(body).data.children;
+        switch (command) {
+            case "reddit":
+                return this.reddit(results);
+            case "redimg":
+                return this.redimg(results);
+        }
+    }
+
+
     async onCommand({message, command, args}) {
         if (command !== "reddit" && command !== "redimg")
             return;
 
         const sub = args[0];
-        const body = await request("https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json");
-        const results = JSON.parse(body).data.children;
-        switch (command) {
-            case "reddit":
-                return Reddit.reddit(message, results);
-            case "redimg":
-                return Reddit.redimg(message, results);
-        }
+        return this.sendRequest("https://reddit.com/" + (sub ? `r/${sub}` : "") + ".json")
+            .then(body => this.subCommand(command, body))
+            .catch(() => "Reddit down or subreddit banned.")
+        
     }
 
-    static reddit(message, results) {
+    reddit(results) {
         const item = results[Math.floor(Math.random() * results.length)].data;
         return {
             type: "text",
@@ -39,12 +50,14 @@ module.exports = class Reddit extends Plugin {
         };
     }
 
-    static redimg(message, results) {
+    redimg(results) {
         results = results
             .map(c => c.data)
             .filter(c => c.post_hint === "image");
-        const item = results[Math.floor(Math.random() * results.length)];
 
+        if (results.length == 0) return "Subreddit not found!"
+
+        const item = results[Math.floor(Math.random() * results.length)];
         return {
             type: "photo",
             photo: item.url,
